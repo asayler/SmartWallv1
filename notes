@@ -1,0 +1,31 @@
+State Info:
+   Master
+      - List of slaves (addresses (SmartWall, IP), types, channels)
+      - Slave aliases (string Alias to SmartWall Address)
+      - Scheduled Events
+      - Self Address (SmartWall, IP)
+      - Self Group ID
+   Slave
+      - Self Address (smartWall, IP)
+      - Self Group ID
+      - Type (Hardcoded)
+      - Channels (Hardcoded)
+
+Slave Self Config Process
+   1. Complete all self checks
+   2. Confirm network connection live
+   3. Read Group ID (hardcoded or switched)
+   3. Has another device requested init - blocking?
+   4. Random wait to minimize collisions
+   4. Broadcast Request Initilization message to Network (blocks
+      all other self init requests)
+   5. Await response (if another Req Init message is seen,
+      abort and start over)
+   6. Timeout and retry, or broadcast Self Init Complete Message
+
+File Extensions
+.sws - SmartWall Status - Internal SmartWall State Files
+.swc - SmartWall Configuration - SmartWall Config Files
+
+Questions:
+   
