@@ -1,29 +1,24 @@
 # Andy Sayler
 # SmartWall Project
-# SmartWall Master
+# SmartWall Common
 # makefile
-# Created 2/2/11
+# Created 2/14/11
 #
 # Change Log:
-# 02/02/11 - Created
-# 02/14/11 - Updated for auto generated dependencies
+# 02/14/11 - Created
 # ---
 
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = master.o
-EXEC = master
+OBJS = SmartWall.o
 
 .PHONY : all
-all : master
+all : SmartWall.o
 
-master : master.o
-	$(CC) $(CFLAGS) master.o -o master
-
-master.o : master.c
-	$(CC) $(CFLAGS) -c master.c 
--include master.d
+SmartWall.o : SmartWall.c
+	$(CC) $(CFLAGS) -c SmartWall.c 
+-include SmartWall.d
 
 # Automatically generate dependencies for .c files
 %.d : %.c
@@ -34,7 +29,7 @@ master.o : master.c
 
 .PHONY : clean
 clean :
-	rm -f $(EXEC) $(OBJS)
+	rm -f $(OBJS)
 	rm -f *.d
 	rm -f *~
 	rm -f core*
