@@ -1,6 +1,6 @@
 /* Andy Sayler
  * SmartWall Project
- * SmartWall Structs
+ * SmartWall Structs and Defines
  * SmartWall.h
  * Created 2/2/11
  *

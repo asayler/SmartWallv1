@@ -16,24 +16,24 @@
 int getDevices(struct SWDeviceEntry* devices, int maxDevices){
 
     /* Function Vars */
+    char deviceFileName[MAX_FILENAME_LENGTH];
     const int errorVal = -1;
     FILE* deviceFile = NULL;
     int devCnt = 0;    
 
     /* Temp Vars */
-    swAddress_t swAddrTmp = 0;
-    in_addr_t ipAddrTmp = 0;
-    devType_t devTypeTmp = 0;
-    numChan_t numChanTmp = 0;
-    swVersion_t versionTmp = 0;
-    devUID_t uidTmp = 0;
+    struct SWDeviceEntry deviceTmp;
+
+    /* Build filenmae */
+    strcpy(deviceFileName, USERMON_DEVICE_FILE_BASE);
+    strcat(deviceFileName, USERMON_DEVICE_FILE_EXTENSION);
 
     /* TODO: Add Semephore access control to common SW state file */
 
     /* Open File */
-    deviceFile = fopen(USERMON_DEVICE_FILE, "r");
+    deviceFile = fopen(deviceFileName, "r");
     if(deviceFile == NULL){
-        fprintf(stderr, "Could not open %s\n", USERMON_DEVICE_FILE);
+        fprintf(stderr, "Could not open %s\n", deviceFileName);
         perror("deviceFile fopen");
         return errorVal;
     }
@@ -41,64 +41,29 @@ int getDevices(struct SWDeviceEntry* devices, int maxDevices){
     /* Read File */
     while(!feof(deviceFile)){
         /* Read From File */
-        /* Get SW Address */
-        if(fscanf(deviceFile, "%" SCNxSWAddr, &swAddrTmp) != 1){
-            fprintf(stderr, "Line %d of %s has bad data near first pos\n"
-                    "or extra line return at end of file.\n",
-                    devCnt, USERMON_DEVICE_FILE);
-            devCnt = errorVal;
-            break;
-        }
-        /* Get IP Address */
-        if(fscanf(deviceFile, "%" SCNxIPAddr, &ipAddrTmp) != 1){
-            fprintf(stderr, "Line %d of %s has bad data near second pos.\n",
-                    devCnt, USERMON_DEVICE_FILE);
-            devCnt = errorVal;
-            break;
-        }
-        /* Get Device Type */
-        if(fscanf(deviceFile, "%" SCNxDevType, &devTypeTmp) != 1){
-            fprintf(stderr, "Line %d of %s has bad data near third pos.\n",
-                    devCnt, USERMON_DEVICE_FILE);
-            devCnt = errorVal;
-            break;
-        }
-        /* Get Number of Device Channels */
-        if(fscanf(deviceFile, "%" SCNxNumChan, &numChanTmp) != 1){
-            fprintf(stderr, "Line %d of %s has bad data near fourth pos.\n",
-                    devCnt, USERMON_DEVICE_FILE);
-            devCnt = errorVal;
-            break;
-        }
-        /* Get SW Protocol version */
-        if(fscanf(deviceFile, "%" SCNxSWVer, &versionTmp) != 1){
-            fprintf(stderr, "Line %d of %s has bad data near fifth pos.\n",
-                    devCnt, USERMON_DEVICE_FILE);
-            devCnt = errorVal;
-            break;
-        }
-        /* Get Device Unique ID */
-        if(fscanf(deviceFile, "%" SCNxDevUID, &uidTmp) != 1){
-            fprintf(stderr, "Line %d of %s has bad data near sixth pos.\n",
-                    devCnt, USERMON_DEVICE_FILE);
+        if(readDevice(&deviceTmp, deviceFile) < 0){
+            fprintf(stderr, "Line %d of %s has bad data.\n",
+                    devCnt, deviceFileName);
             devCnt = errorVal;
             break;
         }
 
         /* Add device info to struct in array*/
         if(devCnt < maxDevices){
-            devices[devCnt].swAddr = swAddrTmp;
-            devices[devCnt].ipAddr = ipAddrTmp;
-            devices[devCnt].devType = devTypeTmp;
-            devices[devCnt].numChan = numChanTmp;
-            devices[devCnt].version = versionTmp;
-            devices[devCnt].uid = uidTmp;
+            devices[devCnt].swAddr = deviceTmp.swAddr;
+            devices[devCnt].ipAddr = deviceTmp.ipAddr;
+            devices[devCnt].devType = deviceTmp.devType;
+            devices[devCnt].numChan = deviceTmp.numChan;
+            devices[devCnt].version = deviceTmp.version;
+            devices[devCnt].uid = deviceTmp.uid;
         }
         else{
             fprintf(stderr, "Max number of devices exceeded.\n");
             devCnt = errorVal;
             break;
         }
+
+        /* Increment */
         devCnt++;
     }
 

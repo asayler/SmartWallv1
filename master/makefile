@@ -12,14 +12,18 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = master.o
+OBJS = swMaster.o master.o
 EXEC = master
 
 .PHONY : all
-all : master
+all : master swMaster.o
 
-master : master.o
-	$(CC) $(CFLAGS) master.o -o master
+master : master.o swMaster.o
+	$(CC) $(CFLAGS) master.o swMaster.o -o master
+
+swMaster.o : swMaster.c
+	$(CC) $(CFLAGS) -c swMaster.c 
+-include swMaster.d
 
 master.o : master.c
 	$(CC) $(CFLAGS) -c master.c 

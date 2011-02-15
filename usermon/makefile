@@ -18,12 +18,16 @@ EXEC = testMain
 .PHONY : all
 all : testMain
 
-testMain : usermon.o testMain.o
-	$(CC) $(CFLAGS) usermon.o testMain.o -o testMain
+testMain : usermon.o testMain.o ../master/swMaster.o
+	$(CC) $(CFLAGS) usermon.o testMain.o ../master/swMaster.o -o testMain
 
 usermon.o : usermon.c
 	$(CC) $(CFLAGS) -c usermon.c
 -include usermon.d
+
+../master/swMaster.o : ../master/swMaster.c
+	$(CC) $(CFLAGS) -c ../master/swMaster.c 
+-include ../master/swMaster.d
 
 testMain.o : testMain.c
 	$(CC) $(CFLAGS) -c testMain.c

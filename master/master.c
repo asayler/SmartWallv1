@@ -24,17 +24,21 @@
 #include <fcntl.h>
 #include <netdb.h>
 
-#include "../com/SmartWall.h"
+#include "swMaster.h"
 
 #define SENDPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
 #define BUFLEN 1024 /* 1 kB datagram buffer */
 #define SLAVEIP "127.0.0.1"
 
+#define MYSWUID 0x0001000000000001
 #define MYSWGROUP 0x01
 #define MYSWADDRESS 0x0001
 #define MYSWVER 0x1
 #define MYSWTYPE SW_TYPE_MASTER
 #define MYSWCHAN 0x00
+
+/* Private Functions */
+int initialize(void);
 
 int main(int argc, char *argv[]){
 
@@ -45,10 +49,11 @@ int main(int argc, char *argv[]){
     /* Setup State Vars */
     
     /* Setup SW Vars */
-    const uint8_t  mySWVersion = MYSWVER;
-    const uint8_t  mySWType    = MYSWTYPE;
-    uint16_t mySWAddress = MYSWADDRESS;
-    uint8_t  mySWGroup   = MYSWGROUP;
+    const devUID_t mySWUID = MYSWUID;
+    const swVersion_t  mySWVersion = MYSWVER;
+    const devType_t  mySWType    = MYSWTYPE;
+    swAddress_t mySWAddress = MYSWADDRESS;
+    groupID_t  mySWGroup   = MYSWGROUP;
 
     /* Setup Network Vars */
     struct SmartWallHeader myHeader;
@@ -59,13 +64,50 @@ int main(int argc, char *argv[]){
     int s;
     int a, b, r;
     unsigned int slen = sizeof(si_other);
+
+    /* Init */
+    /* HACK: Test Code */
+    struct SWDeviceEntry newEntry;
+    newEntry.swAddr = mySWAddress;
+    /* IP */
+    memset((char*) &si_me, 0, sizeof(si_me));
+    si_me.sin_family = AF_INET;
+    a = inet_aton(SLAVEIP, &si_me.sin_addr);
+    if (a < 0){
+        perror("inet_aton");
+        exit(1);
+    }
+    newEntry.ipAddr = ntohl(si_me.sin_addr.s_addr);
+    newEntry.devType = mySWType;
+    newEntry.numChan = 0;
+    newEntry.version = mySWVersion;
+    newEntry.uid = mySWUID;
     
+    char deviceFileName[MAX_FILENAME_LENGTH];
+    FILE* deviceFile = NULL;
+    strcpy(deviceFileName, MASTER_DEVICE_FILE_BASE);
+    strcat(deviceFileName, MASTER_DEVICE_FILE_EXTENSION);    
+    
+    /* Open File */
+    deviceFile = fopen(deviceFileName, "a");
+    if(deviceFile == NULL){
+        fprintf(stderr, "Could not open %s\n", deviceFileName);
+        perror("deviceFile fopen");
+    }
+    
+    if(writeDevice(&newEntry, deviceFile) < 0){
+        fprintf(stderr, "Could not write newEntry to %s\n", deviceFileName);
+    }
+
+    /* END HACK */
+
     /*Print Base Data */
     fprintf(stdout, "I am a SW_TYPE_MASTER.\n");
-    fprintf(stdout, "Device Type:       0x%x\n", mySWType);
-    fprintf(stdout, "SmartWall Version: 0x%x\n", mySWVersion);
-    fprintf(stdout, "SmartWall Address: 0x%x\n", mySWAddress);
-    fprintf(stdout, "SmartWall Group:   0x%x\n", mySWGroup);
+    fprintf(stdout, "SmartWall UID:     0x%" PRIxDevUID "\n", mySWUID);
+    fprintf(stdout, "Device Type:       0x%" PRIxDevType "\n", mySWType);
+    fprintf(stdout, "SmartWall Version: 0x%" PRIxSWVer "\n", mySWVersion);
+    fprintf(stdout, "SmartWall Address: 0x%" PRIxSWAddr "\n", mySWAddress);
+    fprintf(stdout, "SmartWall Group:   0x%" PRIxGrpID "\n", mySWGroup);
     
     /* Print Test Data */
     fprintf(stdout, "SmartWall Header Size: %lu\n", sizeof(myHeader));
@@ -78,7 +120,6 @@ int main(int argc, char *argv[]){
     }
 
     /* Zero and Init Structs */
-    memset((char*) &si_me, 0, sizeof(si_me));
     memset((char*) &si_other, 0, sizeof(si_other));
     si_other.sin_family = AF_INET;
     si_other.sin_port = htons(SENDPORT);

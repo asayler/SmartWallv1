@@ -15,10 +15,15 @@
 #define SWMASTER_H
 
 /* Outside Includes */
+#include <stdio.h>
+#include <arpa/inet.h>
+
 #include "../com/SmartWall.h"
+#include "../com/swDevice.h"
 
 /* Defines */
-#define MASTER_DEVICE_FILE "../devices.sws"
+#define MASTER_DEVICE_FILE_BASE "../devices"
+#define MASTER_DEVICE_FILE_EXTENSION DEVICE_STATUS_EXTENSION
 #define MASTER_MAXDEVICES 999
 
 /* Structs */
@@ -31,5 +36,10 @@ struct SWDeviceEntry {
     swVersion_t version; /* SW Protocol Version */
     devUID_t uid;        /* SW Unique Device ID */
 };
+
+/* Public Functions */
+extern int buildDevFileName(char* filename);
+extern int readDevice(struct SWDeviceEntry* device, FILE* devFile);
+extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile);
 
 #endif
