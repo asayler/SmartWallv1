@@ -6,6 +6,7 @@
  *
  * Change Log:
  * 02/02/11 - Created
+ * 02/17/11 - Updated to v1.1 header structure
  * ---
  */
 
@@ -63,6 +64,18 @@ typedef uint64_t devType_t;
 #define SCNdevType SCNu64
 #define SCNxDevType SCNx64
 
+typedef uint16_t swOpcode_t;
+#define PRIswOpcode PRIu16
+#define PRIxSWOpcode PRIx16
+#define SCNswOpcode SCNu16
+#define SCNxSWOpcode SCNx16
+
+typedef uint16_t totalLength_t;
+#define PRItotLength PRIu16
+#define PRIxTotLength PRIx16
+#define SCNtotLength SCNu16
+#define SCNxTotLength SCNx16
+
 typedef uint8_t numChan_t;
 #define PRInumChan PRIu8
 #define PRIxNumChan PRIx8
@@ -79,12 +92,15 @@ typedef uint64_t devUID_t;
 struct SmartWallHeader {
     swVersion_t version; /* SmartWall Protocol version */
     msgType_t msgType; /* SmartWall Mesage Type */
-    uint8_t unused; /* For allignment */
+    uint8_t unused1; /* For allignment */
     groupID_t groupID; /* SmartWall groupID */
     swAddress_t sourceAddress; /* SmartWall Source Address */
     swAddress_t destAddress; /* SmartWall Destination Address */
     devType_t sourceType; /* Source Device Type Mask */
     devType_t destType; /* Destination Device Type Mask */
+    swOpcode_t opcode; /* SW Opcode */
+    totalLength_t totalLength; /* Total Length in bytes (Header + Data) */
+    uint32_t unused2; /* For Allignment */
 };
 
 #endif
