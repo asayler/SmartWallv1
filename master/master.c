@@ -34,7 +34,7 @@
 #define MYSWGROUP 0x01
 #define MYSWADDRESS 0x0001
 #define MYSWVER 0x1
-#define MYSWTYPE SW_TYPE_MASTER
+#define MYSWTYPE SW_TYPE_MASTER | SW_TYPE_UNIVERSAL
 #define MYSWCHAN 0x00
 
 /* Private Functions */
@@ -138,12 +138,13 @@ int main(int argc, char *argv[]){
     */
 
     /* Setup Header */
-    myHeader.verType = (mySWVersion << 4) | (uint8_t) 0x01;
-    myHeader.sourceType = mySWType;
-    myHeader.destType = SW_TYPE_OUTLET;
+    myHeader.version = mySWVersion;
+    myHeader.msgType = 0x01;
     myHeader.groupID = mySWGroup;
     myHeader.sourceAddress = mySWAddress;
     myHeader.destAddress = 0x0010;
+    myHeader.sourceType = mySWType;
+    myHeader.destType = SW_TYPE_OUTLET;
 
     r = sendto(s, (char*) &myHeader, sizeof(myHeader), 0,
                (struct sockaddr*) &si_other, slen);

@@ -12,6 +12,10 @@
 #ifndef SWOUTLET_H
 #define SWOUTLET_H
 
+/* Outside Includes */
+#include "swSlave.h"
+
+/* Defines */
 #define OUTLET_CHAN_OFF 0
 #define OUTLET_CHAN_ON 1
 

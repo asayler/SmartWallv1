@@ -92,12 +92,12 @@ int printDevices(FILE* outstream){
     
     /* Print Devices */
     charCnt += fprintf(outstream,
-                       "    | %5s | %15s | %3s | %3s | %2s | %31s\n",
-                       "SWAdr", "IP Address  ", "Typ",
-                       "#Ch", "Vr", "SW Device UID         ");
+                       "    | %5s | %15s | %18s | %3s | %2s\n",
+                       "SWAdr", "IP Address  ", "Types       ",
+                       "#Ch", "Vr");
     charCnt += fprintf(outstream,
                        "----------------------------------------"
-                       "----------------------------------------\n");
+                       "----------------------\n");
     for(i = 0; i < devCnt; i++){
         /* Write Device Line Output */
         /* Print device count */
@@ -115,31 +115,13 @@ int printDevices(FILE* outstream){
         charCnt += fprintf(outstream, "%3.3" PRIipAddr " | ",
                            ((devices[i].ipAddr >> 0) & 0xff));
         /* Print SW Device Type */ 
-        charCnt += fprintf(outstream, "%3" PRIdevType " | ",
+        charCnt += fprintf(outstream, "0x%16.16" PRIxDevType " | ",
                            devices[i].devType);
         /* Print Number of Device Channels */
         charCnt += fprintf(outstream, "%3" PRInumChan " | ",
                            devices[i].numChan);
         /* Print SW Protocol version */
-        charCnt += fprintf(outstream, "%2" PRIswVer " | ", devices[i].version);
-        /* Print SW Uniq ID */
-        /* Convert SW Uniq ID to dotted decimal string */
-        charCnt += fprintf(outstream, "%3.3" PRIdevUID ".",
-                           ((devices[i].uid >> 56) & 0xff));
-        charCnt += fprintf(outstream, "%3.3" PRIdevUID ".",
-                           ((devices[i].uid >> 48) & 0xff));
-        charCnt += fprintf(outstream, "%3.3" PRIdevUID ".",
-                           ((devices[i].uid >> 40) & 0xff));
-        charCnt += fprintf(outstream, "%3.3" PRIdevUID ".",
-                           ((devices[i].uid >> 32) & 0xff));
-        charCnt += fprintf(outstream, "%3.3" PRIdevUID ".",
-                           ((devices[i].uid >> 24) & 0xff));
-        charCnt += fprintf(outstream, "%3.3" PRIdevUID ".",
-                           ((devices[i].uid >> 16) & 0xff));
-        charCnt += fprintf(outstream, "%3.3" PRIdevUID ".",
-                           ((devices[i].uid >> 8) & 0xff));
-        charCnt += fprintf(outstream, "%3.3" PRIdevUID "\n",
-                           ((devices[i].uid >> 0) & 0xff));
+        charCnt += fprintf(outstream, "%2" PRIswVer "\n", devices[i].version);
     }
 
     return charCnt;
@@ -164,12 +146,12 @@ int printDevicesHex(FILE* outstream){
     
     /* Print Devices */
     charCnt += fprintf(outstream,
-                       "    | %6s | %10s | %4s | %4s | %3s | %18s\n",
-                       "SW Adr", "IP Address", "Type",
+                       "    | %6s | %10s | %18s | %4s | %3s | %18s\n",
+                       "SW Adr", "IP Address", "Types       ",
                        " #Ch", "Ver", "SW Device UID  ");
     charCnt += fprintf(outstream,
                        "----------------------------------------"
-                       "--------------------------\n");
+                       "----------------------------------------\n");
     for(i = 0; i < devCnt; i++){
         /* Write Device Line Output */
         /* Print device count */
@@ -181,7 +163,7 @@ int printDevicesHex(FILE* outstream){
         charCnt += fprintf(outstream, "0x%8.8" PRIxIPAddr " | ",
                            devices[i].ipAddr);
         /* Print SW Device Type */
-        charCnt += fprintf(outstream, "0x%2.2" PRIxDevType " | ",
+        charCnt += fprintf(outstream, "0x%16.16" PRIxDevType " | ",
                            devices[i].devType);
         /* Print Number of Device Channels */
         charCnt += fprintf(outstream, "0x%2.2" PRIxNumChan " | ",

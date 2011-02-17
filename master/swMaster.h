@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <arpa/inet.h>
 
-#include "../com/SmartWall.h"
 #include "../com/swDevice.h"
 
 /* Defines */
@@ -31,7 +30,7 @@
 struct SWDeviceEntry {
     swAddress_t swAddr;  /* SW Address */
     in_addr_t ipAddr;    /* IP Address - Host Byte Order */
-    devType_t devType;   /* SW Device Type */
+    devType_t devType;   /* SW Device Type Mask */
     numChan_t numChan;   /* Number of Channels on Device */
     swVersion_t version; /* SW Protocol Version */
     devUID_t uid;        /* SW Unique Device ID */

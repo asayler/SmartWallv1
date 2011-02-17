@@ -1,4 +1,4 @@
-/* Andy Sayler
+ /* Andy Sayler
  * SmartWall Project
  * SmartWall Slave Outlet Sim
  * slaveOutlet.c
@@ -24,16 +24,16 @@
 #include <fcntl.h>
 #include <netdb.h>
 
-#include "../com/SmartWall.h"
 #include "swOutlet.h"
 
 #define LISTENPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
 #define BUFLEN 1024 /* 1 kB datagram buffer */
 
+#define MYSWUID 0x0001000000000001
 #define MYSWGROUP 0x01
 #define MYSWADDRESS 0x0010
 #define MYSWVER 0x1
-#define MYSWTYPE SW_TYPE_OUTLET
+#define MYSWTYPE SW_TYPE_OUTLET | SW_TYPE_UNIVERSAL
 #define MYSWCHAN 0x02
 
 #define CHAN1_INITSTATE OUTLET_CHAN_ON;
@@ -44,16 +44,17 @@ int main(int argc, char *argv[]){
     /* Handel Input */
     (void) argc;
     (void) argv;
-
+    
     /* Setup State Vars */
     uint8_t ch1State = CHAN1_INITSTATE;
     uint8_t ch2State = CHAN2_INITSTATE;
 
     /* Setup SW Vars */
-    const uint8_t  mySWVersion = MYSWVER;
-    const uint8_t  mySWType    = MYSWTYPE;
-    uint16_t mySWAddress = MYSWADDRESS;
-    uint8_t  mySWGroup   = MYSWGROUP;
+    const devUID_t mySWUID = MYSWUID;
+    const swVersion_t  mySWVersion = MYSWVER;
+    const devType_t  mySWType    = MYSWTYPE;
+    swAddress_t mySWAddress = MYSWADDRESS;
+    groupID_t  mySWGroup   = MYSWGROUP;
 
     /* Setup Network Vars */
     struct SmartWallHeader myHeader;
@@ -66,16 +67,17 @@ int main(int argc, char *argv[]){
     
     /*Print Base Data */
     fprintf(stdout, "I am a SW_TYPE_OUTLET.\n");
-    fprintf(stdout, "Device Type:       0x%x\n", mySWType);
-    fprintf(stdout, "SmartWall Version: 0x%x\n", mySWVersion);
-    fprintf(stdout, "SmartWall Address: 0x%x\n", mySWAddress);
-    fprintf(stdout, "SmartWall Group:   0x%x\n", mySWGroup);
+    fprintf(stdout, "SmartWall UID:     0x%" PRIxDevUID "\n", mySWUID);
+    fprintf(stdout, "Device Type:       0x%" PRIxDevType "\n", mySWType);
+    fprintf(stdout, "SmartWall Version: 0x%" PRIxSWVer "\n", mySWVersion);
+    fprintf(stdout, "SmartWall Address: 0x%" PRIxSWAddr "\n", mySWAddress);
+    fprintf(stdout, "SmartWall Group:   0x%" PRIxGrpID "\n", mySWGroup);
+
     fprintf(stdout, "Channel 1 State:   %u\n", ch1State);
     fprintf(stdout, "Channel 2 State:   %u\n", ch2State);
 
     /* Print Test Data */
     fprintf(stdout, "SmartWall Header Size: %lu\n", sizeof(myHeader));
-
 
     /* Setup Socket */
     s = socket(AF_INET, SOCK_DGRAM, 0);
@@ -111,7 +113,7 @@ int main(int argc, char *argv[]){
     }
 
     close(s);
-
+    
     return 0;
 
 }

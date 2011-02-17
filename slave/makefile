@@ -18,16 +18,16 @@ EXEC = slaveOutlet
 .PHONY : all
 all : slaveOutlet
 
-slaveOutlet : ../com/SmartWall.o slaveOutlet.o
-	$(CC) $(CFLAGS) ../com/SmartWall.o slaveOutlet.o -o slaveOutlet
+slaveOutlet : ../com/swDevice.o slaveOutlet.o
+	$(CC) $(CFLAGS) ../com/swDevice.o slaveOutlet.o -o slaveOutlet
 
 slaveOutlet.o : slaveOutlet.c
 	$(CC) $(CFLAGS) -c slaveOutlet.c 
 -include slaveOutlet.d
 
-../com/SmartWall.o : ../com/SmartWall.c
-	$(CC) $(CFLAGS) -c ../com/SmartWall.c -o ../com/SmartWall.o 
--include ../com/SmartWall.d
+../com/swDevice.o : ../com/swDevice.c
+	$(CC) $(CFLAGS) -c ../com/swDevice.c -o ../com/swDevice.o 
+-include ../com/swDevice.d
 
 # Automatically generate dependencies for .c files
 %.d : %.c

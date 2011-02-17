@@ -21,7 +21,6 @@
 #include <netinet/in.h>
 
 #include "../com/SmartWall.h"
-#include "../com/swDevice.h"
 #include "../master/swMaster.h"
 
 /* Defines */

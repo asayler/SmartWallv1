@@ -12,13 +12,10 @@
 #ifndef SWSLAVE_H
 #define SWSLAVE_H
 
-
 /* Outside Includes */
-#include "../com/SmartWall.h"
+#include "../com/swDevice.h"
 
 /* Defines */
 #define SLAVE_CONFIG_FILE_BASE "SLAVE"
-#define MASTER_MAXDEVICES 999
-
 
 #endif
