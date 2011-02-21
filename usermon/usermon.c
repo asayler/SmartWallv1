@@ -52,7 +52,7 @@ int getDevices(struct SWDeviceEntry* devices, int maxDevices){
         if(devCnt < maxDevices){
             devices[devCnt].swAddr = deviceTmp.swAddr;
             devices[devCnt].ipAddr = deviceTmp.ipAddr;
-            devices[devCnt].devType = deviceTmp.devType;
+            devices[devCnt].devTypes = deviceTmp.devTypes;
             devices[devCnt].numChan = deviceTmp.numChan;
             devices[devCnt].version = deviceTmp.version;
             devices[devCnt].uid = deviceTmp.uid;
@@ -116,7 +116,7 @@ int printDevices(FILE* outstream){
                            ((devices[i].ipAddr >> 0) & 0xff));
         /* Print SW Device Type */ 
         charCnt += fprintf(outstream, "0x%16.16" PRIxDevType " | ",
-                           devices[i].devType);
+                           devices[i].devTypes);
         /* Print Number of Device Channels */
         charCnt += fprintf(outstream, "%3" PRInumChan " | ",
                            devices[i].numChan);
@@ -164,7 +164,7 @@ int printDevicesHex(FILE* outstream){
                            devices[i].ipAddr);
         /* Print SW Device Type */
         charCnt += fprintf(outstream, "0x%16.16" PRIxDevType " | ",
-                           devices[i].devType);
+                           devices[i].devTypes);
         /* Print Number of Device Channels */
         charCnt += fprintf(outstream, "0x%2.2" PRIxNumChan " | ",
                            devices[i].numChan);

@@ -87,7 +87,7 @@ extern int readDevice(struct SWDeviceEntry* device, FILE* devFile){
     if(device != NULL){
         device->swAddr = swAddrTmp;
         device->ipAddr = ipAddrTmp;
-        device->devType = devTypeTmp;
+        device->devTypes = devTypeTmp;
         device->numChan = numChanTmp;
         device->version = versionTmp;
         device->uid = uidTmp;
@@ -143,7 +143,7 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
         count += numPri;
     }
     /* Write Device Type */
-    numPri = fprintf(devFile, "%2.2" PRIxDevType " ", device->devType);    
+    numPri = fprintf(devFile, "%2.2" PRIxDevType " ", device->devTypes);    
     if(numPri < 1){
         fprintf(stderr, "Could not write near third pos.\n");
         return errorVal;

@@ -26,7 +26,7 @@ usermon.o : usermon.c
 -include usermon.d
 
 ../master/swMaster.o : ../master/swMaster.c
-	$(CC) $(CFLAGS) -c ../master/swMaster.c 
+	$(CC) $(CFLAGS) -c ../master/swMaster.c -o ../master/swMaster.o 
 -include ../master/swMaster.d
 
 testMain.o : testMain.c

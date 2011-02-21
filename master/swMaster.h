@@ -30,7 +30,7 @@
 struct SWDeviceEntry {
     swAddress_t swAddr;  /* SW Address */
     in_addr_t ipAddr;    /* IP Address - Host Byte Order */
-    devType_t devType;   /* SW Device Type Mask */
+    devType_t devTypes;  /* SW Device Types Mask */
     numChan_t numChan;   /* Number of Channels on Device */
     swVersion_t version; /* SW Protocol Version */
     devUID_t uid;        /* SW Unique Device ID */

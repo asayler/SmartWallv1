@@ -54,7 +54,7 @@ int main(int argc, char *argv[]){
     const devType_t  mySWType    = MYSWTYPE;
     swAddress_t mySWAddress = MYSWADDRESS;
     groupID_t  mySWGroup   = MYSWGROUP;
-
+    
     /* Setup Network Vars */
     struct SmartWallHeader myHeader;
     uint8_t buf[BUFLEN];
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
         exit(1);
     }
     newEntry.ipAddr = ntohl(si_me.sin_addr.s_addr);
-    newEntry.devType = mySWType;
+    newEntry.devTypes = mySWType;
     newEntry.numChan = 0;
     newEntry.version = mySWVersion;
     newEntry.uid = mySWUID;
@@ -139,12 +139,15 @@ int main(int argc, char *argv[]){
 
     /* Setup Header */
     myHeader.version = mySWVersion;
-    myHeader.msgType = 0x01;
+    myHeader.msgScope = SW_SCP_CHANNEL;
+    myHeader.msgType = SW_MSG_QUERY;
     myHeader.groupID = mySWGroup;
     myHeader.sourceAddress = mySWAddress;
     myHeader.destAddress = 0x0010;
-    myHeader.sourceType = mySWType;
-    myHeader.destType = SW_TYPE_OUTLET;
+    myHeader.sourceTypes = mySWType;
+    myHeader.targetType = SW_TYPE_OUTLET;
+    myHeader.opcode = 0x00;
+    myHeader.totalLength = sizeof(myHeader) + 0;
 
     r = sendto(s, (char*) &myHeader, sizeof(myHeader), 0,
                (struct sockaddr*) &si_other, slen);
