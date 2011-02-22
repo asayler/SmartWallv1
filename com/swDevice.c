@@ -35,7 +35,7 @@ int printSWHeader(FILE* stream, const struct SmartWallHeader* input){
                    input->targetType);
     num += fprintf(stream, "Opcode:    0x%" PRIxSWOpcode "\n",
                    input->opcode);
-    num += fprintf(stream, "Tot Lng:   0x%" PRIxTotLength "\n",
+    num += fprintf(stream, "Tot Lng:   0x%" PRIxSWLength "\n",
                    input->totalLength);
     
     return num;

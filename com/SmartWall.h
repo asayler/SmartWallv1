@@ -13,21 +13,26 @@
 #ifndef SMARTWALL_H
 #define SMARTWALL_H
 
+/* Version Number */
+#define SW_VERSION 0x01
+
 /* Outside Includes */
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdio.h>
 
 /* SmartWall Message Types */
-#define SW_MSG_SET    0x01
-#define SW_MSG_QUERY  0x02
-#define SW_MSG_REPORT 0x03
-#define SW_MSG_ERROR  0xff
+#define SW_MSG_SET     0x01
+#define SW_MSG_REQUEST 0x02
+#define SW_MSG_QUERY   0x03
+#define SW_MSG_REPORT  0x04
+#define SW_MSG_ERROR   0xff
 
 /* SmartWall Message Scope */
 #define SW_SCP_NETWORK 0x01
 #define SW_SCP_DEVICE  0x02
 #define SW_SCP_CHANNEL 0x03
+#define SW_SCP_ERROR   0xff
 
 /* SmartWall Device Type Bits */
 #define SW_TYPE_MASTER    0x0000000000000001
@@ -86,11 +91,11 @@ typedef uint16_t swOpcode_t;
 #define SCNswOpcode  SCNu16
 #define SCNxSWOpcode SCNx16
 
-typedef uint16_t totalLength_t;
-#define PRItotLength  PRIu16
-#define PRIxTotLength PRIx16
-#define SCNtotLength  SCNu16
-#define SCNxTotLength SCNx16
+typedef uint16_t swLength_t;
+#define PRIswLength  PRIu16
+#define PRIxSWLength PRIx16
+#define SCNswLength  SCNu16
+#define SCNxSWLength SCNx16
 
 typedef uint8_t numChan_t;
 #define PRInumChan  PRIu8
@@ -115,8 +120,68 @@ struct SmartWallHeader {
     devType_t sourceTypes;     /* Source Device Types Mask */
     devType_t targetType;      /* Destination Device Type */
     swOpcode_t opcode;         /* SW Opcode */
-    totalLength_t totalLength; /* Total Length in bytes (Header + Data) */
+    swLength_t totalLength;    /* Total Length in bytes (Header + Data) */
     uint32_t unused0;          /* For Allignment, Future CRC32? */
 };
+
+/* SmartWall Device Scope Header */
+struct SmartWallDeviceHeader {
+    swLength_t dataLength; /* Operand Bytes */
+    uint16_t unused0;      /* Alignment Padding */
+    uint32_t unused1;      /* Alignment Padding */
+};
+
+/* SmartWall Channel Scope Header */
+struct SmartWallChannelHeader {
+    numChan_t numChan;     /* Number of Channels Affected */
+    uint8_t unused0;       /* Alignment Padding */
+    swLength_t dataLength; /* Operand Bytes per channel */
+    uint32_t unused1;      /* Alignment Padding */
+};
+
+/* SmartWall Channel Scope Channel Header */
+struct SmartWallChannelHead {
+    numChan_t chanNum; /* Affected Channel */
+    uint8_t unused0;   /* Alignment Padding */
+    uint16_t unused1;  /* Alignment Padding */
+    uint32_t unused2;  /* Alignment Padding */
+};
+
+/* SmartWall Channel Entry Struct */
+struct SWChannelEntry {
+    struct SmartWallChannelHead chanHead;
+    void* chanValue;
+};
+
+/* SmartWall Channel Data Struct */
+struct SWChannelData {
+    struct SmartWallChannelHeader header;
+    struct SWChannelEntry* data;
+};
+
+/* SmartWall Device Struct */
+struct SmartWallDev {
+    swVersion_t version;
+    swAddress_t address;
+    groupID_t groupID;
+    devType_t types;
+};
+
+/* Public Functions */
+extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
+                                    const struct SmartWallDev* source,
+                                    const struct SmartWallDev* destination,
+                                    const devType_t targetType,
+                                    const msgType_t msgType,
+                                    const swOpcode_t opcode,
+                                    const struct SWChannelData* data); 
+
+extern swLength_t readSWChannelMsg(const char* msg, const swLength_t maxLength,
+                                   struct SmartWallDev* source,
+                                   struct SmartWallDev* destination,
+                                   devType_t* targetType,
+                                   swOpcode_t* opcode,
+                                   struct SWChannelData* data); 
+
 
 #endif

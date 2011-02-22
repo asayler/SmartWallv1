@@ -11,13 +11,17 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = swDevice.o
+OBJS = swDevice.o SmartWall.o
 
 .PHONY : all
-all : swDevice.o
+all : swDevice.o SmartWall.o
 
 swDevice.o : swDevice.c
 	$(CC) $(CFLAGS) -c swDevice.c 
+-include swDevice.d
+
+SmartWall.o : SmartWall.c
+	$(CC) $(CFLAGS) -c SmartWall.c 
 -include swDevice.d
 
 # Automatically generate dependencies for .c files
