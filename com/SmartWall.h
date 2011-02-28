@@ -20,6 +20,10 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdio.h>
+#include <string.h>
+
+/* Constatns */
+#define SW_MAX_MSG_LENGTH 1024 /* In Bytes */
 
 /* SmartWall Message Types */
 #define SW_MSG_SET     0x01

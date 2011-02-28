@@ -9,8 +9,6 @@
  * ---
  */
 
-#include <string.h>
-
 #include "SmartWall.h"
 
 #define ERROR_VAL -1
@@ -66,10 +64,16 @@ extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
     
 
     /* Calculate Length */
+    calcLength = 0;
+    fprintf(stderr, "0: calcLength = %" PRIswLength  "\n", calcLength);
     calcLength += sizeof(swHeader);
+    fprintf(stderr, "1: calcLength = %" PRIswLength  "\n", calcLength);
     calcLength += sizeof(data->header);
-    calcLength += (data->header).numChan * sizeof(data->data->chanHead);
+    fprintf(stderr, "2: calcLength = %" PRIswLength  "\n", calcLength);
+    calcLength += (data->header).numChan * sizeof(data->data[0].chanHead);
+    fprintf(stderr, "3a: calcLength = %" PRIswLength  "\n", calcLength);    
     calcLength += (data->header).numChan * (data->header).dataLength;
+    fprintf(stderr, "3b: calcLength = %" PRIswLength  "\n", calcLength);
 
     /* Check Length Against Max */
     if(calcLength > maxLength){
@@ -89,29 +93,42 @@ extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
     swHeader.opcode = opcode;
     swHeader.totalLength = calcLength;
 
+    /* Zero Length */
+    length = 0;
+
+    fprintf(stderr, "0: length = %" PRIswLength  "\n", length);
+
     /* Copy SW Header to Msg */
     tmpLength = sizeof(swHeader);
     memcpy((msg + length), &swHeader, tmpLength);
     length += tmpLength;
+
+    fprintf(stderr, "1: length = %" PRIswLength  "\n", length);
 
     /* Copy SW Channel Scope Header to Msg */
     tmpLength = sizeof(data->header);
     memcpy((msg + length), &(data->header), tmpLength);
     length += tmpLength;
 
+    fprintf(stderr, "2: length = %" PRIswLength  "\n", length);
+
     /* Copy Data to Msg */
-    for(i=0; i<(data->header).numChan; i++){
+    for(i=0; i<((data->header).numChan); i++){
         tmpLength = sizeof(data->data[i].chanHead);
         memcpy((msg + length), &(data->data[i]).chanHead, tmpLength);
         length += tmpLength;
+	fprintf(stderr, "3a: length = %" PRIswLength  "\n", length);
         tmpLength += (data->header).dataLength;
         memcpy((msg + length), &(data->data[i]).chanValue, tmpLength);
         length += tmpLength;
+	fprintf(stderr, "3b: length = %" PRIswLength  "\n", length);
     }
 
     /* Final Length Check */
     if(calcLength != length){
         fprintf(stderr, "writeMsg Error: calcLength not equal to length !\n");
+	fprintf(stderr, "calcLength: %" PRIswLength "\n", calcLength);
+	fprintf(stderr, "length: %" PRIswLength "\n", length);
         return ERROR_VAL;
     }
 
