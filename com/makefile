@@ -11,7 +11,7 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = swDevice.o SmartWall.o comTest.o
+OBJS = swDevice.o SmartWall.o comTest.o comTools.o
 EXEC = comTest
 
 .PHONY : all
@@ -25,12 +25,16 @@ SmartWall.o : SmartWall.c
 	$(CC) $(CFLAGS) -c SmartWall.c 
 -include swDevice.d
 
-comTest : comTest.o SmartWall.o
-	$(CC) $(CFLAGS) comTest.o SmartWall.o -o comTest 
+comTest : comTest.o SmartWall.o comTools.o
+	$(CC) $(CFLAGS) comTest.o SmartWall.o comTools.o -o comTest 
 
 comTest.o : comTest.c
 	$(CC) $(CFLAGS) -c comTest.c 
 -include comTest.d
+
+comTools.o : comTools.c
+	$(CC) $(CFLAGS) -c comTools.c 
+-include comTools.d
 
 # Automatically generate dependencies for .c files
 %.d : %.c

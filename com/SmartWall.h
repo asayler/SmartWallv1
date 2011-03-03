@@ -172,7 +172,8 @@ struct SmartWallDev {
 };
 
 /* Public Functions */
-extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
+extern swLength_t writeSWChannelMsg(uint8_t* msg,
+                                    const swLength_t maxLength,
                                     const struct SmartWallDev* source,
                                     const struct SmartWallDev* destination,
                                     const devType_t targetType,
@@ -180,7 +181,8 @@ extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
                                     const swOpcode_t opcode,
                                     const struct SWChannelData* data); 
 
-extern swLength_t readSWChannelMsg(const char* msg, const swLength_t maxLength,
+extern swLength_t readSWChannelMsg(const uint8_t* msg,
+                                   const swLength_t maxLength,
                                    struct SmartWallDev* source,
                                    struct SmartWallDev* destination,
                                    devType_t* targetType,

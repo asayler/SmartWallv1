@@ -13,7 +13,7 @@
 
 #define ERROR_VAL -1
 
-extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
+extern swLength_t writeSWChannelMsg(uint8_t* msg, const swLength_t maxLength,
                                     const struct SmartWallDev* source,
                                     const struct SmartWallDev* destination,
                                     const devType_t targetType,
@@ -27,8 +27,16 @@ extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
     int i;
     swLength_t tmpLength = 0;
 
-    /* Local Structs and Mem Init */
+    /* Local Structs */
     struct SmartWallHeader swHeader;
+
+    /* Check Input */
+    if(msg == NULL){
+        fprintf(stderr, "writeMsg Error: Input 'msg' must not be null!\n");
+        return ERROR_VAL;
+    }
+
+    /* Mem Init */
     memset(&swHeader, 0, sizeof(swHeader));
     memset(msg, 0, maxLength);
 
@@ -104,10 +112,10 @@ extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
     /* Copy Data to Msg */
     for(i=0; i<((data->header).numChan); i++){
         tmpLength = sizeof(data->data[i].chanHead);
-        memcpy((msg + length), &(data->data[i]).chanHead, tmpLength);
+        memcpy((msg + length), &((data->data[i]).chanHead), tmpLength);
         length += tmpLength;
         tmpLength = (data->header).dataLength;
-        memcpy((msg + length), &(data->data[i]).chanValue, tmpLength);
+        memcpy((msg + length), (data->data[i]).chanValue, tmpLength);
         length += tmpLength;
     }
 
