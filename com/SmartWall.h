@@ -113,7 +113,7 @@ typedef uint64_t devUID_t;
 #define SCNdevUID  SCNu64
 #define SCNxDevUID SCNx64
 
-/* SmartWall Header Struct */
+/* SmartWall Header Struct  - 32 Bytes */
 struct SmartWallHeader {
     swVersion_t version;       /* SmartWall Protocol version */
     msgScope_t msgScope;       /* SmartWall Mesage Scope */
@@ -135,7 +135,7 @@ struct SmartWallDeviceHeader {
     uint32_t unused1;      /* Alignment Padding */
 };
 
-/* SmartWall Channel Scope Header */
+/* SmartWall Channel Scope Header - 8 Bytes*/
 struct SmartWallChannelHeader {
     numChan_t numChan;     /* Number of Channels Affected */
     uint8_t unused0;       /* Alignment Padding */
@@ -143,7 +143,7 @@ struct SmartWallChannelHeader {
     uint32_t unused1;      /* Alignment Padding */
 };
 
-/* SmartWall Channel Scope Channel Header */
+/* SmartWall Channel Scope Channel Header - 8 Bytes*/
 struct SmartWallChannelHead {
     numChan_t chanNum; /* Affected Channel */
     uint8_t unused0;   /* Alignment Padding */
