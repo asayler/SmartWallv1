@@ -53,6 +53,7 @@ extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
         fprintf(stderr, "writeMsg Error: source must not be null!\n");
         return ERROR_VAL;
     }
+    
     /* Check Data */
     if(data != NULL){
         /* Good Input, Normal Behavior, Continue */
@@ -62,19 +63,13 @@ extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
         return ERROR_VAL;
     }
     
-
     /* Calculate Length */
     calcLength = 0;
-    fprintf(stderr, "0: calcLength = %" PRIswLength  "\n", calcLength);
     calcLength += sizeof(swHeader);
-    fprintf(stderr, "1: calcLength = %" PRIswLength  "\n", calcLength);
     calcLength += sizeof(data->header);
-    fprintf(stderr, "2: calcLength = %" PRIswLength  "\n", calcLength);
     calcLength += (data->header).numChan * sizeof(data->data[0].chanHead);
-    fprintf(stderr, "3a: calcLength = %" PRIswLength  "\n", calcLength);    
     calcLength += (data->header).numChan * (data->header).dataLength;
-    fprintf(stderr, "3b: calcLength = %" PRIswLength  "\n", calcLength);
-
+    
     /* Check Length Against Max */
     if(calcLength > maxLength){
         fprintf(stderr, "writeMsg Error: Length greater than max!\n");
@@ -96,32 +91,24 @@ extern swLength_t writeSWChannelMsg(char* msg, const swLength_t maxLength,
     /* Zero Length */
     length = 0;
 
-    fprintf(stderr, "0: length = %" PRIswLength  "\n", length);
-
     /* Copy SW Header to Msg */
     tmpLength = sizeof(swHeader);
     memcpy((msg + length), &swHeader, tmpLength);
     length += tmpLength;
-
-    fprintf(stderr, "1: length = %" PRIswLength  "\n", length);
 
     /* Copy SW Channel Scope Header to Msg */
     tmpLength = sizeof(data->header);
     memcpy((msg + length), &(data->header), tmpLength);
     length += tmpLength;
 
-    fprintf(stderr, "2: length = %" PRIswLength  "\n", length);
-
     /* Copy Data to Msg */
     for(i=0; i<((data->header).numChan); i++){
         tmpLength = sizeof(data->data[i].chanHead);
         memcpy((msg + length), &(data->data[i]).chanHead, tmpLength);
         length += tmpLength;
-	fprintf(stderr, "3a: length = %" PRIswLength  "\n", length);
-        tmpLength += (data->header).dataLength;
+        tmpLength = (data->header).dataLength;
         memcpy((msg + length), &(data->data[i]).chanValue, tmpLength);
         length += tmpLength;
-	fprintf(stderr, "3b: length = %" PRIswLength  "\n", length);
     }
 
     /* Final Length Check */

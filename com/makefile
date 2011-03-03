@@ -12,6 +12,7 @@ CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
 OBJS = swDevice.o SmartWall.o comTest.o
+EXEC = comTest
 
 .PHONY : all
 all : swDevice.o SmartWall.o comTest
@@ -40,7 +41,7 @@ comTest.o : comTest.c
 
 .PHONY : clean
 clean :
-	rm -f $(OBJS)
+	rm -f $(OBJS) $(EXEC)
 	rm -f *.d
 	rm -f *~
 	rm -f core*
