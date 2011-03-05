@@ -75,7 +75,7 @@ extern swLength_t writeSWChannelMsg(uint8_t* msg, const swLength_t maxLength,
     calcLength = 0;
     calcLength += sizeof(swHeader);
     calcLength += sizeof(data->header);
-    calcLength += (data->header).numChan * sizeof(data->data[0].chanHead);
+    calcLength += (data->header).numChan * sizeof(data->data[0].chanTop);
     calcLength += (data->header).numChan * (data->header).dataLength;
     
     /* Check Length Against Max */
@@ -111,8 +111,8 @@ extern swLength_t writeSWChannelMsg(uint8_t* msg, const swLength_t maxLength,
 
     /* Copy Data to Msg */
     for(i=0; i<((data->header).numChan); i++){
-        tmpLength = sizeof(data->data[i].chanHead);
-        memcpy((msg + length), &((data->data[i]).chanHead), tmpLength);
+        tmpLength = sizeof(data->data[i].chanTop);
+        memcpy((msg + length), &((data->data[i]).chanTop), tmpLength);
         length += tmpLength;
         tmpLength = (data->header).dataLength;
         memcpy((msg + length), (data->data[i]).chanValue, tmpLength);
@@ -128,4 +128,100 @@ extern swLength_t writeSWChannelMsg(uint8_t* msg, const swLength_t maxLength,
     }
 
     return length;
+}
+
+extern swLength_t readSWChannelMsg(const uint8_t* msg,
+                                   const swLength_t msgLength,
+                                   struct SmartWallDev* source,
+                                   struct SmartWallDev* destination,
+                                   devType_t* targetType,
+                                   swOpcode_t* opcode,
+                                   struct SWChannelData* data){
+    /* Local Vars */
+    swLength_t offset = 0;
+    swLength_t calcLength = 0;
+    swLength_t tmpLength = 0;
+
+    /* Local Structs */
+    struct SmartWallHeader swHeader;
+
+    /* Check Input */
+    if(msg == NULL){
+        fprintf(stderr, "readMsg Error: Input 'msg' must not be null!\n");
+        return ERROR_VAL;
+    }
+    if(targetType == NULL){
+        fprintf(stderr, "readMsg Error: 'targetType' must not be null!\n");
+        return ERROR_VAL;
+    }
+    if(opcode == NULL){
+        fprintf(stderr, "readMsg Error: 'opcode' must not be null!\n");
+        return ERROR_VAL;
+    }
+    if(source == NULL){
+        fprintf(stderr, "readMsg Error: source must not be null!\n");
+        return ERROR_VAL;
+    }
+    if(destination == NULL){
+        fprintf(stderr, "readMsg Error: destination must not be null!\n");
+        return ERROR_VAL;
+    }
+    if(data != NULL){
+        fprintf(stderr, "readMsg Error: data must not be null!\n");
+        return ERROR_VAL;
+    }
+
+    /* Mem Init */
+    memset(source, 0, sizeof(*source));
+    memset(destination, 0, sizeof(*destination));
+    memset(data, 0, sizeof(*data));
+    memset(&swHeader, 0, sizeof(swHeader));    
+
+    /* Zero Offset */
+    offset = 0;
+
+    /* Extract SW Header */
+    if((size_t)(msgLength - offset) < sizeof(swHeader)){
+        fprintf(stderr, "readMsg Error: msg too small to contain swHeader!\n");
+        return ERROR_VAL;
+    }
+    else{
+        /* Copy SW Header from Msg */
+        tmpLength = sizeof(swHeader);
+        memcpy(&swHeader, (msg + offset), tmpLength);
+        offset += tmpLength;
+    }
+    
+    /* Calculate and Check Length */
+    calcLength = swHeader.totalLength;
+    if(msgLength != calcLength){
+        fprintf(stderr, "readMsg Error: msg does nto match declared size!\n");
+        return ERROR_VAL;
+    }
+
+    /* Setup Output Device Structs and Data */
+    source->version = swHeader.version;
+    source->address = swHeader.sourceAddress;
+    source->groupID = swHeader.groupID;
+    source->types = swHeader.sourceTypes;
+    destination->version = swHeader.version;
+    destination->address = swHeader.destAddress;
+    destination->groupID = swHeader.groupID;
+    destination->types = 0;
+    *targetType = swHeader.targetType;
+    *opcode = swHeader.opcode;
+
+    /* Extract Chan Header */
+    if((size_t)(msgLength - offset) < sizeof(data->header)){
+        fprintf(stderr, "readMsg Error: msg too small to contain chHeader!\n");
+        return ERROR_VAL;
+    }
+    else{
+        /* Copy Chan Header from Msg */
+        tmpLength = sizeof(data->header);
+        memcpy(&(data->header), (msg + offset), tmpLength);
+        offset += tmpLength;
+    }
+    
+    return offset;
 }

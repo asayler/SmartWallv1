@@ -83,11 +83,11 @@ int main(int argc, char* argv[]){
         memset(&dataEntries[1], 0, sizeof(dataEntries[1]));
         memset(&dataEntries[2], 0, sizeof(dataEntries[2]));
         
-        dataEntries[0].chanHead.chanNum = 0;
+        dataEntries[0].chanTop.chanNum = 0;
         dataEntries[0].chanValue = payload0;
-        dataEntries[1].chanHead.chanNum = 1;
+        dataEntries[1].chanTop.chanNum = 1;
         dataEntries[1].chanValue = payload1;
-        dataEntries[2].chanHead.chanNum = 2;
+        dataEntries[2].chanTop.chanNum = 2;
         dataEntries[2].chanValue = payload2;
         
         data.header.numChan = 3;
@@ -104,7 +104,6 @@ int main(int argc, char* argv[]){
         destination.groupID = COM_TEST_GID;
         destination.types = COM_TEST_DTYPES;
         
-        fprintf(stdout, "Write Test Message:\n");    
         msgSize = writeSWChannelMsg(msg, SW_MAX_MSG_LENGTH,
                                     &source, &destination,
                                     COM_TEST_TRGTYPE,
@@ -117,7 +116,6 @@ int main(int argc, char* argv[]){
         fprintf(stdout, "print_payload returned: %d\n", pcnt);
     }
     else if(mode == REF){
-        fprintf(stdout, "Reference Test Message:\n");    
         msgSize = genSWChannelRefMsg(refmsg, SW_MAX_MSG_LENGTH);
         fprintf(stdout, "msgSize: %" PRIswLength "\n",
                 msgSize);
@@ -159,7 +157,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     calcLength = 0;
     calcLength += sizeof(struct SmartWallHeader);
     calcLength += sizeof(struct SmartWallChannelHeader);
-    calcLength += COM_TEST_NUMCHN * sizeof(struct SmartWallChannelHead);
+    calcLength += COM_TEST_NUMCHN * sizeof(struct SmartWallChannelTop);
     calcLength += COM_TEST_NUMCHN * COM_TEST_DATASIZE;
 
     /* Check Length Against Max */

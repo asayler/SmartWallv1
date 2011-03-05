@@ -40,7 +40,7 @@
 
 /* SmartWall Device Type Bits */
 #define SW_TYPE_MASTER    0x0000000000000001
-#define SW_TYPE_OUTLET    0x0000000000000002
+#define SW_TYPE_OUTLET    0x0000000000000004
 #define SW_TYPE_UNIVERSAL 0x8000000000000000
 
 /* SmartWall Special Addresses */
@@ -144,7 +144,7 @@ struct SmartWallChannelHeader {
 };
 
 /* SmartWall Channel Scope Channel Header - 8 Bytes*/
-struct SmartWallChannelHead {
+struct SmartWallChannelTop {
     numChan_t chanNum; /* Affected Channel */
     uint8_t unused0;   /* Alignment Padding */
     uint16_t unused1;  /* Alignment Padding */
@@ -153,7 +153,7 @@ struct SmartWallChannelHead {
 
 /* SmartWall Channel Entry Struct */
 struct SWChannelEntry {
-    struct SmartWallChannelHead chanHead;
+    struct SmartWallChannelTop chanTop;
     void* chanValue;
 };
 
@@ -182,7 +182,7 @@ extern swLength_t writeSWChannelMsg(uint8_t* msg,
                                     const struct SWChannelData* data); 
 
 extern swLength_t readSWChannelMsg(const uint8_t* msg,
-                                   const swLength_t maxLength,
+                                   const swLength_t msgLength,
                                    struct SmartWallDev* source,
                                    struct SmartWallDev* destination,
                                    devType_t* targetType,

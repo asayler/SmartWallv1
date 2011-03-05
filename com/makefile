@@ -43,6 +43,13 @@ comTools.o : comTools.c
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
+.PHONY : test
+test :
+	valgrind -q ./comTest -w > writeTestOut
+	./comTest -ref > writeRefOut
+	diff writeTestOut writeRefOut
+	rm -f writeTestOut writeRefOut
+
 .PHONY : clean
 clean :
 	rm -f $(OBJS) $(EXEC)

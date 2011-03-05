@@ -1,7 +1,7 @@
 /* Andy Sayler
  * SmartWall Project
  * SmartWall Function Tests
- * comTest.c
+ * comTools.c
  * Created 03/03/11 
  *
  * On print_hex_ascii_line:
