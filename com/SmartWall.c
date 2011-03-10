@@ -134,6 +134,7 @@ extern swLength_t readSWChannelMsg(const uint8_t* msg,
                                    struct SmartWallDev* source,
                                    struct SmartWallDev* destination,
                                    devType_t* targetType,
+                                   msgType_t* msgType,
                                    swOpcode_t* opcode,
                                    struct SWChannelData* data,
                                    const swLength_t maxNumChan,
@@ -208,6 +209,7 @@ extern swLength_t readSWChannelMsg(const uint8_t* msg,
     destination->groupID = swHeader.groupID;
     destination->types = 0;
     *targetType = swHeader.targetType;
+    *msgType = swHeader.msgType;
     *opcode = swHeader.opcode;
 
     /* Extract Chan Header */

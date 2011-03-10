@@ -33,7 +33,7 @@ static swLength_t genSWChannelRefMsg(uint8_t* msg, swLength_t maxLength);
 
 /* Option enum */
 enum OPTIONS{
-    WRITE, READ, REF, MEMSIZE
+    WRITE, READ, RW, REF, MEMSIZE
 };
 
 int main(int argc, char* argv[]){
@@ -52,6 +52,7 @@ int main(int argc, char* argv[]){
     char payload1[COM_TEST_DATASIZE] = COM_TEST_PAYLOAD1;
     char payload2[COM_TEST_DATASIZE] = COM_TEST_PAYLOAD2;
     devType_t targetType = COM_TEST_TRGTYPE;
+    msgType_t msgType = COM_TEST_MSGTYPE;
     swOpcode_t opcode = COM_TEST_OPCODE;
 
     /* input options */
@@ -65,6 +66,9 @@ int main(int argc, char* argv[]){
         }
         else if(strcmp(argv[1], "-r") == 0){
             mode = READ;
+        }
+        else if(strcmp(argv[1], "-rw") == 0){
+            mode = RW;
         }
         else if(strcmp(argv[1], "-ref") == 0){
             mode = REF;
@@ -112,10 +116,11 @@ int main(int argc, char* argv[]){
         
         msgSize = writeSWChannelMsg(msg, SW_MAX_MSG_LENGTH,
                                     &source, &destination,
-                                    COM_TEST_TRGTYPE,
-                                    COM_TEST_MSGTYPE,
-                                    COM_TEST_OPCODE,
+                                    targetType,
+                                    msgType,
+                                    opcode,
                                     &data);
+     
         fprintf(stdout, "msgSize: %" PRIswLength "\n",
                 msgSize);
         pcnt = print_payload(msg, msgSize);
@@ -132,7 +137,10 @@ int main(int argc, char* argv[]){
         memset(payload0, 0, COM_TEST_DATASIZE);
         memset(payload1, 0, COM_TEST_DATASIZE);
         memset(payload2, 0, COM_TEST_DATASIZE);
-
+        targetType = 0;
+        msgType = 0;
+        opcode = 0;
+        
         /* Setup Inner Structs */
         data.data = dataEntries;
         dataEntries[0].chanValue = payload0;
@@ -145,11 +153,13 @@ int main(int argc, char* argv[]){
         /* Read Ref Message */
         msgSize = readSWChannelMsg(refmsg, msgSize,
                                    &source, &destination,
-                                   &targetType, &opcode,
+                                   &targetType, &msgType, &opcode,
                                    &data,
                                    COM_TEST_NUMCHN,
                                    COM_TEST_DATASIZE);
         
+        /* Check Output */
+
         /* Print Message */
         fprintf(stdout, "-----Source  Device-----\n");
         print_swDev(&source);
@@ -160,6 +170,68 @@ int main(int argc, char* argv[]){
         fprintf(stdout, "opcode:     0x%4.4" PRIxSWOpcode "\n", opcode);
         fprintf(stdout, "-------Body  Data-------\n");
         print_swChanMsgBody(&data, COM_TEST_NUMCHN, COM_TEST_DATASIZE);
+    }
+    else if(mode == RW){
+        /* Zero Structs */
+        memset(&msg, 0, SW_MAX_MSG_LENGTH);
+        memset(&refmsg, 0, SW_MAX_MSG_LENGTH);
+        memset(&data, 0, sizeof(data));
+        memset(&dataEntries[0], 0, sizeof(dataEntries[0]));
+        memset(&dataEntries[1], 0, sizeof(dataEntries[1]));
+        memset(&dataEntries[2], 0, sizeof(dataEntries[2]));
+        memset(payload0, 0, COM_TEST_DATASIZE);
+        memset(payload1, 0, COM_TEST_DATASIZE);
+        memset(payload2, 0, COM_TEST_DATASIZE);
+        targetType = 0;
+        msgType = 0;
+        opcode = 0;
+        
+        /* Setup Inner Structs */
+        data.data = dataEntries;
+        dataEntries[0].chanValue = payload0;
+        dataEntries[1].chanValue = payload1;
+        dataEntries[2].chanValue = payload2;
+        
+        /* Generate Ref Message */
+        msgSize = genSWChannelRefMsg(refmsg, SW_MAX_MSG_LENGTH);
+        
+        /* Read Ref Message */
+        msgSize = readSWChannelMsg(refmsg, msgSize,
+                                   &source, &destination,
+                                   &targetType, &msgType, &opcode,
+                                   &data,
+                                   COM_TEST_NUMCHN,
+                                   COM_TEST_DATASIZE);
+        
+        /* Write Message */
+        msgSize = writeSWChannelMsg(msg, SW_MAX_MSG_LENGTH,
+                                    &source, &destination,
+                                    targetType,
+                                    msgType,
+                                    opcode,
+                                    &data);
+     
+        /* Read Written Message */
+        msgSize = readSWChannelMsg(msg, msgSize,
+                                   &source, &destination,
+                                   &targetType, &msgType, &opcode,
+                                   &data,
+                                   COM_TEST_NUMCHN,
+                                   COM_TEST_DATASIZE);
+
+        /* Write Message */
+        msgSize = writeSWChannelMsg(msg, SW_MAX_MSG_LENGTH,
+                                    &source, &destination,
+                                    targetType,
+                                    msgType,
+                                    opcode,
+                                    &data);
+
+        /* Print Output */
+        fprintf(stdout, "msgSize: %" PRIswLength "\n",
+                msgSize);
+        pcnt = print_payload(msg, msgSize);
+        fprintf(stdout, "print_payload returned: %d\n", pcnt);
     }
     else if(mode == REF){
         msgSize = genSWChannelRefMsg(refmsg, SW_MAX_MSG_LENGTH);

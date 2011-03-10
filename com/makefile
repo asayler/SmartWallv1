@@ -46,7 +46,10 @@ comTools.o : comTools.c
 .PHONY : test
 test :
 	valgrind -q ./comTest -w > writeTestOut
-	./comTest -ref > writeRefOut
+	valgrind -q ./comTest -ref > writeRefOut
+	diff writeTestOut writeRefOut
+	rm -f writeTestOut
+	valgrind -q ./comTest -rw > writeTestOut
 	diff writeTestOut writeRefOut
 	rm -f writeTestOut writeRefOut
 
