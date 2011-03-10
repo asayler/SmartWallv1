@@ -21,5 +21,18 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#include "SmartWall.h"
+
 /* print packet payload data (avoid printing binary data) */
 extern int print_payload(const uint8_t* payload, int len);
+
+/* print SW Header data */
+extern int print_swHeader(const struct SmartWallHeader* header);
+
+/* print SW Device data */
+extern int print_swDev(const struct SmartWallDev* dev);
+
+/* print SW Channel Message data */
+extern int print_swChanMsgBody(const struct SWChannelData* data,
+                               const swLength_t maxNumChan,
+                               const swLength_t maxDataLength);

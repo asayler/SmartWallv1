@@ -30,15 +30,14 @@ extern swLength_t writeSWChannelMsg(uint8_t* msg, const swLength_t maxLength,
     /* Local Structs */
     struct SmartWallHeader swHeader;
 
+    /* Mem Init */
+    memset(&swHeader, 0, sizeof(swHeader));
+
     /* Check Input */
     if(msg == NULL){
         fprintf(stderr, "writeMsg Error: Input 'msg' must not be null!\n");
         return ERROR_VAL;
     }
-
-    /* Mem Init */
-    memset(&swHeader, 0, sizeof(swHeader));
-    memset(msg, 0, maxLength);
 
     /* Check Input */
     /* Check Source + Destination */
@@ -136,14 +135,20 @@ extern swLength_t readSWChannelMsg(const uint8_t* msg,
                                    struct SmartWallDev* destination,
                                    devType_t* targetType,
                                    swOpcode_t* opcode,
-                                   struct SWChannelData* data){
+                                   struct SWChannelData* data,
+                                   const swLength_t maxNumChan,
+                                   const swLength_t maxDataLength){
     /* Local Vars */
     swLength_t offset = 0;
     swLength_t calcLength = 0;
     swLength_t tmpLength = 0;
+    int i = 0;
 
     /* Local Structs */
     struct SmartWallHeader swHeader;
+
+    /* Mem Init */
+    memset(&swHeader, 0, sizeof(swHeader));    
 
     /* Check Input */
     if(msg == NULL){
@@ -166,16 +171,10 @@ extern swLength_t readSWChannelMsg(const uint8_t* msg,
         fprintf(stderr, "readMsg Error: destination must not be null!\n");
         return ERROR_VAL;
     }
-    if(data != NULL){
+    if(data == NULL){
         fprintf(stderr, "readMsg Error: data must not be null!\n");
         return ERROR_VAL;
     }
-
-    /* Mem Init */
-    memset(source, 0, sizeof(*source));
-    memset(destination, 0, sizeof(*destination));
-    memset(data, 0, sizeof(*data));
-    memset(&swHeader, 0, sizeof(swHeader));    
 
     /* Zero Offset */
     offset = 0;
@@ -195,7 +194,7 @@ extern swLength_t readSWChannelMsg(const uint8_t* msg,
     /* Calculate and Check Length */
     calcLength = swHeader.totalLength;
     if(msgLength != calcLength){
-        fprintf(stderr, "readMsg Error: msg does nto match declared size!\n");
+        fprintf(stderr, "readMsg Error: msg does not match declared size!\n");
         return ERROR_VAL;
     }
 
@@ -223,5 +222,38 @@ extern swLength_t readSWChannelMsg(const uint8_t* msg,
         offset += tmpLength;
     }
     
+    /* Check Limits */
+    if((data->header).numChan > maxNumChan){
+        fprintf(stderr, "readMsg Error: numChan exceeds max!\n");
+        return ERROR_VAL;
+    }
+    if((data->header).dataLength > maxDataLength){
+        fprintf(stderr, "readMsg Error: dataLength exceeds max!\n");
+        return ERROR_VAL;
+    }
+
+    /* Check data Pointer */
+    if(data->data == NULL){
+        fprintf(stderr, "readMsg Error: data->data must not be null!\n");
+        return ERROR_VAL;
+    }
+
+    /* Extract Chan Data */
+    for(i = 0; i < (data->header).numChan; i++){
+        /* Copy chanTop */
+        tmpLength = sizeof(data->data->chanTop);
+        memcpy(&((data->data)[i].chanTop), (msg + offset), tmpLength);
+        offset += tmpLength;
+        /* Check value Pointer */
+        if((data->data)[i].chanValue == NULL){
+            fprintf(stderr, "readMsg Error: chanValue must not be null!\n");
+            return ERROR_VAL;
+        }
+        /* Copy chanValue */
+        tmpLength = (data->header).dataLength;
+        memcpy(((data->data)[i].chanValue), (msg + offset), tmpLength);
+        offset += tmpLength;
+    }
+
     return offset;
 }

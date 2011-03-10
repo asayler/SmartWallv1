@@ -187,7 +187,8 @@ extern swLength_t readSWChannelMsg(const uint8_t* msg,
                                    struct SmartWallDev* destination,
                                    devType_t* targetType,
                                    swOpcode_t* opcode,
-                                   struct SWChannelData* data); 
-
+                                   struct SWChannelData* data,
+                                   const swLength_t maxNumChan,
+                                   const swLength_t maxDataLength);
 
 #endif
