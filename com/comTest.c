@@ -22,6 +22,7 @@
 #define COM_TEST_TRGTYPE SW_TYPE_OUTLET
 #define COM_TEST_MSGTYPE SW_MSG_REQUEST
 #define COM_TEST_OPCODE 0x01
+#define COM_TEST_SCOPE SW_SCP_CHANNEL
 #define COM_TEST_DATASIZE 8
 #define COM_TEST_NUMCHN 3
 #define COM_TEST_PAYLOAD0 "test000"
@@ -42,8 +43,10 @@ int main(int argc, char* argv[]){
     int pcnt;
     enum OPTIONS mode;
     uint8_t msg[SW_MAX_MSG_LENGTH];
+    uint8_t msgBody[SW_MAX_MSG_LENGTH - sizeof(struct SmartWallHeader)];
     uint8_t refmsg[SW_MAX_MSG_LENGTH];
     swLength_t msgSize = 0;
+    swLength_t bodySize = 0;
     struct SmartWallDev source;
     struct SmartWallDev destination;
     struct SWChannelData data;
@@ -54,6 +57,7 @@ int main(int argc, char* argv[]){
     devType_t targetType = COM_TEST_TRGTYPE;
     msgType_t msgType = COM_TEST_MSGTYPE;
     swOpcode_t opcode = COM_TEST_OPCODE;
+    msgScope_t msgScope = COM_TEST_SCOPE;
 
     /* input options */
     if(argc < 2){
@@ -114,12 +118,13 @@ int main(int argc, char* argv[]){
         destination.groupID = COM_TEST_GID;
         destination.types = COM_TEST_DTYPES;
         
-        msgSize = writeSWChannelMsg(msg, SW_MAX_MSG_LENGTH,
-                                    &source, &destination,
-                                    targetType,
-                                    msgType,
-                                    opcode,
-                                    &data);
+        bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
+                                             sizeof(struct SmartWallHeader)),
+                                      &data);
+        msgSize = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
+                             &source, &destination,
+                             targetType, msgScope, msgType, opcode,
+                             msgBody, bodySize);
      
         fprintf(stdout, "msgSize: %" PRIswLength "\n",
                 msgSize);
@@ -202,14 +207,15 @@ int main(int argc, char* argv[]){
                                    &data,
                                    COM_TEST_NUMCHN,
                                    COM_TEST_DATASIZE);
-        
-        /* Write Message */
-        msgSize = writeSWChannelMsg(msg, SW_MAX_MSG_LENGTH,
-                                    &source, &destination,
-                                    targetType,
-                                    msgType,
-                                    opcode,
-                                    &data);
+
+        /* Write Message */     
+        bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
+                                             sizeof(struct SmartWallHeader)),
+                                      &data);
+        msgSize = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
+                             &source, &destination,
+                             targetType, msgScope, msgType, opcode,
+                             msgBody, bodySize);
      
         /* Read Written Message */
         msgSize = readSWChannelMsg(msg, msgSize,
@@ -219,14 +225,16 @@ int main(int argc, char* argv[]){
                                    COM_TEST_NUMCHN,
                                    COM_TEST_DATASIZE);
 
-        /* Write Message */
-        msgSize = writeSWChannelMsg(msg, SW_MAX_MSG_LENGTH,
-                                    &source, &destination,
-                                    targetType,
-                                    msgType,
-                                    opcode,
-                                    &data);
 
+        /* Write Message */
+        bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
+                                             sizeof(struct SmartWallHeader)),
+                                      &data);
+        msgSize = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
+                             &source, &destination,
+                             targetType, msgScope, msgType, opcode,
+                             msgBody, bodySize);
+     
         /* Print Output */
         fprintf(stdout, "msgSize: %" PRIswLength "\n",
                 msgSize);
