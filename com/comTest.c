@@ -156,13 +156,17 @@ int main(int argc, char* argv[]){
         msgSize = genSWChannelRefMsg(refmsg, SW_MAX_MSG_LENGTH);
         
         /* Read Ref Message */
-        msgSize = readSWChannelMsg(refmsg, msgSize,
-                                   &source, &destination,
-                                   &targetType, &msgType, &opcode,
-                                   &data,
-                                   COM_TEST_NUMCHN,
-                                   COM_TEST_DATASIZE);
+        msgSize = readSWMsg(refmsg, msgSize,
+                            &source, &destination,
+                            &targetType, &msgScope, &msgType, &opcode,
+                            msgBody, &bodySize,
+                            SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
         
+        bodySize = readSWChannelBody(msgBody, bodySize,
+                                     &data,
+                                     COM_TEST_NUMCHN,
+                                     COM_TEST_DATASIZE);
+
         /* Check Output */
 
         /* Print Message */
@@ -201,12 +205,16 @@ int main(int argc, char* argv[]){
         msgSize = genSWChannelRefMsg(refmsg, SW_MAX_MSG_LENGTH);
         
         /* Read Ref Message */
-        msgSize = readSWChannelMsg(refmsg, msgSize,
-                                   &source, &destination,
-                                   &targetType, &msgType, &opcode,
-                                   &data,
-                                   COM_TEST_NUMCHN,
-                                   COM_TEST_DATASIZE);
+        msgSize = readSWMsg(refmsg, msgSize,
+                            &source, &destination,
+                            &targetType, &msgScope, &msgType, &opcode,
+                            msgBody, &bodySize,
+                            SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
+        
+        bodySize = readSWChannelBody(msgBody, bodySize,
+                                     &data,
+                                     COM_TEST_NUMCHN,
+                                     COM_TEST_DATASIZE);
 
         /* Write Message */     
         bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
@@ -218,13 +226,16 @@ int main(int argc, char* argv[]){
                              msgBody, bodySize);
      
         /* Read Written Message */
-        msgSize = readSWChannelMsg(msg, msgSize,
-                                   &source, &destination,
-                                   &targetType, &msgType, &opcode,
-                                   &data,
-                                   COM_TEST_NUMCHN,
-                                   COM_TEST_DATASIZE);
-
+        msgSize = readSWMsg(msg, msgSize,
+                            &source, &destination,
+                            &targetType, &msgScope, &msgType, &opcode,
+                            msgBody, &bodySize,
+                            SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
+        
+        bodySize = readSWChannelBody(msgBody, bodySize,
+                                     &data,
+                                     COM_TEST_NUMCHN,
+                                     COM_TEST_DATASIZE);
 
         /* Write Message */
         bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -

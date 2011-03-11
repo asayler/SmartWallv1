@@ -183,19 +183,26 @@ extern swLength_t writeSWMsg(uint8_t* msg,
                              const void* body,
                              const swLength_t bodyLength);
 
-extern swLength_t writeSWChannelBody(uint8_t* msg,
+extern swLength_t readSWMsg(const uint8_t* msg,
+                            const swLength_t msgLength,
+                            struct SmartWallDev* source,
+                            struct SmartWallDev* destination,
+                            devType_t* targetType,
+                            msgScope_t* msgScope,
+                            msgType_t* msgType,
+                            swOpcode_t* opcode,
+                            void* body,
+                            swLength_t* bodyLength,
+                            const swLength_t maxBodyLength);
+
+extern swLength_t writeSWChannelBody(uint8_t* msgBody,
                                      const swLength_t maxLength,
                                      const struct SWChannelData* data); 
 
-extern swLength_t readSWChannelMsg(const uint8_t* msg,
-                                   const swLength_t msgLength,
-                                   struct SmartWallDev* source,
-                                   struct SmartWallDev* destination,
-                                   devType_t* targetType,
-                                   msgType_t* msgType,
-                                   swOpcode_t* opcode,
-                                   struct SWChannelData* data,
-                                   const swLength_t maxNumChan,
-                                   const swLength_t maxDataLength);
+extern swLength_t readSWChannelBody(const uint8_t* msgBody,
+                                    const swLength_t bodyLength,
+                                    struct SWChannelData* data,
+                                    const swLength_t maxNumChan,
+                                    const swLength_t maxDataLength);
 
 #endif
