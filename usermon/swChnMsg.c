@@ -25,7 +25,7 @@
 #include <fcntl.h>
 #include <netdb.h>
 
-#include "swMaster.h"
+#include "../master/swMaster.h"
 
 #define SENDPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
 #define BUFLEN 1024 /* 1 kB datagram buffer */

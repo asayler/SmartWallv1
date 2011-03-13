@@ -31,9 +31,6 @@
 #define USERMON_DEVICE_FILE_EXTENSION MASTER_DEVICE_FILE_EXTENSION
 #define USERMON_MAXDEVICES MASTER_MAXDEVICES
 
-/* Function to return an array of structs describing active SmartWall devices */
-extern int getDevices(struct SWDeviceEntry* devices, int maxDevices);
-
 /* Function to print SmartWall active device list to stream in decimal*/
 extern int printDevices(FILE* outstream);
 

@@ -12,14 +12,60 @@
 #include "swMaster.h"
 
 /* Public Functions */
-extern int buildDevFileName(char* filename){
+extern int buildDevFileName(char* filename, const int maxLength){
  
-    /* Build filenmae */
-    strncpy(filename, MASTER_DEVICE_FILE_BASE, MAX_FILENAME_LENGTH - 1);
-    strcat(filename, MASTER_DEVICE_FILE_EXTENSION);
+    /* Local Vars */
+    int length = 0;
 
-    return 0;
+    /* Test Length */
+    length = strlen(MASTER_DEVICE_FILE_BASE) +
+        strlen(MASTER_DEVICE_FILE_EXTENSION) + 1;
+    if(length > maxLength){
+        fprintf(stderr, "buildDevFileName: Filename exceeds max length.\n");
+        return -1;
+    }
+
+    /* Build Filename */
+    strncpy(filename, MASTER_DEVICE_FILE_BASE, maxLength - 1);
+    strncat(filename, MASTER_DEVICE_FILE_EXTENSION,
+            maxLength - strlen(filename) - 1);
+
+    return strlen(filename);
 }
+
+extern FILE* openDevFile(char* filename, const char* mode){
+    
+    /* Local Vars */
+    FILE* devFile = NULL;
+
+    /* TODO: Add Semephore access control to common SW state file */
+    
+    /* Open File */
+    devFile = fopen(filename, mode);
+    if(devFile == NULL){
+        fprintf(stderr, "openDevFile: Could not open devFile\n");
+        perror("openDevFile: fopen:");
+        /* TODO: Return Semaphore on failure */
+    }
+ 
+    return devFile;
+
+}
+
+extern int closeDevFile(FILE* devFile){
+
+    /* TODO: Add Semephore access control to common SW state file */
+
+    int val = fclose(devFile);
+
+    if(val != 0){
+        fprintf(stderr, "closeDevFile: Could not close devFile\n");
+    }
+    
+    return val; 
+
+}
+
 
 extern int readDevice(struct SWDeviceEntry* device, FILE* devFile){
     /* Function Vars */
@@ -185,9 +231,49 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
     return count;;
 }
 
-extern int findDevice(const swAddress_t swAddress,
-                      struct SWDeviceEntry* device, FILE* devFile){
+/* Function to return an array of structs describing
+ * active SmartWall devices */
+int getDevices(struct SWDeviceEntry* devices, const int maxDevices,
+               FILE* devFile){
 
+    /* Function Vars */
+    const int errorVal = -1;
+    int devCnt = 0;    
+
+    /* Temp Vars */
+    struct SWDeviceEntry deviceTmp;
+
+    /* Read File */
+    while(!feof(devFile)){
+        /* Read From File */
+        if(readDevice(&deviceTmp, devFile) < 0){
+            fprintf(stderr, "Line %d of devFile has bad data.\n",
+                    devCnt);
+            devCnt = errorVal;
+            break;
+        }
+
+        /* Add device info to struct in array*/
+        if(devCnt < maxDevices){
+            memcpy(&(devices[devCnt]), &deviceTmp, sizeof(devices[devCnt]));
+        }
+        else{
+            fprintf(stderr, "Max number of devices exceeded.\n");
+            devCnt = errorVal;
+            break;
+        }
+
+        /* Increment */
+        devCnt++;
+    }
+    
+    return devCnt;
+}
+
+
+extern int findDevice(const swAddress_t swAddress, struct SWDeviceEntry device,
+                      const struct SWDeviceEntry* devices,
+                      const int numDevices, FILE* devFile){
     /* Local Vars */
     int cnt;
     char deviceFileName[MAX_FILENAME_LENGTH];
@@ -196,44 +282,6 @@ extern int findDevice(const swAddress_t swAddress,
 
     /* Temp Vars */
     struct SWDeviceEntry deviceTmp;
-
-    /* Setup Filename */
-    buildDevFileName(deviceFileName);
-
-    /* TODO: Add Semephore access control to common SW state file */
-    
-    /* Open File */
-    deviceFile = fopen(deviceFileName, "r");
-    if(deviceFile == NULL){
-        fprintf(stderr, "Could not open %s\n", deviceFileName);
-        perror("deviceFile fopen");
-    }
-    
-    while(!feof(deviceFile)){
-        /* Read From File */
-        if(readDevice(&deviceTmp, deviceFile) < 0){
-            fprintf(stderr, "findDevice: Error on line %d of dev file %s.\n",
-                    cnt, deviceFileName);
-            cnt = -1;
-            break;
-        }
-
-        /* Add device info to struct in array*/
-        if(cnt < maxDevices){
-            
-        }
-        else{
-            fprintf(stderr, "findDevice: Max number of devices exceeded.\n");
-            cnt = -1;
-            break;
-        }
-
-        /* Increment */
-        cnt++;
-    }
-
-    /* TODO: Add Semephore access control to common SW state file */
-    fclose(deviceFile);
     
     return 0;
 }

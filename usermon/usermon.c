@@ -11,85 +11,46 @@
 
 #include "usermon.h"
 
-/* Function to return an array of structs describing
- * active SmartWall devices */
-int getDevices(struct SWDeviceEntry* devices, int maxDevices){
-
-    /* Function Vars */
-    char deviceFileName[MAX_FILENAME_LENGTH];
-    const int errorVal = -1;
-    FILE* deviceFile = NULL;
-    int devCnt = 0;    
-
-    /* Temp Vars */
-    struct SWDeviceEntry deviceTmp;
-
-    /* Build filenmae */
-    strcpy(deviceFileName, USERMON_DEVICE_FILE_BASE);
-    strcat(deviceFileName, USERMON_DEVICE_FILE_EXTENSION);
-
-    /* TODO: Add Semephore access control to common SW state file */
-
-    /* Open File */
-    deviceFile = fopen(deviceFileName, "r");
-    if(deviceFile == NULL){
-        fprintf(stderr, "Could not open %s\n", deviceFileName);
-        perror("deviceFile fopen");
-        return errorVal;
-    }
-    
-    /* Read File */
-    while(!feof(deviceFile)){
-        /* Read From File */
-        if(readDevice(&deviceTmp, deviceFile) < 0){
-            fprintf(stderr, "Line %d of %s has bad data.\n",
-                    devCnt, deviceFileName);
-            devCnt = errorVal;
-            break;
-        }
-
-        /* Add device info to struct in array*/
-        if(devCnt < maxDevices){
-            devices[devCnt].swAddr = deviceTmp.swAddr;
-            devices[devCnt].ipAddr = deviceTmp.ipAddr;
-            devices[devCnt].devTypes = deviceTmp.devTypes;
-            devices[devCnt].numChan = deviceTmp.numChan;
-            devices[devCnt].version = deviceTmp.version;
-            devices[devCnt].uid = deviceTmp.uid;
-        }
-        else{
-            fprintf(stderr, "Max number of devices exceeded.\n");
-            devCnt = errorVal;
-            break;
-        }
-
-        /* Increment */
-        devCnt++;
-    }
-
-    /* TODO: Add Semephore access control to common SW state file */
-    fclose(deviceFile);
-    
-    return devCnt;
-}
-
 int printDevices(FILE* outstream){
 
     /* Function Vars */
+    char filename[MAX_FILENAME_LENGTH];
+    FILE* devFile = NULL;
     const int errorVal = -1;
     int charCnt = 0;
     struct SWDeviceEntry devices[USERMON_MAXDEVICES];
     int devCnt = 0;
     int i = 0;
 
+    /* Get Device Filename */
+    if(buildDevFileName(filename, MAX_FILENAME_LENGTH) <= 0){
+        fprintf(stderr, "printDevices: Could not create devFile name.\n");
+        return errorVal;
+    }
+
+    /* Open Device File */
+    devFile = openDevFile(filename, "r");
+    if(devFile == NULL){
+        fprintf(stderr, "printDevices: Could not open devFile.\n");
+        return errorVal;
+    }
+
     /* Get Device Array */
-    devCnt = getDevices(devices, USERMON_MAXDEVICES);
+    devCnt = getDevices(devices, USERMON_MAXDEVICES, devFile);
     if(devCnt < 0){
-        fprintf(stderr, "Error gettign device list: getDevices returned %d\n",
+        fprintf(stderr, "printDevices: "
+                "Error gettign device list: getDevices returned %d\n",
                 devCnt);
         return errorVal;
     }
     
+    /* Close Device File */
+    if(closeDevFile(devFile) != 0){
+        fprintf(stderr, "printDevices: Could not close devFile.\n");
+        return errorVal;
+    }
+    devFile = NULL;
+
     /* Print Devices */
     charCnt += fprintf(outstream,
                        "    | %5s | %15s | %18s | %3s | %2s\n",
@@ -130,19 +91,42 @@ int printDevices(FILE* outstream){
 int printDevicesHex(FILE* outstream){
 
     /* Function Vars */
+    char filename[MAX_FILENAME_LENGTH];
+    FILE* devFile = NULL;
     const int errorVal = -1;
     int charCnt = 0;
     struct SWDeviceEntry devices[USERMON_MAXDEVICES];
     int devCnt = 0;
     int i = 0;
 
+    /* Get Device Filename */
+    if(buildDevFileName(filename, MAX_FILENAME_LENGTH) <= 0){
+        fprintf(stderr, "printDevices: Could not create devFile name.\n");
+        return errorVal;
+    }
+
+    /* Open Device File */
+    devFile = openDevFile(filename, "r");
+    if(devFile == NULL){
+        fprintf(stderr, "printDevices: Could not open devFile.\n");
+        return errorVal;
+    }
+
     /* Get Device Array */
-    devCnt = getDevices(devices, USERMON_MAXDEVICES);
+    devCnt = getDevices(devices, USERMON_MAXDEVICES, devFile);
     if(devCnt < 0){
-        fprintf(stderr, "Error gettign device list: getDevices returned %d\n",
+        fprintf(stderr, "printDevices: "
+                "Error gettign device list: getDevices returned %d\n",
                 devCnt);
         return errorVal;
     }
+    
+    /* Close Device File */
+    if(closeDevFile(devFile) != 0){
+        fprintf(stderr, "printDevices: Could not close devFile.\n");
+        return errorVal;
+    }
+    devFile = NULL;
     
     /* Print Devices */
     charCnt += fprintf(outstream,

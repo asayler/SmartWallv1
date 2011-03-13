@@ -37,10 +37,17 @@ struct SWDeviceEntry {
 };
 
 /* Public Functions */
-extern int buildDevFileName(char* filename);
+extern int buildDevFileName(char* filename, const int maxLength);
+extern FILE* openDevFile(char* filename, const char* mode);
+extern int closeDevFile(FILE* devFile);
 extern int readDevice(struct SWDeviceEntry* device, FILE* devFile);
-extern int findDevice(const swAddress_t swAddress,
-                      struct SWDeviceEntry* device, FILE* devFile);
+/* Function to return an array of structs describing active SW devices */
+extern int getDevices(struct SWDeviceEntry* devices, const int maxDevices,
+                      FILE* devFile);
+extern int findDevice(const swAddress_t swAddress, struct SWDeviceEntry device,
+                      const struct SWDeviceEntry* devices,
+                      const int numDevices, FILE* devFile);
 extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile);
+
 
 #endif

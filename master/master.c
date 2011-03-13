@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
     
     char deviceFileName[MAX_FILENAME_LENGTH];
     FILE* deviceFile = NULL;
-    buildDevFileName(deviceFileName);
+    buildDevFileName(deviceFileName, MAX_FILENAME_LENGTH);
     
     /* Open File */
     deviceFile = fopen(deviceFileName, "a");

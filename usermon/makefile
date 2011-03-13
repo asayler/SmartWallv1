@@ -12,22 +12,25 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = usermon.o testMain.o
-EXEC = testMain
+OBJS = usermon.o testMain.o swChnMsg.o
+EXEC = testMain swChnMsg
 
 .PHONY : all
-all : testMain
+all : testMain swChnMsg
 
 testMain : usermon.o testMain.o ../master/swMaster.o
 	$(CC) $(CFLAGS) usermon.o testMain.o ../master/swMaster.o -o testMain
+
+swChnMsg : swChnMsg.o ../com/SmartWall.o
+	$(CC) $(CFLAGS) swChnMsg.o ../com/SmartWall.o -o swChnMsg
 
 usermon.o : usermon.c
 	$(CC) $(CFLAGS) -c usermon.c
 -include usermon.d
 
-../master/swMaster.o : ../master/swMaster.c
-	$(CC) $(CFLAGS) -c ../master/swMaster.c -o ../master/swMaster.o 
--include ../master/swMaster.d
+swChnMsg.o : swChnMsg.c
+	$(CC) $(CFLAGS) -c swChnMsg.c 
+-include swChnMsg.d
 
 testMain.o : testMain.c
 	$(CC) $(CFLAGS) -c testMain.c
