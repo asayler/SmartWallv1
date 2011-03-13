@@ -12,6 +12,14 @@ power and utility monitoring and control framework. This repository
 contains much a of the code related to the version 1 Prototype of
 a functioning SmartWall system.
 
+***TO BUILD***
+Run make in each of the following folders in the following order. Each make
+run should complete without errors.
+
+com
+master
+usermon
+
 ***Significant Directories***
 /com - common SmartWall protocol functions, definitions, and structures
 /master - Reference master SmartWall device implementation code
