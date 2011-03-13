@@ -85,8 +85,7 @@ int main(int argc, char *argv[]){
     
     char deviceFileName[MAX_FILENAME_LENGTH];
     FILE* deviceFile = NULL;
-    strcpy(deviceFileName, MASTER_DEVICE_FILE_BASE);
-    strcat(deviceFileName, MASTER_DEVICE_FILE_EXTENSION);    
+    buildDevFileName(deviceFileName);
     
     /* Open File */
     deviceFile = fopen(deviceFileName, "a");

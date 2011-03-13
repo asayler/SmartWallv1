@@ -12,11 +12,11 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = swMaster.o master.o
-EXEC = master
+OBJS = swMaster.o master.o swChnMsg.o
+EXEC = master swChnMsg
 
 .PHONY : all
-all : master swMaster.o
+all : master swMaster.o swChnMsg
 
 master : master.o swMaster.o
 	$(CC) $(CFLAGS) master.o swMaster.o -o master
@@ -28,6 +28,13 @@ swMaster.o : swMaster.c
 master.o : master.c
 	$(CC) $(CFLAGS) -c master.c 
 -include master.d
+
+swChnMsg : swChnMsg.o ../com/SmartWall.o
+	$(CC) $(CFLAGS) swChnMsg.o ../com/SmartWall.o -o swChnMsg
+
+swChnMsg.o : swChnMsg.c
+	$(CC) $(CFLAGS) -c swChnMsg.c 
+-include swChnMsg.d
 
 # Automatically generate dependencies for .c files
 %.d : %.c

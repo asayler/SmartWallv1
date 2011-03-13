@@ -82,6 +82,7 @@ typedef uint16_t swAddress_t;
 #define PRIxSWAddr PRIx16
 #define SCNswAddr  SCNu16
 #define SCNxSWAddr SCNx16
+#define SWADDRESS_MAX 65535
 
 typedef uint64_t devType_t;
 #define PRIdevType  PRIu64
@@ -116,8 +117,8 @@ typedef uint64_t devUID_t;
 /* SmartWall Header Struct  - 32 Bytes */
 struct SmartWallHeader {
     swVersion_t version;       /* SmartWall Protocol version */
-    msgScope_t msgScope;       /* SmartWall Mesage Scope */
-    msgType_t msgType;         /* SmartWall Mesage Type */
+    msgScope_t msgScope;       /* SmartWall Message Scope */
+    msgType_t msgType;         /* SmartWall Message Type */
     groupID_t groupID;         /* SmartWall groupID */
     swAddress_t sourceAddress; /* SmartWall Source Address */
     swAddress_t destAddress;   /* SmartWall Destination Address */

@@ -13,9 +13,12 @@
 
 /* Public Functions */
 extern int buildDevFileName(char* filename){
-    (void) filename;
+ 
+    /* Build filenmae */
+    strncpy(filename, MASTER_DEVICE_FILE_BASE, MAX_FILENAME_LENGTH - 1);
+    strcat(filename, MASTER_DEVICE_FILE_EXTENSION);
 
-    return -1;
+    return 0;
 }
 
 extern int readDevice(struct SWDeviceEntry* device, FILE* devFile){
@@ -180,4 +183,57 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
     }
     
     return count;;
+}
+
+extern int findDevice(const swAddress_t swAddress,
+                      struct SWDeviceEntry* device, FILE* devFile){
+
+    /* Local Vars */
+    int cnt;
+    char deviceFileName[MAX_FILENAME_LENGTH];
+    FILE* deviceFile = NULL;
+    int maxDevices = 10;
+
+    /* Temp Vars */
+    struct SWDeviceEntry deviceTmp;
+
+    /* Setup Filename */
+    buildDevFileName(deviceFileName);
+
+    /* TODO: Add Semephore access control to common SW state file */
+    
+    /* Open File */
+    deviceFile = fopen(deviceFileName, "r");
+    if(deviceFile == NULL){
+        fprintf(stderr, "Could not open %s\n", deviceFileName);
+        perror("deviceFile fopen");
+    }
+    
+    while(!feof(deviceFile)){
+        /* Read From File */
+        if(readDevice(&deviceTmp, deviceFile) < 0){
+            fprintf(stderr, "findDevice: Error on line %d of dev file %s.\n",
+                    cnt, deviceFileName);
+            cnt = -1;
+            break;
+        }
+
+        /* Add device info to struct in array*/
+        if(cnt < maxDevices){
+            
+        }
+        else{
+            fprintf(stderr, "findDevice: Max number of devices exceeded.\n");
+            cnt = -1;
+            break;
+        }
+
+        /* Increment */
+        cnt++;
+    }
+
+    /* TODO: Add Semephore access control to common SW state file */
+    fclose(deviceFile);
+    
+    return 0;
 }

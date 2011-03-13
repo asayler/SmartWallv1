@@ -39,6 +39,8 @@ struct SWDeviceEntry {
 /* Public Functions */
 extern int buildDevFileName(char* filename);
 extern int readDevice(struct SWDeviceEntry* device, FILE* devFile);
+extern int findDevice(const swAddress_t swAddress,
+                      struct SWDeviceEntry* device, FILE* devFile);
 extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile);
 
 #endif
