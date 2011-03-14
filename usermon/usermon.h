@@ -49,6 +49,15 @@ extern int printDevicesHex(FILE* outstream,
 extern int printDeviceHex(FILE* outstream,
                           struct SWDeviceEntry* device, int cnt);
 
+/* Function to print SmartWall active device list to stream in hex*/
+extern int printDevicesRaw(FILE* outstream,
+                           struct SWDeviceEntry* devices,
+                           const int numDevices);
+
+/* Function to print single SmartWall device info to stream in hex*/
+extern int printDeviceRaw(FILE* outstream,
+                          struct SWDeviceEntry* device, int cnt);
+
 /* Function to print current SmartWall network info */
 extern int printNetInfo(FILE* outstream);
 

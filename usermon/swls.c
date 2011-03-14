@@ -91,13 +91,15 @@ int main(int argc, char* argv[]){
         }
         else if(mode == DECIMAL){
             if(printDevices(stdout, devices, devCnt) < 0){
-                fprintf(stderr, "swls: Error listing devices in HEX mode.\n");
+                fprintf(stderr, "swls: Error listing devices in DEC mode.\n");
                 exit(EXIT_FAILURE);
             }
         }
         else if(mode == RAW){
-            fprintf(stderr, "swls: RAW mode not yet implmented.\n");
-            exit(EXIT_FAILURE);
+            if(printDevicesRaw(stdout, devices, devCnt) < 0){
+                fprintf(stderr, "swls: Error listing devices in RAW mode.\n");
+                exit(EXIT_FAILURE);
+            }
         }
         else{
             fprintf(stderr, "swls: Unhandeled output mode: %d\n", mode);

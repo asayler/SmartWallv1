@@ -22,13 +22,13 @@ extern int printDevices(FILE* outstream,
     
     /* Check Input */
     if(devices == NULL){
-        fprintf(stderr, "printDevices: devices must nut be NULL.\n");
+        fprintf(stderr, "printDevices: devices must not be NULL.\n");
         return errorVal;
     }
 
     /* Print Devices */
     charCnt += fprintf(outstream,
-                       "    | %5s | %15s | %18s | %3s | %2s\n",
+                       "   | %5s | %15s | %18s | %3s | %2s\n",
                        "SWAdr", "IP Address  ", "Types       ",
                        "#Ch", "Vr");
     charCnt += fprintf(outstream,
@@ -50,13 +50,13 @@ extern int printDevice(FILE* outstream,
 
     /* check user input */
     if(device == NULL){
-        fprintf(stderr, "printDevice: device must nut be NULL.\n");
+        fprintf(stderr, "printDevice: device must not be NULL.\n");
         return errorVal;
     }
 
     /* Write Device Line Output */
     /* Print device count */
-    charCnt += fprintf(outstream, "%3.3d | ", cnt);
+    charCnt += fprintf(outstream, "%3.3d| ", cnt);
     /* Print SW Address */
     charCnt += fprintf(outstream, "%5" PRIswAddr " | ", device->swAddr);
     /* Print IPv4 Address */
@@ -93,13 +93,13 @@ extern int printDevicesHex(FILE* outstream,
 
     /* Check Input */
     if(devices == NULL){
-        fprintf(stderr, "printDevicesHex: devices must nut be NULL.\n");
+        fprintf(stderr, "printDevicesHex: devices must not be NULL.\n");
         return errorVal;
     }
     
     /* Print Devices */
     charCnt += fprintf(outstream,
-                       "    | %6s | %10s | %18s | %4s | %3s | %18s\n",
+                       "   | %6s | %10s | %18s | %4s | %4s | %18s\n",
                        "SW Adr", "IP Address", "Types       ",
                        " #Ch", "Ver", "SW Device UID  ");
     charCnt += fprintf(outstream,
@@ -127,7 +127,7 @@ extern int printDeviceHex(FILE* outstream,
 
     /* Write Device Line Output */
     /* Print device count */
-    charCnt += fprintf(outstream, "%3.3d | ", cnt);
+    charCnt += fprintf(outstream, "%3.3d| ", cnt);
     /* Print SW Address */
     charCnt += fprintf(outstream, "0x%4.4" PRIxSWAddr " | ",
                        device->swAddr);
@@ -141,11 +141,74 @@ extern int printDeviceHex(FILE* outstream,
     charCnt += fprintf(outstream, "0x%2.2" PRIxNumChan " | ",
                        device->numChan);
     /* Print SW Protcol Version */
-    charCnt += fprintf(outstream, "0x%1.1" PRIxSWVer " | ",
+    charCnt += fprintf(outstream, "0x%2.2" PRIxSWVer " | ",
                        device->version);
     /* Print SW Device Unique ID */
     charCnt += fprintf(outstream, "0x%16.16" PRIxDevUID "\n",
                        device->uid);
     
     return charCnt;
+}
+
+
+extern int printDevicesRaw(FILE* outstream,
+                           struct SWDeviceEntry* devices,
+                           const int numDevices){
+    
+    /* Function Vars */
+    const int errorVal = -1;
+    int charCnt = 0;
+    int i = 0;
+    
+    /* Check Input */
+    if(devices == NULL){
+        fprintf(stderr, "printDevices: devices must not be NULL.\n");
+        return errorVal;
+    }
+    
+    /* Print Devices */
+    for(i = 0; i < numDevices; i++){
+        printDeviceRaw(outstream, &devices[i], i);
+    }
+    
+    return charCnt;
+}
+
+extern int printDeviceRaw(FILE* outstream,
+                          struct SWDeviceEntry* device, int cnt){
+
+    /* Local vars */
+    int charCnt = 0;
+    const int errorVal = -1;
+
+    /* check user input */
+    if(device == NULL){
+        fprintf(stderr, "printDevice: device must not be NULL.\n");
+        return errorVal;
+    }
+
+    /* Write Device Line Output */
+    /* Print device count */
+    charCnt += fprintf(outstream, "%3.3d ", cnt);
+    /* Print SW Address */
+    charCnt += fprintf(outstream, "0x%4.4" PRIxSWAddr " ",
+                       device->swAddr);
+    /* Print IP Address */
+    charCnt += fprintf(outstream, "0x%8.8" PRIxIPAddr " ",
+                       device->ipAddr);
+    /* Print SW Device Type */
+    charCnt += fprintf(outstream, "0x%16.16" PRIxDevType " ",
+                       device->devTypes);
+    /* Print Number of Device Channels */
+    charCnt += fprintf(outstream, "0x%2.2" PRIxNumChan " ",
+                       device->numChan);
+    /* Print SW Protcol Version */
+    charCnt += fprintf(outstream, "0x%2.2" PRIxSWVer " ",
+                       device->version);
+    /* Print SW Device Unique ID */
+    charCnt += fprintf(outstream, "0x%16.16" PRIxDevUID "\n",
+                       device->uid);
+    
+    return charCnt;
+
 }
