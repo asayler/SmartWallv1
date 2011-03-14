@@ -98,6 +98,9 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "Could not write newEntry to %s\n", deviceFileName);
     }
 
+    /* Close File */
+    fclose(deviceFile);
+
     /* END HACK */
 
     /*Print Base Data */

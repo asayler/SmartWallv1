@@ -16,8 +16,10 @@
 
 /* Outside Includes */
 #include <stdio.h>
+#include <stdlib.h>
 #include <arpa/inet.h>
 
+/* SW Includes */
 #include "../com/swDevice.h"
 
 /* Defines */
@@ -35,6 +37,8 @@ struct SWDeviceEntry {
     swVersion_t version; /* SW Protocol Version */
     devUID_t uid;        /* SW Unique Device ID */
 };
+extern int compSWDeviceEntry(const struct SWDeviceEntry* d1,
+                             const struct SWDeviceEntry* d2);
 
 /* Public Functions */
 extern int buildDevFileName(char* filename, const int maxLength);
@@ -44,9 +48,11 @@ extern int readDevice(struct SWDeviceEntry* device, FILE* devFile);
 /* Function to return an array of structs describing active SW devices */
 extern int getDevices(struct SWDeviceEntry* devices, const int maxDevices,
                       FILE* devFile);
-extern int findDevice(const swAddress_t swAddress, struct SWDeviceEntry device,
+extern int sortDevices(struct SWDeviceEntry* devices, const int numDevices);
+extern int findDevice(const swAddress_t swAddress,
+                      struct SWDeviceEntry* device,
                       const struct SWDeviceEntry* devices,
-                      const int numDevices, FILE* devFile);
+                      const int numDevices);
 extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile);
 
 

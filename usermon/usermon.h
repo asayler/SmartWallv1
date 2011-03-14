@@ -32,10 +32,22 @@
 #define USERMON_MAXDEVICES MASTER_MAXDEVICES
 
 /* Function to print SmartWall active device list to stream in decimal*/
-extern int printDevices(FILE* outstream);
+extern int printDevices(FILE* outstream,
+                        struct SWDeviceEntry* devices,
+                        const int numDevices);
+
+/* Function to print single SmartWall device info to stream in decimal*/
+extern int printDevice(FILE* outstream,
+                       struct SWDeviceEntry* device, int cnt);
 
 /* Function to print SmartWall active device list to stream in hex*/
-extern int printDevicesHex(FILE* outstream);
+extern int printDevicesHex(FILE* outstream,
+                           struct SWDeviceEntry* devices,
+                           const int numDevices);
+
+/* Function to print single SmartWall device info to stream in hex*/
+extern int printDeviceHex(FILE* outstream,
+                          struct SWDeviceEntry* device, int cnt);
 
 /* Function to print current SmartWall network info */
 extern int printNetInfo(FILE* outstream);
