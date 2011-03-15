@@ -60,7 +60,7 @@ int main(int argc, char* argv[]){
         }
         
         /* Open Device File */
-        devFile = openDevFile(filename, "r");
+        devFile = openDevFile(filename);
         if(devFile == NULL){
             fprintf(stderr, "printDevices: Could not open devFile.\n");
             exit(EXIT_FAILURE);

@@ -36,6 +36,7 @@ struct SWDeviceEntry {
     numChan_t numChan;   /* Number of Channels on Device */
     swVersion_t version; /* SW Protocol Version */
     devUID_t uid;        /* SW Unique Device ID */
+    int lineNum;         /* Line Number in Device File or -1 if not in file */
 };
 extern int compSWDeviceEntry(const struct SWDeviceEntry* d1,
                              const struct SWDeviceEntry* d2);
@@ -49,7 +50,7 @@ extern int buildDevFileName(char* filename, const int maxLength);
 /* Function to return a handle to the SW Device File and                 *
  * protect the file while open                                           */
 /* Return Value: SW device File handel on success, NULL on failure       */
-extern FILE* openDevFile(char* filename, const char* mode);
+extern FILE* openDevFile(char* filename);
 
 /* Function to close a handel to the SW Device File and release protections */
 /* Return Value: 0 on success, -1 or EOF on failure */
@@ -57,11 +58,19 @@ extern int closeDevFile(FILE* devFile);
 
 /* Function to read the next device form the SW Device File devFile */
 /* Return Value: number of fields read on success, -1 on failure */
-extern int readDevice(struct SWDeviceEntry* device, FILE* devFile);
+extern int readDevice(struct SWDeviceEntry* device, FILE* devFile,
+                      int lineNum);
 
 /* Function to write the next device to the SW Device File devFile */
 /* Return Value: number of fields written on success, -1 on failure */
 extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile);
+
+/* Function to update any device in devices. Devices  with lineNum = -1
+   are removed from the SW Device File devFile */
+/* Return Value: number of remaining devices on success, -1 on failure */
+extern FILE* updateDevices(struct SWDeviceEntry* devices,
+                           int* numDevices, 
+                           FILE* devFile);
 
 /* Function to populate an array of structs describing active SW devices */
 /* Return Value: Number of valid devices copied into devices on success, *
@@ -73,12 +82,11 @@ extern int getDevices(struct SWDeviceEntry* devices, const int maxDevices,
 /* Return Value: 0 on success, -1 on failure                             */
 extern int sortDevices(struct SWDeviceEntry* devices, const int numDevices);
 
-/* Function to find and return the Device Entry with SW address swAddress
-   form a sorted array of devices                                        */
-/* Return Value: 0 on success, -1 on failure                             */
-extern int findDevice(const swAddress_t swAddress,
-                      struct SWDeviceEntry* device,
-                      const struct SWDeviceEntry* devices,
-                      const int numDevices);
+/* Function to find and return a pointer to the Device Entry with SW
+   address swAddress from a sorted array of devices                      */
+/* Return Value: pointer to SWDeviceEntry in devices, NULL on failure    */
+extern struct SWDeviceEntry* findDevice(const swAddress_t swAddress,
+                                        const struct SWDeviceEntry* devices,
+                                        const int numDevices);
 
 #endif

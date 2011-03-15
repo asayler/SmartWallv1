@@ -11,13 +11,14 @@
 
 #include "swMaster.h"
 
+const int errorVal = -1;
+
 /* Public Functions */
 extern int buildDevFileName(char* filename, const int maxLength){
  
     /* Local Vars */
     int length = 0;
-    const int errorVal = -1;
-
+    
     /* Check Input */
     if(filename == NULL){
         fprintf(stderr, "buildDevFileName: 'filename' must not be NULL.\n");
@@ -40,7 +41,7 @@ extern int buildDevFileName(char* filename, const int maxLength){
     return strlen(filename);
 }
 
-extern FILE* openDevFile(char* filename, const char* mode){
+extern FILE* openDevFile(char* filename){
     
     /* Local Vars */
     FILE* devFile = NULL;
@@ -50,15 +51,11 @@ extern FILE* openDevFile(char* filename, const char* mode){
         fprintf(stderr, "openDevFile: 'filename' must not be NULL.\n");
         return NULL;
     }
-    if(mode == NULL){
-        fprintf(stderr, "openDevFile: 'mode' must not be NULL.\n");
-        return NULL;
-    }
-
+    
     /* TODO: Add Semephore access control to common SW state file */
     
     /* Open File */
-    devFile = fopen(filename, mode);
+    devFile = fopen(filename, "r+");
     if(devFile == NULL){
         fprintf(stderr, "openDevFile: Could not open devFile\n");
         perror("openDevFile: fopen:");
@@ -71,9 +68,6 @@ extern FILE* openDevFile(char* filename, const char* mode){
 
 extern int closeDevFile(FILE* devFile){
 
-    /* Local Vars */
-    const int errorVal = -1;
-    
     /* Check Input */
     if(devFile == NULL){
         fprintf(stderr, "closeDevFile: 'devFile' must not be NULL.\n");
@@ -94,10 +88,10 @@ extern int closeDevFile(FILE* devFile){
 }
 
 
-extern int readDevice(struct SWDeviceEntry* device, FILE* devFile){
+extern int readDevice(struct SWDeviceEntry* device, FILE* devFile,
+                      int lineNum){
     
     /* Local Vars */
-    const int errorVal = -1;
     int count = 0;
 
     /* Temp Vars */
@@ -178,6 +172,7 @@ extern int readDevice(struct SWDeviceEntry* device, FILE* devFile){
         device->numChan = numChanTmp;
         device->version = versionTmp;
         device->uid = uidTmp;
+        device->lineNum = lineNum;
     }
     else {
         fprintf(stderr, "'devices' must not be NULL.\n");
@@ -190,7 +185,6 @@ extern int readDevice(struct SWDeviceEntry* device, FILE* devFile){
 extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
     
     /* Local Vars */
-    const int errorVal = -1;
     int count = 0;
 
     /* Temp Vars */
@@ -280,7 +274,6 @@ int getDevices(struct SWDeviceEntry* devices, const int maxDevices,
                FILE* devFile){
 
     /* Function Vars */
-    const int errorVal = -1;
     int devCnt = 0;    
 
     /* Temp Vars */
@@ -300,10 +293,13 @@ int getDevices(struct SWDeviceEntry* devices, const int maxDevices,
         return errorVal;
     }
 
+    /* Reset File Pointer */
+    rewind(devFile);
+    
     /* Read File */
     while(!feof(devFile)){
         /* Read From File */
-        if(readDevice(&deviceTmp, devFile) < 0){
+        if(readDevice(&deviceTmp, devFile, devCnt) < 0){
             fprintf(stderr, "Line %d of devFile has bad data.\n",
                     devCnt);
             devCnt = errorVal;
@@ -327,11 +323,67 @@ int getDevices(struct SWDeviceEntry* devices, const int maxDevices,
     return devCnt;
 }
 
+extern FILE* updateDevices(struct SWDeviceEntry* devices,
+                           int* numDevices, 
+                           FILE* devFile){
+    
+    /* Local Vars */
+    char filename[MAX_FILENAME_LENGTH];
+    int i = 0;
+
+    /* Check Input */
+    if(devices == NULL){
+        fprintf(stderr, "updateDevices: 'devices' must not be NULL.\n");
+        return NULL;
+    }
+    if(devFile == NULL){
+        fprintf(stderr, "updateDevices: 'devFile' must not be NULL.\n");
+        return NULL;
+    }
+    if(*numDevices <= 0){
+        fprintf(stderr, "updateDevices: 'numDevices' must be > 0.\n");
+        return NULL;
+    }
+
+    /* Reset File Pointer */
+    rewind(devFile);
+    
+    /* Close file and overwrite */
+    if(fclose(devFile) != 0){
+        fprintf(stderr, "updateDevices: Could not close devFile.\n");
+        return NULL;
+    }
+    if(buildDevFileName(filename, MAX_FILENAME_LENGTH) < 0){
+        fprintf(stderr, "updateDevices: Could not create filename.\n");
+        return NULL;
+    }
+    devFile = fopen(filename, "w+");
+    if(devFile == NULL){
+        fprintf(stderr, "updateDevices: Could not open devFile.\n");
+        return NULL;
+    }
+
+    /* Write Out Data */
+    for(i = 0; i < *numDevices; i++){
+        if(devices[i].lineNum >= 0){
+            if(writeDevice(&devices[i], devFile) < 0){
+                fprintf(stderr, "removeDevices: Error writing device to "
+                        "line %d.\n", devices[i].lineNum);
+                return NULL;
+            }
+        }
+    }
+    
+    /* Reset File Pointer */
+    rewind(devFile);
+
+    /* Reread Devices */
+    *numDevices = getDevices(devices, *numDevices, devFile);
+    return devFile;
+}
+
 extern int sortDevices(struct SWDeviceEntry* devices, const int numDevices){
     
-    /* Local vars */
-    const int errorVal = -1;
-
     /* Check Input */
     if(devices == NULL){
         fprintf(stderr, "sortDevices: devices must not be NULL.\n");
@@ -351,27 +403,21 @@ extern int sortDevices(struct SWDeviceEntry* devices, const int numDevices){
 }
 
 /* Input devices must be sorted to work properly*/
-extern int findDevice(const swAddress_t swAddress,
-                      struct SWDeviceEntry* device,
-                      const struct SWDeviceEntry* devices,
-                      const int numDevices){
+extern struct SWDeviceEntry* findDevice(const swAddress_t swAddress,
+                                        const struct SWDeviceEntry* devices,
+                                        const int numDevices){
     
     /* Local vars */
-    const int errorVal = -1;
     struct SWDeviceEntry* tmpDev = NULL;
 
     /* Check Input */
-    if(device == NULL){
-        fprintf(stderr, "findDevice: device must not be NULL.\n");
-        return errorVal;
-    }
     if(devices == NULL){
         fprintf(stderr, "findDevice: devices must not be NULL.\n");
-        return errorVal;
+        return NULL;
     }
     if(numDevices <= 0){
         fprintf(stderr, "findDevices: numDevices must be > 0.\n");
-        return errorVal;
+        return NULL;
     }
     
     /* Temp Key Device */
@@ -388,11 +434,10 @@ extern int findDevice(const swAddress_t swAddress,
     if(tmpDev == NULL){
         fprintf(stderr, "findDevices: Could not locate device with address "
                 "0x%4.4" PRIxSWAddr ".\n", swAddress);
-        return errorVal;
+        return NULL;
     }
     else{
-        memcpy(device, tmpDev, sizeof(*device));
-        return 0;
+        return tmpDev;
     }
 }
 
@@ -401,11 +446,11 @@ extern int compSWDeviceEntry(const struct SWDeviceEntry* d1,
     /* Check Input */
     if(d1 == NULL){
         fprintf(stderr, "compSWDeviceEntry: d1 NULL, returning -1\n");
-        return -1;
+        return errorVal;
     }
     if(d2 == NULL){
         fprintf(stderr, "compSWDeviceEntry: d2 NULL, returning -1\n");
-        return -1;
+        return errorVal;
     }
 
     /* Compare */

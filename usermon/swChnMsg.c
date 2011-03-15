@@ -68,6 +68,7 @@ int main(int argc, char *argv[]){
     const msgScope_t msgScope = SW_SCP_CHANNEL;
     msgType_t msgType;
     swOpcode_t opcode;
+    struct SWDeviceEntry* tgtDeviceEntry;
     struct SWDeviceEntry tgtDeviceInfo;
     
     char devFilename[MAX_FILENAME_LENGTH]; 
@@ -187,7 +188,7 @@ int main(int argc, char *argv[]){
             fprintf(stderr, "%s: Error building device filename.\n", PGMNAME);
             exit(EXIT_FAILURE);
         }
-        devFile = openDevFile(devFilename, "r");
+        devFile = openDevFile(devFilename);
         if(devFile == NULL){
             fprintf(stderr, "%s: Error opening device file.\n", PGMNAME);
             exit(EXIT_FAILURE);
@@ -201,15 +202,17 @@ int main(int argc, char *argv[]){
             fprintf(stderr, "%s: Error closing device file.\n", PGMNAME);
             exit(EXIT_FAILURE);
         }
-        devFile == NULL;
+        devFile = NULL;
         if(sortDevices(devices, numDevices) < 0){
             fprintf(stderr, "%s: Error sorting SW device list.\n", PGMNAME);
             exit(EXIT_FAILURE);
         }
-        if(findDevice(tgtSWAddress, &tgtDeviceInfo, devices, numDevices) < 0){
+        tgtDeviceEntry = findDevice(tgtSWAddress, devices, numDevices);
+        if(tgtDeviceEntry == NULL){
             fprintf(stderr, "%s: Error finding SW device.\n", PGMNAME);
             exit(EXIT_FAILURE);
         }
+        memcpy(&tgtDeviceInfo, tgtDeviceEntry, sizeof(tgtDeviceInfo));
         
     }
 

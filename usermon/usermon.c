@@ -11,12 +11,14 @@
 
 #include "usermon.h"
 
+static const int errorVal = -1;
+static const int successVal = 0;
+
 extern int printDevices(FILE* outstream,
                         struct SWDeviceEntry* devices,
                         const int numDevices){
     
     /* Function Vars */
-    const int errorVal = -1;
     int charCnt = 0;
     int i = 0;
     
@@ -35,19 +37,18 @@ extern int printDevices(FILE* outstream,
                        "----------------------------------------"
                        "----------------------\n");
     for(i = 0; i < numDevices; i++){
-        printDevice(outstream, &devices[i], i);
+        printDevice(outstream, &devices[i]);
     }
     
     return charCnt;
 }
 
 extern int printDevice(FILE* outstream,
-                       struct SWDeviceEntry* device, int cnt){
+                       struct SWDeviceEntry* device){
 
     /* Local vars */
     int charCnt = 0;
-    const int errorVal = -1;
-
+    
     /* check user input */
     if(device == NULL){
         fprintf(stderr, "printDevice: device must not be NULL.\n");
@@ -56,7 +57,7 @@ extern int printDevice(FILE* outstream,
 
     /* Write Device Line Output */
     /* Print device count */
-    charCnt += fprintf(outstream, "%3.3d| ", cnt);
+    charCnt += fprintf(outstream, "%3.3d| ", device->lineNum);
     /* Print SW Address */
     charCnt += fprintf(outstream, "%5" PRIswAddr " | ", device->swAddr);
     /* Print IPv4 Address */
@@ -87,7 +88,6 @@ extern int printDevicesHex(FILE* outstream,
                            const int numDevices){
 
     /* Function Vars */
-    const int errorVal = -1;
     int charCnt = 0;
     int i = 0;
 
@@ -106,19 +106,18 @@ extern int printDevicesHex(FILE* outstream,
                        "----------------------------------------"
                        "----------------------------------------\n");
     for(i = 0; i < numDevices; i++){
-        printDeviceHex(outstream, &devices[i], i);
+        printDeviceHex(outstream, &devices[i]);
      }
 
     return charCnt;
 }
 
 extern int printDeviceHex(FILE* outstream,
-                          struct SWDeviceEntry* device, int cnt){
+                          struct SWDeviceEntry* device){
     
     /* local vars */
     int charCnt = 0;
-    const int errorVal = -1;
-
+    
     /* check user input */
     if(device == NULL){
         fprintf(stderr, "printDeviceHex: device must nut be NULL.\n");
@@ -127,7 +126,7 @@ extern int printDeviceHex(FILE* outstream,
 
     /* Write Device Line Output */
     /* Print device count */
-    charCnt += fprintf(outstream, "%3.3d| ", cnt);
+    charCnt += fprintf(outstream, "%3.3d| ", device->lineNum);
     /* Print SW Address */
     charCnt += fprintf(outstream, "0x%4.4" PRIxSWAddr " | ",
                        device->swAddr);
@@ -156,7 +155,6 @@ extern int printDevicesRaw(FILE* outstream,
                            const int numDevices){
     
     /* Function Vars */
-    const int errorVal = -1;
     int charCnt = 0;
     int i = 0;
     
@@ -168,19 +166,18 @@ extern int printDevicesRaw(FILE* outstream,
     
     /* Print Devices */
     for(i = 0; i < numDevices; i++){
-        printDeviceRaw(outstream, &devices[i], i);
+        printDeviceRaw(outstream, &devices[i]);
     }
     
     return charCnt;
 }
 
 extern int printDeviceRaw(FILE* outstream,
-                          struct SWDeviceEntry* device, int cnt){
+                          struct SWDeviceEntry* device){
 
     /* Local vars */
     int charCnt = 0;
-    const int errorVal = -1;
-
+    
     /* check user input */
     if(device == NULL){
         fprintf(stderr, "printDevice: device must not be NULL.\n");
@@ -189,7 +186,7 @@ extern int printDeviceRaw(FILE* outstream,
 
     /* Write Device Line Output */
     /* Print device count */
-    charCnt += fprintf(outstream, "%3.3d ", cnt);
+    charCnt += fprintf(outstream, "%3.3d ", device->lineNum);
     /* Print SW Address */
     charCnt += fprintf(outstream, "0x%4.4" PRIxSWAddr " ",
                        device->swAddr);
@@ -210,5 +207,4 @@ extern int printDeviceRaw(FILE* outstream,
                        device->uid);
     
     return charCnt;
-
 }

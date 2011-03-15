@@ -66,9 +66,7 @@ int main(int argc, char *argv[]){
     unsigned int slen = sizeof(si_other);
 
     /* Init */
-    /* HACK: Test Code */
-    struct SWDeviceEntry newEntry;
-    newEntry.swAddr = mySWAddress;
+    
     /* IP */
     memset((char*) &si_me, 0, sizeof(si_me));
     si_me.sin_family = AF_INET;
@@ -77,32 +75,7 @@ int main(int argc, char *argv[]){
         perror("inet_aton");
         exit(1);
     }
-    newEntry.ipAddr = ntohl(si_me.sin_addr.s_addr);
-    newEntry.devTypes = mySWType;
-    newEntry.numChan = 0;
-    newEntry.version = mySWVersion;
-    newEntry.uid = mySWUID;
     
-    char deviceFileName[MAX_FILENAME_LENGTH];
-    FILE* deviceFile = NULL;
-    buildDevFileName(deviceFileName, MAX_FILENAME_LENGTH);
-    
-    /* Open File */
-    deviceFile = fopen(deviceFileName, "a");
-    if(deviceFile == NULL){
-        fprintf(stderr, "Could not open %s\n", deviceFileName);
-        perror("deviceFile fopen");
-    }
-    
-    if(writeDevice(&newEntry, deviceFile) < 0){
-        fprintf(stderr, "Could not write newEntry to %s\n", deviceFileName);
-    }
-
-    /* Close File */
-    fclose(deviceFile);
-
-    /* END HACK */
-
     /*Print Base Data */
     fprintf(stdout, "I am a SW_TYPE_MASTER.\n");
     fprintf(stdout, "SmartWall UID:     0x%" PRIxDevUID "\n", mySWUID);
