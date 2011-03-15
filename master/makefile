@@ -12,17 +12,24 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = swMaster.o master.o
-EXEC = master
+OBJS = swMaster.o master.o masterTest.o
+EXEC = master masterTest
 
 .PHONY : all
-all : master swMaster.o
+all : master masterTest swMaster.o
 
 master : master.o swMaster.o
 	$(CC) $(CFLAGS) master.o swMaster.o -o master
 
+masterTest : masterTest.o swMaster.o
+	$(CC) $(CFLAGS) masterTest.o swMaster.o -o masterTest
+
 swMaster.o : swMaster.c
 	$(CC) $(CFLAGS) -c swMaster.c 
+-include swMaster.d
+
+masterTest.o : masterTest.c
+	$(CC) $(CFLAGS) -c masterTest.c 
 -include swMaster.d
 
 master.o : master.c
@@ -35,6 +42,14 @@ master.o : master.c
 	$(CC) -MM $(CFLAGS) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
+
+.PHONY : test
+test : masterTest
+	sed '/^$$/d' ../devices.sws > devicesOrig.tmp
+	valgrind -q ./masterTest
+	sed '/^$$/d' ../devices.sws > devices.tmp
+	diff devicesOrig.tmp devices.tmp
+	rm -f devicesOrig.tmp devices.tmp
 
 .PHONY : clean
 clean :

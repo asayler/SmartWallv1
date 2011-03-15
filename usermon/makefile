@@ -12,23 +12,21 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = usermon.o testMain.o swChnMsg.o swls.o
-EXEC = testMain swChnMsg swls
+OBJS = usermon.o swChnMsg.o swls.o
+EXEC = swChnMsg swls
 
 .PHONY : all
 all : swChnMsg swls
-
-.PHONY : test
-test : testMain
-
-testMain : usermon.o testMain.o ../master/swMaster.o
-	$(CC) $(CFLAGS) usermon.o testMain.o ../master/swMaster.o -o testMain
 
 swChnMsg : swChnMsg.o ../com/SmartWall.o ../master/swMaster.o
 	$(CC) $(CFLAGS) swChnMsg.o ../com/SmartWall.o ../master/swMaster.o -o swChnMsg
 
 swls : swls.o usermon.o ../master/swMaster.o
 	$(CC) $(CFLAGS) swls.o usermon.o ../master/swMaster.o -o swls
+
+swChnMsg.o : swChnMsg.c
+	$(CC) $(CFLAGS) -c swChnMsg.c 
+-include swChnMsg.d
 
 swls.o : swls.c
 	$(CC) $(CFLAGS) -c swls.c
@@ -37,14 +35,6 @@ swls.o : swls.c
 usermon.o : usermon.c
 	$(CC) $(CFLAGS) -c usermon.c
 -include usermon.d
-
-swChnMsg.o : swChnMsg.c
-	$(CC) $(CFLAGS) -c swChnMsg.c 
--include swChnMsg.d
-
-testMain.o : testMain.c
-	$(CC) $(CFLAGS) -c testMain.c
--include testMain.d
 
 # Automatically generate dependencies for .c files
 %.d : %.c

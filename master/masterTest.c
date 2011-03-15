@@ -9,7 +9,17 @@
  * ---
  */
 
+#include "swMaster.h"
+
 int main(int argc, char *argv[]){
+
+    /* Local vars */
+    char filename[MAX_FILENAME_LENGTH];    
+    FILE* devFile = NULL;
+    struct SWDeviceEntry newEntry;
+    int devCnt = 0;
+    struct SWDeviceEntry devices[MASTER_MAXDEVICES];
+    struct SWDeviceEntry* findDev = NULL;
 
     /* Handel Input */
     (void) argc;
@@ -17,29 +27,67 @@ int main(int argc, char *argv[]){
 
     /* Get Device Filename */
     if(buildDevFileName(filename, MAX_FILENAME_LENGTH) <= 0){
-        fprintf(stderr, "printDevices: Could not create devFile name.\n");
+        fprintf(stderr, "masterTest: Could not create devFile name.\n");
         exit(EXIT_FAILURE);
     }
     
     /* Open Device File */
-    devFile = openDevFile(filename, "r");
+    devFile = openDevFile(filename);
     if(devFile == NULL){
-        fprintf(stderr, "printDevices: Could not open devFile.\n");
+        fprintf(stderr, "masterTest: Could not open devFile.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Write Test record */
+    newEntry.swAddr = 0x0003;
+    newEntry.ipAddr = 0x33333333;
+    newEntry.devTypes = SW_TYPE_UNIVERSAL | SW_TYPE_OUTLET;
+    newEntry.numChan = 0x03;
+    newEntry.version = SW_VERSION;
+    newEntry.uid = 0x3333333333333333;
+    newEntry.lineNum = -1;
+    if(fseek(devFile, 0, SEEK_END) != 0){
+        fprintf(stderr, "masterTest: Could not seek to end of devFile.\n");
+        exit(EXIT_FAILURE);
+    }
+    if(writeDevice(&newEntry, devFile) < 0){
+        fprintf(stderr, "masterTest: Error writing new device to devFile.\n");
         exit(EXIT_FAILURE);
     }
     
     /* Get Device Array */
-    devCnt = getDevices(devices, USERMON_MAXDEVICES, devFile);
+    devCnt = getDevices(devices, MASTER_MAXDEVICES, devFile);
     if(devCnt < 0){
-        fprintf(stderr, "printDevices: "
-                "Error gettign device list: getDevices returned %d\n",
+        fprintf(stderr, "masterTest: "
+                "Error getting device list: getDevices returned %d\n",
                 devCnt);
         exit(EXIT_FAILURE);
     }
     
+    /* Sort Device Array */
+    if(sortDevices(devices, devCnt) < 0){
+        fprintf(stderr, "masterTest: Error sorting device list.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Find new device in array */
+    findDev = findDevice(newEntry.swAddr, devices, devCnt);
+    if(findDev == NULL){
+        fprintf(stderr, "masterTest: Could not find new device.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Remove new device from devFile */
+    findDev->lineNum = -1;
+    devFile = updateDevices(devices, &devCnt, devFile);
+    if(devFile == NULL){
+        fprintf(stderr, "masterTest: Could not update devFile.\n");
+        exit(EXIT_FAILURE);
+    }
+
     /* Close Device File */
     if(closeDevFile(devFile) != 0){
-        fprintf(stderr, "printDevices: Could not close devFile.\n");
+        fprintf(stderr, "masterTest: Could not close devFile.\n");
         exit(EXIT_FAILURE);
     }
     devFile = NULL;

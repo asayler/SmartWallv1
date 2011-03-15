@@ -44,7 +44,7 @@ comTools.o : comTools.c
 	rm -f $@.$$$$
 
 .PHONY : test
-test :
+test : comTest
 	valgrind -q ./comTest -w > writeTestOut
 	valgrind -q ./comTest -ref > writeRefOut
 	diff writeTestOut writeRefOut
