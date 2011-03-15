@@ -22,30 +22,8 @@
 #include <stdio.h>
 #include <string.h>
 
-/* Constatns */
+/* Constants */
 #define SW_MAX_MSG_LENGTH 1024 /* In Bytes */
-
-/* SmartWall Message Types */
-#define SW_MSG_SET     0x01
-#define SW_MSG_REQUEST 0x02
-#define SW_MSG_QUERY   0x03
-#define SW_MSG_REPORT  0x04
-#define SW_MSG_ERROR   0xff
-
-/* SmartWall Message Scope */
-#define SW_SCP_NETWORK 0x01
-#define SW_SCP_DEVICE  0x02
-#define SW_SCP_CHANNEL 0x03
-#define SW_SCP_ERROR   0xff
-
-/* SmartWall Device Type Bits */
-#define SW_TYPE_MASTER    0x0000000000000001
-#define SW_TYPE_OUTLET    0x0000000000000004
-#define SW_TYPE_UNIVERSAL 0x8000000000000000
-
-/* SmartWall Special Addresses */
-#define SW_ADDR_NETWORK   0x0000
-#define SW_ADDR_BROADCAST 0xffff
 
 /* Data Types */
 #define PRIipAddr  PRIu32
@@ -95,6 +73,7 @@ typedef uint16_t swOpcode_t;
 #define PRIxSWOpcode PRIx16
 #define SCNswOpcode  SCNu16
 #define SCNxSWOpcode SCNx16
+#define SWOPCODE_MAX 65535
 
 typedef uint16_t swLength_t;
 #define PRIswLength  PRIu16
@@ -113,6 +92,36 @@ typedef uint64_t devUID_t;
 #define PRIxDevUID PRIx64
 #define SCNdevUID  SCNu64
 #define SCNxDevUID SCNx64
+
+/* SmartWall Message Types */
+#define SW_MSG_SET     0x01
+#define SW_MSG_REQUEST 0x02
+#define SW_MSG_QUERY   0x03
+#define SW_MSG_REPORT  0x04
+#define SW_MSG_ERROR   0xff
+extern int strToMT(const char* typeStr, const size_t maxLength,
+                   msgType_t* type);
+extern int MTtoStr(char* typeStr, const size_t maxLength,
+                   const msgType_t* type);
+
+/* SmartWall Message Scope */
+#define SW_SCP_NETWORK 0x01
+#define SW_SCP_DEVICE  0x02
+#define SW_SCP_CHANNEL 0x03
+#define SW_SCP_ERROR   0xff
+
+/* SmartWall Device Type Bits */
+#define SW_TYPE_MASTER    0x0000000000000001
+#define SW_TYPE_OUTLET    0x0000000000000004
+#define SW_TYPE_UNIVERSAL 0x8000000000000000
+extern int strToDT(const char* typeStr, const size_t maxLength,
+                   devType_t* type);
+extern int DTtoStr(char* typeStr, const size_t maxLength,
+                   const devType_t* type);
+
+/* SmartWall Special Addresses */
+#define SW_ADDR_NETWORK   0x0000
+#define SW_ADDR_BROADCAST 0xffff
 
 /* SmartWall Header Struct  - 32 Bytes */
 struct SmartWallHeader {

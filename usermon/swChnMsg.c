@@ -28,13 +28,12 @@
 #include "../master/swMaster.h"
 
 #define SENDPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
-#define BUFLEN 1024 /* 1 kB datagram buffer */
-#define SLAVEIP "127.0.0.1"
+#define BUFLEN SW_MAX_MSG_LENGTH
 
 #define MYSWUID 0x0001000000000001
 #define MYSWGROUP 0x01
 #define MYSWADDRESS 0x0001
-#define MYSWVER 0x1
+#define MYSWVER SW_VERSION
 #define MYSWTYPE SW_TYPE_MASTER | SW_TYPE_UNIVERSAL
 #define MYSWCHAN 0x00
 
@@ -69,6 +68,12 @@ int main(int argc, char *argv[]){
     const msgScope_t msgScope = SW_SCP_CHANNEL;
     msgType_t msgType;
     swOpcode_t opcode;
+    struct SWDeviceEntry tgtDeviceInfo;
+    
+    char devFilename[MAX_FILENAME_LENGTH]; 
+    FILE* devFile = NULL;
+    struct SWDeviceEntry devices[MASTER_MAXDEVICES];
+    int numDevices = 0;
 
     /* Setup Network Vars */
     uint8_t buf[BUFLEN];
@@ -96,35 +101,118 @@ int main(int argc, char *argv[]){
         /* Target Address */
         temp = strtoul(argv[1], NULL, 0);
         if(temp == 0){
-            fprintf(stderr, "%s: Could not convert 1st argument to int.\n",
+            fprintf(stderr, "%s: Could not convert 1st arg to long int.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
         if(temp == ULONG_MAX){
             perror(PGMNAME);
-            fprintf(stderr, "%s: 1st argument out of range.\n",
+            fprintf(stderr, "%s: 1st arg out of range.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
         if(temp > SWADDRESS_MAX){
-            fprintf(stderr, "%s: Target address out of range.\n",
+            fprintf(stderr, "%s: Target Address out of range.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
         tgtSWAddress = temp;
         /* Message Type */
+        if(strToMT(argv[2], strlen(argv[2]), &msgType) < 0){
+            fprintf(stderr, "%s: Invalid Message Type in 2nd arg.\n",
+                    PGMNAME);
+            exit(EXIT_FAILURE);
+        }
         /* Target Device Type */
+        if(strToDT(argv[3], strlen(argv[3]), &tgtSWType) < 0){
+            fprintf(stderr, "%s: Invalid Target Device Type in 3rd arg.\n",
+                    PGMNAME);
+            exit(EXIT_FAILURE);
+        }
         /* Opcode */
+        temp = strtoul(argv[4], NULL, 0);
+        if(temp == 0){
+            fprintf(stderr, "%s: Could not convert 4th arg to long int.\n",
+                    PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        if(temp == ULONG_MAX){
+            perror(PGMNAME);
+            fprintf(stderr, "%s: 4th arg out of range.\n",
+                    PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        if(temp > SWOPCODE_MAX){
+            fprintf(stderr, "%s: Opcode out of range.\n",
+                    PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        opcode = temp;
+
         /* Argument Size */
+        temp = strtoul(argv[5], NULL, 0);
+        if(temp == 0){
+            fprintf(stderr, "%s: Could not convert 5th arg to long int.\n",
+                    PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        if(temp == ULONG_MAX){
+            perror(PGMNAME);
+            fprintf(stderr, "%s: 5th arg out of range.\n",
+                    PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        if(temp > (SW_MAX_MSG_LENGTH - sizeof(struct SmartWallHeader) -
+                   sizeof(struct SmartWallChannelHeader) -
+                   sizeof(struct SmartWallChannelTop))){
+            fprintf(stderr, "%s: Arg Size exceeds max possbile arg bytes.\n",
+                    PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        opcode = temp;
+        /* Loop Through Args */
         
     }
-
+    
+    
     if((mode == ERROR) | (mode == HELP)){
         fprintf(stderr, "%s: Usage Format\n"
                 "<SW Dest Address> <SW Msg Type> <SW Tgt Type> <SW Opcode> "
                 "<Chn Arg Size (bytes)> <Chn#> <Chn Arg> ...\n", PGMNAME);
     }
     
+    if(mode == SEND){
+        /* Retrieve Device Data From File*/
+        if(buildDevFileName(devFilename, MAX_FILENAME_LENGTH) < 0){
+            fprintf(stderr, "%s: Error building device filename.\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        devFile = openDevFile(devFilename, "r");
+        if(devFile == NULL){
+            fprintf(stderr, "%s: Error opening device file.\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        numDevices = getDevices(devices, MASTER_MAXDEVICES, devFile);
+        if(numDevices <= 0){
+            fprintf(stderr, "%s: Error getting SW device list.\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        if(closeDevFile(devFile) < 0){
+            fprintf(stderr, "%s: Error closing device file.\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        devFile == NULL;
+        if(sortDevices(devices, numDevices) < 0){
+            fprintf(stderr, "%s: Error sorting SW device list.\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        if(findDevice(tgtSWAddress, &tgtDeviceInfo, devices, numDevices) < 0){
+            fprintf(stderr, "%s: Error finding SW device.\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+        
+    }
+
     return 0;
 
 }

@@ -24,8 +24,8 @@ test : testMain
 testMain : usermon.o testMain.o ../master/swMaster.o
 	$(CC) $(CFLAGS) usermon.o testMain.o ../master/swMaster.o -o testMain
 
-swChnMsg : swChnMsg.o ../com/SmartWall.o
-	$(CC) $(CFLAGS) swChnMsg.o ../com/SmartWall.o -o swChnMsg
+swChnMsg : swChnMsg.o ../com/SmartWall.o ../master/swMaster.o
+	$(CC) $(CFLAGS) swChnMsg.o ../com/SmartWall.o ../master/swMaster.o -o swChnMsg
 
 swls : swls.o usermon.o ../master/swMaster.o
 	$(CC) $(CFLAGS) swls.o usermon.o ../master/swMaster.o -o swls

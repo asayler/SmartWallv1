@@ -12,6 +12,185 @@
 #include "SmartWall.h"
 
 #define ERROR_VAL -1
+#define SUCCESS_VAL 0
+
+extern int strToMT(const char* typeStr, const size_t maxLength,
+                   msgType_t* type){
+
+    /* check input */
+    if(typeStr == NULL){
+        fprintf(stderr, "strToMT: 'typeStr' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+    if(maxLength <= 0){
+        fprintf(stderr, "strToMT: 'maxLength' must be > 0.\n");
+        return ERROR_VAL;
+    }
+    if(type == NULL){
+        fprintf(stderr, "strToMT: 'type' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* convert */
+    if(strncmp(typeStr, "SET", maxLength) == 0){
+        *type = SW_MSG_SET;
+        return SUCCESS_VAL;
+    }
+    else if(strncmp(typeStr, "REQUEST", maxLength) == 0){
+        *type = SW_MSG_REQUEST;
+        return SUCCESS_VAL;
+    }
+    else if(strncmp(typeStr, "QUERY", maxLength) == 0){
+        *type = SW_MSG_QUERY;
+        return SUCCESS_VAL;
+    }
+    else if(strncmp(typeStr, "REPORT", maxLength) == 0){
+        *type = SW_MSG_REPORT;
+        return SUCCESS_VAL;
+    }
+    else if(strncmp(typeStr, "ERROR", maxLength) == 0){
+        *type = SW_MSG_ERROR;
+        return SUCCESS_VAL;
+    }
+    else{
+        fprintf(stderr, "strToMT: Unrecognized Message Type: %s\n", typeStr);
+        return ERROR_VAL;
+    }
+
+    return SUCCESS_VAL;
+}
+
+extern int MTtoStr(char* typeStr, const size_t maxLength,
+                   const msgType_t* type){
+
+    /* check input */
+    if(typeStr == NULL){
+        fprintf(stderr, "MTtoStr: 'typeStr' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+    if(maxLength <= 0){
+        fprintf(stderr, "MTtoStr: 'maxLength' must be > 0.\n");
+        return ERROR_VAL;
+    }
+    if(type == NULL){
+        fprintf(stderr, "MTtoStr: 'type' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* convert */
+    if(*type == SW_MSG_SET){
+        strncpy(typeStr, "SET", maxLength);
+        typeStr[maxLength-1] = '\0';
+        return SUCCESS_VAL;
+    }
+    else if(*type == SW_MSG_REQUEST){
+        strncpy(typeStr, "REQUEST", maxLength);
+        typeStr[maxLength-1] = '\0';
+        return SUCCESS_VAL;
+    }
+    else if(*type == SW_MSG_QUERY){
+        strncpy(typeStr, "QUERY", maxLength);
+        typeStr[maxLength-1] = '\0';
+        return SUCCESS_VAL;
+    }
+    else if(*type == SW_MSG_REPORT){
+        strncpy(typeStr, "REPORT", maxLength);
+        typeStr[maxLength-1] = '\0';
+        return SUCCESS_VAL;
+    }
+    else if(*type == SW_MSG_ERROR){
+        strncpy(typeStr, "ERROR", maxLength);
+        typeStr[maxLength-1] = '\0';
+        return SUCCESS_VAL;
+    }
+    else{
+        fprintf(stderr, "MTtoStr: Unrecognized Message Type: 0x%"
+                PRIxMsgType "\n", *type);
+        return ERROR_VAL;
+    }
+
+    return SUCCESS_VAL;
+}
+
+extern int strToDT(const char* typeStr, const size_t maxLength,
+                   devType_t* type){
+    
+    /* check input */
+    if(typeStr == NULL){
+        fprintf(stderr, "strToDT: 'typeStr' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+    if(maxLength <= 0){
+        fprintf(stderr, "strToDT: 'maxLength' must be > 0.\n");
+        return ERROR_VAL;
+    }
+    if(type == NULL){
+        fprintf(stderr, "strToDT: 'type' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* convert */
+    if(strncmp(typeStr, "MASTER", maxLength) == 0){
+        *type = SW_TYPE_MASTER;
+        return SUCCESS_VAL;
+    }
+    else if(strncmp(typeStr, "OUTLET", maxLength) == 0){
+        *type = SW_TYPE_OUTLET;
+        return SUCCESS_VAL;
+    }
+    else if(strncmp(typeStr, "UNIVERSAL", maxLength) == 0){
+        *type = SW_TYPE_UNIVERSAL;
+        return SUCCESS_VAL;
+    }
+    else{
+        fprintf(stderr, "strToDT: Unrecognized Device Type: %s\n", typeStr);
+        return ERROR_VAL;
+    }
+
+    return SUCCESS_VAL;
+}
+
+extern int DTtoStr(char* typeStr, const size_t maxLength,
+                   const devType_t* type){
+
+    /* check input */
+    if(typeStr == NULL){
+        fprintf(stderr, "DTtoStr: 'typeStr' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+    if(maxLength <= 0){
+        fprintf(stderr, "DTtoStr: 'maxLength' must be > 0.\n");
+        return ERROR_VAL;
+    }
+    if(type == NULL){
+        fprintf(stderr, "DTtoStr: 'type' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* convert */
+    if(*type == SW_TYPE_MASTER){
+        strncpy(typeStr, "MASTER", maxLength);
+        typeStr[maxLength-1] = '\0';
+        return SUCCESS_VAL;
+    }
+    else if(*type == SW_TYPE_OUTLET){
+        strncpy(typeStr, "OUTLET", maxLength);
+        typeStr[maxLength-1] = '\0';
+        return SUCCESS_VAL;
+    }
+    else if(*type == SW_TYPE_UNIVERSAL){
+        strncpy(typeStr, "UNIVERSAL", maxLength);
+        typeStr[maxLength-1] = '\0';
+        return SUCCESS_VAL;
+    }
+    else{
+        fprintf(stderr, "DTtoStr: Unrecognized Device Type: 0x%16.16"
+                PRIxDevType "\n", *type);
+        return ERROR_VAL;
+    }
+
+    return SUCCESS_VAL;
+}
 
 extern swLength_t writeSWMsg(uint8_t* msg,
                              const swLength_t maxLength,

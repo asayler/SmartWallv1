@@ -370,7 +370,7 @@ extern int findDevice(const swAddress_t swAddress,
         return errorVal;
     }
     if(numDevices <= 0){
-        fprintf(stderr, "sortDevices: numDevices must be > 0.\n");
+        fprintf(stderr, "findDevices: numDevices must be > 0.\n");
         return errorVal;
     }
     
@@ -385,7 +385,9 @@ extern int findDevice(const swAddress_t swAddress,
                                               compSWDeviceEntry);
 
     /* Check Output and Copy Value If Appropriate*/
-    if(device == NULL){
+    if(tmpDev == NULL){
+        fprintf(stderr, "findDevices: Could not locate device with address "
+                "0x%4.4" PRIxSWAddr ".\n", swAddress);
         return errorVal;
     }
     else{
