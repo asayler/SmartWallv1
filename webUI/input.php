@@ -5,22 +5,26 @@ All active outlets:  <br />
 <?php
 
 //get outlet list from Andy's compiled swls.c program
-$b = shell_exec("cd /home/laura/senior/code/SmartWallv1/usermon && ./swls 2>&1");
 
-//extract 16digit hex values
-$UID_format = "/(0x\d{16})/";
-preg_match_all($UID_format, $b, $matches,PREG_PATTERN_ORDER);
-//print_r($matches);
+//change directory for relative path purposes
+chdir('/home/laura/senior/code/SmartWallv1/usermon');
+$raw = shell_exec("./swls -raw 2>&1");
 
-//extract UIDs
-$counter = 0; 
-foreach($matches[1] as $value) { 
-   if($counter%2 != 0){
-   $UIDs[] = $value;
-   }
-   $counter++;
+//initialize array $lookup
+//$lookup will hold hash of UID->array(other data)
+$lookup = array(); 
+
+$lines = explode("\n", $raw); //break up on newline characters
+foreach($lines as $line) {
+   $items = explode(" ", $line); //break up on spaces
+   $lookup[$items[6]] = array('swAdr' => $items[1], 'ipAdr' => $items[2], 'type' => $items[3], 'ch' => $items[4], 'ver' => $items[5]); 
+}   
+
+foreach($lookup as $key => $value) {
+   $UIDs[] = $key;
 }
-//print_r($UIDs);
+//print_r($UIDs); //debug
+
 ?>
 
 <!-- Print all UIDs in a selection form-->
@@ -41,14 +45,6 @@ foreach($matches[1] as $value) {
      echo "Outlet ".$outlet." is on/off";
    }
 ?>
-
-<!---
-<form action="onOff_test.php" method="post">
-Outlet: <input type="text" name="outletNum" />
-On/Off: <input type="text" name="onOff" />
-<input type="submit" />
-</form>
--->
 
 </body>
 </html>
