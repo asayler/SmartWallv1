@@ -36,3 +36,6 @@ extern int print_swDev(const struct SmartWallDev* dev);
 extern int print_swChanMsgBody(const struct SWChannelData* data,
                                const swLength_t maxNumChan,
                                const swLength_t maxDataLength);
+
+/* Function to check if input is a valid number in hex, octal, or decimal */
+extern int isnumeric(char* input);

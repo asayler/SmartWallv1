@@ -18,8 +18,8 @@ EXEC = swChnMsg swls
 .PHONY : all
 all : swChnMsg swls
 
-swChnMsg : swChnMsg.o ../com/SmartWall.o ../master/swMaster.o
-	$(CC) $(CFLAGS) swChnMsg.o ../com/SmartWall.o ../master/swMaster.o -o swChnMsg
+swChnMsg : swChnMsg.o ../com/SmartWall.o ../com/comTools.o ../master/swMaster.o
+	$(CC) $(CFLAGS) swChnMsg.o ../com/SmartWall.o ../com/comTools.o ../master/swMaster.o -o swChnMsg
 
 swls : swls.o usermon.o ../master/swMaster.o
 	$(CC) $(CFLAGS) swls.o usermon.o ../master/swMaster.o -o swls

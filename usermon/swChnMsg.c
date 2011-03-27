@@ -26,6 +26,7 @@
 #include <netdb.h>
 
 #include "../master/swMaster.h"
+#include "../com/comTools.h"
 
 #define SENDPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
 #define BUFLEN SW_MAX_MSG_LENGTH
@@ -55,7 +56,10 @@ int main(int argc, char *argv[]){
 
     /* Local Vars */
     enum OPTIONS mode;
-    unsigned long temp = 0;
+    unsigned long utemp = 0;
+    long temp = 0;
+    int i;
+    unsigned int j;
 
     /* Setup SW Vars */
     const devUID_t mySWUID = MYSWUID;
@@ -64,13 +68,14 @@ int main(int argc, char *argv[]){
     devType_t tgtSWType;
     const swAddress_t mySWAddress = MYSWADDRESS;
     swAddress_t tgtSWAddress;
-    groupID_t  tgtSWGroup;
     const msgScope_t msgScope = SW_SCP_CHANNEL;
     msgType_t msgType;
     swOpcode_t opcode;
     struct SWDeviceEntry* tgtDeviceEntry;
     struct SWDeviceEntry tgtDeviceInfo;
-    
+    struct SmartWallChannelHeader tgtChanInfo;
+    struct SWChannelEntry tgtChanEntries[SW_MAX_CHN];
+
     char devFilename[MAX_FILENAME_LENGTH]; 
     FILE* devFile = NULL;
     struct SWDeviceEntry devices[MASTER_MAXDEVICES];
@@ -100,24 +105,24 @@ int main(int argc, char *argv[]){
         mode = SEND;
         /* Parse and Check Input */
         /* Target Address */
-        temp = strtoul(argv[1], NULL, 0);
-        if(temp == 0){
+        utemp = strtoul(argv[1], NULL, 0);
+        if(utemp == 0){
             fprintf(stderr, "%s: Could not convert 1st arg to long int.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        if(temp == ULONG_MAX){
+        if(utemp == ULONG_MAX){
             perror(PGMNAME);
             fprintf(stderr, "%s: 1st arg out of range.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        if(temp > SWADDRESS_MAX){
+        if(utemp > SWADDRESS_MAX){
             fprintf(stderr, "%s: Target Address out of range.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        tgtSWAddress = temp;
+        tgtSWAddress = utemp;
         /* Message Type */
         if(strToMT(argv[2], strlen(argv[2]), &msgType) < 0){
             fprintf(stderr, "%s: Invalid Message Type in 2nd arg.\n",
@@ -131,48 +136,74 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
         /* Opcode */
-        temp = strtoul(argv[4], NULL, 0);
-        if(temp == 0){
+        utemp = strtoul(argv[4], NULL, 0);
+        if(utemp == 0){
             fprintf(stderr, "%s: Could not convert 4th arg to long int.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        if(temp == ULONG_MAX){
+        if(utemp == ULONG_MAX){
             perror(PGMNAME);
             fprintf(stderr, "%s: 4th arg out of range.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        if(temp > SWOPCODE_MAX){
+        if(utemp > SWOPCODE_MAX){
             fprintf(stderr, "%s: Opcode out of range.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        opcode = temp;
+        opcode = utemp;
 
         /* Argument Size */
-        temp = strtoul(argv[5], NULL, 0);
-        if(temp == 0){
+        utemp = strtoul(argv[5], NULL, 0);
+        if(utemp == 0){
             fprintf(stderr, "%s: Could not convert 5th arg to long int.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        if(temp == ULONG_MAX){
+        if(utemp == ULONG_MAX){
             perror(PGMNAME);
             fprintf(stderr, "%s: 5th arg out of range.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        if(temp > (SW_MAX_MSG_LENGTH - sizeof(struct SmartWallHeader) -
-                   sizeof(struct SmartWallChannelHeader) -
-                   sizeof(struct SmartWallChannelTop))){
-            fprintf(stderr, "%s: Arg Size exceeds max possbile arg bytes.\n",
+        if(utemp > (SW_MAX_MSG_LENGTH - sizeof(struct SmartWallHeader) -
+                    sizeof(struct SmartWallChannelHeader) -
+                    (sizeof(struct SmartWallChannelTop) * ((argc - 6) / 2 )))){
+            fprintf(stderr, "%s: Arg Size exceeds max possible arg bytes.\n",
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        opcode = temp;
+        opcode = utemp;
+
         /* Loop Through Args */
-        
+        for(i = 6; i < argc; i++){
+            if(!isnumeric(argv[i])){
+                fprintf(stderr, "%s: Arg %d is not a number.\n",
+                        PGMNAME, i);
+                exit(EXIT_FAILURE);
+            }
+            if(i % 2){
+                /* Channel Number */
+                temp = strtol(argv[i], NULL, 0);
+                if(temp == LONG_MIN){
+                    perror(PGMNAME);
+                    fprintf(stderr,  "%s: Arg %d out of range.\n",
+                            PGMNAME, i);
+                    exit(EXIT_FAILURE);
+                }
+                if(temp == LONG_MAX){
+                    perror(PGMNAME);
+                    fprintf(stderr, "%s: Arg %d out of range.\n",
+                            PGMNAME, i);
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else{
+                /* Channel Argument */
+            }
+        }
     }
     
     
@@ -213,6 +244,9 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
         memcpy(&tgtDeviceInfo, tgtDeviceEntry, sizeof(tgtDeviceInfo));
+        
+
+        
         
     }
 
