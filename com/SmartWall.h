@@ -24,6 +24,7 @@
 
 /* Constants */
 #define SW_MAX_MSG_LENGTH 1024 /* In Bytes */
+#define SW_MAX_CHN 60 /* Max number of channels on a single device */
 
 /* Data Types */
 #define PRIipAddr  PRIu32

@@ -17,7 +17,7 @@
 
 #include "comTools.h"
 
-/* Local Prtotypes */
+/* Local Prototypes */
 /* print line of payload data (avoid printing binary data) */
 static int print_hex_ascii_line(const uint8_t *payload, int len, int offset);
 /* print line of payload data (binary data only) */
@@ -266,4 +266,42 @@ static int print_swChanHeader(const struct SmartWallChannelHeader* header){
                    header->dataLength);
 
     return cnt;
+}
+
+/* Function to check if input is a valid number in hex, octal, or decimal */
+extern int isnumeric(char* input){
+ 
+    /* Local Vars */
+    unsigned int i = 0;
+    unsigned int j = 0;
+    
+    /* read through leading whitespace */
+    while(isspace(input[i])){
+        i++;
+    }
+
+    /* Loop through input chars and check for legal input */
+    for(j = i; j < strlen(input); j++){
+        /* Check for legal numeric input */
+        if(!isdigit(input[j])){
+            /* Not digit */
+            /* Check for legal negative sign */
+            if((j != i) || (input[j] != '-') || (j == (strlen(input) - 1))){
+                /* Not negative */
+                /* Check for legal hex indicator */
+                if((j != i+1) || (input[i] != '0') ||
+                   (j == (strlen(input) - 1)) ||
+                   (((input[j] != 'x') && (input[j] != 'X')))){
+                    /* Not hex */
+                    return 0;
+                }
+            }
+            else{
+                /* Negative */
+                i++;
+            }
+        }
+    }
+    
+    return 1;
 }
