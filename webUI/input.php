@@ -1,3 +1,7 @@
+<?php
+   error_reporting(0); //suppress error reports. uncomment when problems
+?>
+
 <html>
 <body>
 
@@ -26,24 +30,60 @@ foreach($lookup as $key => $value) {
 //print_r($UIDs); //debug
 
 ?>
+<?php
+//populate $aliases hash from aliases.txt 
+chdir('/home/laura/senior/code/SmartWallv1/webUI');
+$handle = fopen("./aliases.txt","r") or exit("Unable to open file.");
+while(!feof($handle)) {
+   $file_line = fgets($handle);
+   $file_bits = explode(' ', $file_line);
+   $aliases[$file_bits[0]] = $file_bits[1];
+}
+fclose($handle);
+
+foreach($UIDs as $value) {
+   //check if this UID has an alias
+   if(array_key_exists($value, $aliases)){
+      $aliased_UIDs[] = $aliases[$value];
+   } else {
+      $aliased_UIDs[] = $value;
+   }
+}
+chdir('/var/www/');
+?>
 
 <!-- Print all UIDs in a selection form-->
-<form action="<?php echo $PHP_SELF; ?>" method="get">
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
   <select name="outlets" size="<?php echo count($UIDs); ?>">
     <?php
-       foreach($UIDs as $value) {
+    foreach($aliased_UIDs as $value) {
        echo "<option value=$value>$value</option>";
-       }
+    }
+
     ?>
   </select>
   <input type="submit" value="Get Status" name="submit">
 </form>
 
+
 <?php
-   if (isset($_GET['submit'])){
-     $outlet = $_GET["outlets"];
-     echo "Outlet ".$outlet." is on/off";
+//Notice button press of submit, display outlet info
+if (isset($_GET['submit'])){
+   if($_GET["outlets"] != NULL) { //check that an outlet has been selected
+   $outlet = $_GET["outlets"]; //selected outlet
+   chdir('/home/laura/senior/code/SmartWallv1/usermon');
+
+   //convert possibly aliased UID into normal UID
+
+   //query for device state 
+   // ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> <SW Opcode> 
+   //        <Chn Arg Size (bytes)> <Chn#> <Chn Arg> ...               
+//   $temp = shell_exec("./swChnMsg $lookup[$outlet][swAdr] 0x03 $lookup[$outlet]['type']");
+   echo "Outlet ".$outlet." is on/off";
+   } else {
+      echo "First, select an outlet.\n";
    }
+}
 ?>
 
 </body>
