@@ -269,9 +269,11 @@ static int print_swChanHeader(const struct SmartWallChannelHeader* header){
 }
 
 /* Function to check if input is a valid number in hex, octal, or decimal */
+enum numType{OCTAL, DECIMAL, HEX};
 extern int isnumeric(char* input){
  
     /* Local Vars */
+    enum numType type;
     unsigned int i = 0;
     unsigned int j = 0;
     
@@ -280,25 +282,73 @@ extern int isnumeric(char* input){
         i++;
     }
 
+    /* All whitespace or empty */
+    if(input[i] == '\0'){
+        return 0;
+    }
+
+    /* allow negative sign if present */
+    if(input[i] == '-'){
+        i++;
+    }
+
+    /* Lone '-' */
+    if(input[i] == '\0'){
+        return 0;
+    }
+
+    /* determine mode */
+    if(input[i] == '0'){
+        i++;
+        if(input[i] != '\0'){
+            if(input[i] == 'x' || input[i] == 'X'){
+                i++;
+                type = HEX;
+            }
+            else{
+                type = OCTAL;
+            }
+        }
+    }
+    else{
+        type = DECIMAL;
+    }
+
     /* Loop through input chars and check for legal input */
     for(j = i; j < strlen(input); j++){
         /* Check for legal numeric input */
         if(!isdigit(input[j])){
             /* Not digit */
-            /* Check for legal negative sign */
-            if((j != i) || (input[j] != '-') || (j == (strlen(input) - 1))){
-                /* Not negative */
-                /* Check for legal hex indicator */
-                if((j != i+1) || (input[i] != '0') ||
-                   (j == (strlen(input) - 1)) ||
-                   (((input[j] != 'x') && (input[j] != 'X')))){
-                    /* Not hex */
+            switch(type){
+            case OCTAL:
+                {
                     return 0;
+                    break;
                 }
-            }
-            else{
-                /* Negative */
-                i++;
+            case DECIMAL:
+                {
+                    return 0;
+                    break;
+                }
+            case HEX:
+                {
+                    if(isalpha(input[j])){
+                        if((toupper(input[j]) < 'A') ||
+                           (toupper(input[j]) > 'F')){
+                            return 0;
+                        }
+                    }
+                    else{
+                        return 0;
+                    }
+                    break;
+                }
+            default:
+                {
+                    fprintf(stderr, "isnumeric: Unhandeled number type!\n");
+                    return 0;
+                    break;
+                }
             }
         }
     }
