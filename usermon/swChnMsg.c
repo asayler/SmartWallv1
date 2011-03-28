@@ -59,7 +59,8 @@ int main(int argc, char *argv[]){
     unsigned long utemp = 0;
     long temp = 0;
     int i;
-    unsigned int j;
+    unsigned int j, cnt;
+    cnt = 0;
 
     /* Setup SW Vars */
     const devUID_t mySWUID = MYSWUID;
@@ -73,8 +74,14 @@ int main(int argc, char *argv[]){
     swOpcode_t opcode;
     struct SWDeviceEntry* tgtDeviceEntry;
     struct SWDeviceEntry tgtDeviceInfo;
-    struct SmartWallChannelHeader tgtChanInfo;
-    struct SWChannelEntry tgtChanEntries[SW_MAX_CHN];
+    
+    long int args[SW_MAX_CHN];
+
+    struct SWChannelEntry tgtChnEntries[SW_MAX_CHN];
+    memset(&tgtChnEntries, 0, sizeof(tgtChnEntries));
+    struct SWChannelData tgtChnData;
+    memset(&tgtChnData, 0, sizeof(tgtChnData));
+    tgtChnData.data = tgtChnEntries;
 
     char devFilename[MAX_FILENAME_LENGTH]; 
     FILE* devFile = NULL;
@@ -91,6 +98,7 @@ int main(int argc, char *argv[]){
     unsigned int slen = sizeof(si_tgt);
 
     /* Handel Input */
+
     if(argc < 8){
         /* Must have at least 8 args (name + 6) */
         mode = ERROR;
@@ -175,42 +183,91 @@ int main(int argc, char *argv[]){
                     PGMNAME);
             exit(EXIT_FAILURE);
         }
-        opcode = utemp;
+        /* Limit to long ints */
+        /* TODO: Remove this limit and allow arbitrary sizes*/
+        if(utemp > sizeof(long int)){
+            fprintf(stderr, "%s: Arg Size currently limited to "
+                    "sizeof(long int) which is %lu bytes.\n",
+                    PGMNAME, sizeof(long int));
+            exit(EXIT_FAILURE);
+        }
+        tgtChnData.header.dataLength = sizeof(long int);
 
         /* Loop Through Args */
+        cnt = 0;
         for(i = 6; i < argc; i++){
-            if(!isnumeric(argv[i])){
-                fprintf(stderr, "%s: Arg %d is not a number.\n",
-                        PGMNAME, i);
-                exit(EXIT_FAILURE);
-            }
-            if(i % 2){
+            if((i % 2) == 0){
                 /* Channel Number */
-                temp = strtol(argv[i], NULL, 0);
-                if(temp == LONG_MIN){
-                    perror(PGMNAME);
-                    fprintf(stderr,  "%s: Arg %d out of range.\n",
+                if(!isnumeric(argv[i])){
+                    fprintf(stderr, "%s: Arg %d is not a number.\n",
                             PGMNAME, i);
                     exit(EXIT_FAILURE);
                 }
-                if(temp == LONG_MAX){
+                utemp = strtoul(argv[i], NULL, 0);
+                if(utemp == ULONG_MAX){
                     perror(PGMNAME);
                     fprintf(stderr, "%s: Arg %d out of range.\n",
                             PGMNAME, i);
                     exit(EXIT_FAILURE);
                 }
+                if(utemp > (SW_MAX_CHN - 1)){
+                    fprintf(stderr, "%s: Arg %d exceeds max chn number.\n",
+                            PGMNAME, i);
+                    exit(EXIT_FAILURE);
+                }
+                if(cnt < SW_MAX_CHN){
+                    tgtChnData.header.numChan++;
+                    tgtChnData.data[cnt].chanTop.chanNum = utemp;
+                    cnt++;
+                }
+                else{
+                    fprintf(stderr, "%s: Max channels exceeded. " 
+                            "Ignoring Arg %d and all following args.\n",
+                            PGMNAME, i);
+                    break;
+                }
             }
             else{
                 /* Channel Argument */
+                if((msgType == SW_MSG_SET) || (msgType == SW_MSG_REPORT) ||
+                   (msgType == SW_MSG_ERROR)){
+                    /* Has Argument */
+                    if(!isnumeric(argv[i])){
+                        fprintf(stderr, "%s: Arg %d is not a number.\n",
+                                PGMNAME, i);
+                        exit(EXIT_FAILURE);
+                    }
+                    args[cnt] = strtoul(argv[i], NULL, 0);
+                    if(args[cnt] == LONG_MIN){
+                        perror(PGMNAME);
+                        fprintf(stderr,  "%s: Arg %d under range.\n",
+                                PGMNAME, i);
+                        exit(EXIT_FAILURE);
+                    }
+                    if(args[cnt] == LONG_MAX){
+                        perror(PGMNAME);
+                        fprintf(stderr, "%s: Arg %d over range.\n",
+                                PGMNAME, i);
+                        exit(EXIT_FAILURE);
+                    }
+                }
+                else {
+                    /* Null Argument */
+                    args[cnt] = 0;
+                }
+                tgtChnData.data[cnt].chanValue = &args[cnt];
             }
         }
     }
     
-    
+    /* Execute Mode */
+
     if((mode == ERROR) | (mode == HELP)){
+        /* TODO: Remove argument long int size restriction */
         fprintf(stderr, "%s: Usage Format\n"
                 "<SW Dest Address> <SW Msg Type> <SW Tgt Type> <SW Opcode> "
-                "<Chn Arg Size (bytes)> <Chn#> <Chn Arg> ...\n", PGMNAME);
+                "<Chn Arg Size (bytes)> <Chn#> <Chn Arg (long int)> ...\n",
+                PGMNAME);
     }
     
     if(mode == SEND){
