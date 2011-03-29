@@ -29,7 +29,6 @@
 #include "../com/comTools.h"
 
 #define SENDPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
-#define BUFLEN SW_MAX_MSG_LENGTH
 
 #define MYSWADDRESS 0x0001
 
@@ -66,19 +65,21 @@ int main(int argc, char *argv[]){
     struct SWChannelData tgtChnData;
     memset(&tgtChnData, 0, sizeof(tgtChnData));
     tgtChnData.data = tgtChnEntries;
+    uint8_t msg[SW_MAX_MSG_LENGTH];
+    memset(&msg, 0, sizeof(msg));
+    swLength_t msgLen = 0;
+    uint8_t body[SW_MAX_BODY_LENGTH];
+    memset(&body, 0, sizeof(body));
+    swLength_t bodyLen = 0;
 
     /* Setup My SW Vars */
     const swAddress_t mySWAddress = MYSWADDRESS;
     struct SWDeviceEntry* myDeviceEntry = NULL;
-    struct SmartWallDev myDeviceInfo;
-    memset(&myDeviceInfo, 0, sizeof(myDeviceInfo));
     
     /* Setup Target SW vars */
     devType_t tgtSWType = 0;
     swAddress_t tgtSWAddress = 0;
     struct SWDeviceEntry* tgtDeviceEntry = NULL;
-    struct SmartWallDev tgtDeviceInfo;
-    memset(&tgtDeviceInfo, 0, sizeof(tgtDeviceInfo));
  
     /* Setup SW File Vras */
     char devFilename[MAX_FILENAME_LENGTH] = "";
@@ -88,8 +89,7 @@ int main(int argc, char *argv[]){
     int numDevices = 0;
 
     /* Setup Network Vars */
-    uint8_t buf[BUFLEN];
-    memset(&buf, 0, sizeof(buf));
+    
 
     /* Setup Socket Vars */
     struct sockaddr_in si_me, si_tgt;
@@ -195,6 +195,7 @@ int main(int argc, char *argv[]){
 
         /* Loop Through Args */
         cnt = 0;
+        tgtChnData.header.numChan = 0;
         for(i = 6; i < argc; i++){
             if((i % 2) == 0){
                 /* Channel Number */
@@ -218,7 +219,9 @@ int main(int argc, char *argv[]){
                 if(cnt < SW_MAX_CHN){
                     tgtChnData.header.numChan++;
                     tgtChnData.data[cnt].chanTop.chanNum = utemp;
-                    cnt++;
+                    fprintf(stderr, "%d: utemp = %lu\n", cnt, utemp);
+                    fprintf(stderr, "%d: chanNum = %" PRInumChan "\n", cnt,
+                            tgtChnData.data[cnt].chanTop.chanNum);
                 }
                 else{
                     fprintf(stderr, "%s: Max channels exceeded. " 
@@ -256,6 +259,7 @@ int main(int argc, char *argv[]){
                     args[cnt] = 0;
                 }
                 tgtChnData.data[cnt].chanValue = &args[cnt];
+                cnt++;
             }
         }
     }
@@ -297,21 +301,45 @@ int main(int argc, char *argv[]){
         }
         /* Lookup My Device Info */
         myDeviceEntry = findDevice(mySWAddress, devices, numDevices);
-        if(tgtDeviceEntry == NULL){
-            fprintf(stderr, "%s: Error finding SW device with address 0x"
-                    PRIxSWAddr ".\n", PGMNAME);
+        if(myDeviceEntry == NULL){
+            fprintf(stderr, "%s: Error finding my SW device with address "
+                    "0x%4.4" PRIxSWAddr ".\n", PGMNAME, mySWAddress);
             exit(EXIT_FAILURE);
         }
         /* Lookup Target Device Info */
         tgtDeviceEntry = findDevice(tgtSWAddress, devices, numDevices);
         if(tgtDeviceEntry == NULL){
-            fprintf(stderr, "%s: Error finding SW device with address 0x"
-                    PRIxSWAddr ".\n", PGMNAME);
+            fprintf(stderr, "%s: Error finding tgt SW device with address "
+                    "0x%4.4" PRIxSWAddr ".\n", PGMNAME, tgtSWAddress);
             exit(EXIT_FAILURE);
         }
         
-        /* Break Out Device Entry */
-        
+        /* Print Test Data */
+        fprintf(stderr, "Num Channels Effected: %d\n",
+                tgtChnData.header.numChan);
+        for(i = 0; i < tgtChnData.header.numChan; i++){
+            fprintf(stderr, "Entry %d: args[%d] = %ld\n", i, i, args[i]);
+            fprintf(stderr, "Entry %d: Chn %" PRInumChan " = %ld\n", i,
+                    tgtChnData.data[i].chanTop.chanNum,
+                    *((long int*) tgtChnData.data[i].chanValue));
+        }
+
+        /* Assemble Message Body */
+        bodyLen = writeSWChannelBody(body, SW_MAX_BODY_LENGTH, &tgtChnData);
+        if(bodyLen == SWLENGTH_MAX){
+            fprintf(stderr, "%s: Error generating message body.\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }
+
+        /* Assemble Message */
+        msgLen = writeSWMsg(msg, SW_MAX_MSG_LENGTH, &(myDeviceEntry->devInfo),
+                            &(tgtDeviceEntry->devInfo), tgtSWType, msgScope,
+                            msgType, opcode, body, bodyLen);
+        if(msgLen == SWLENGTH_MAX){
+            fprintf(stderr, "%s: Error generating message.\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }        
+                
     }
 
     return 0;

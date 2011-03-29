@@ -22,9 +22,9 @@
 #include <stdio.h>
 #include <string.h>
 
-
 /* Constants */
 #define SW_MAX_MSG_LENGTH 1024 /* In Bytes */
+#define SW_MAX_BODY_LENGTH (1024 - sizeof(struct SmartWallHeader))
 #define SW_MAX_CHN 60 /* Max number of channels on a single device */
 
 /* Data Types */
@@ -82,6 +82,7 @@ typedef uint16_t swLength_t;
 #define PRIxSWLength PRIx16
 #define SCNswLength  SCNu16
 #define SCNxSWLength SCNx16
+#define SWLENGTH_MAX UINT16_MAX
 
 typedef uint8_t numChan_t;
 #define PRInumChan  PRIu8
@@ -186,6 +187,8 @@ struct SmartWallDev {
 };
 
 /* Public Functions */
+/* Function to compose SW Message */
+/* Returns: Message length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t writeSWMsg(uint8_t* msg,
                              const swLength_t maxLength,
                              const struct SmartWallDev* source,
@@ -197,6 +200,8 @@ extern swLength_t writeSWMsg(uint8_t* msg,
                              const void* body,
                              const swLength_t bodyLength);
 
+/* Function to read SW Message */
+/* Returns: Message length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t readSWMsg(const uint8_t* msg,
                             const swLength_t msgLength,
                             struct SmartWallDev* source,
@@ -209,10 +214,14 @@ extern swLength_t readSWMsg(const uint8_t* msg,
                             swLength_t* bodyLength,
                             const swLength_t maxBodyLength);
 
+/* Function to compose SW Channel Body */
+/* Returns: Body length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t writeSWChannelBody(uint8_t* msgBody,
                                      const swLength_t maxLength,
                                      const struct SWChannelData* data); 
 
+/* Function to read SW Channel Body */
+/* Returns: Body length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t readSWChannelBody(const uint8_t* msgBody,
                                     const swLength_t bodyLength,
                                     struct SWChannelData* data,

@@ -161,13 +161,21 @@ int main(int argc, char* argv[]){
                             &targetType, &msgScope, &msgType, &opcode,
                             msgBody, &bodySize,
                             SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
         
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
                                      COM_TEST_NUMCHN,
                                      COM_TEST_DATASIZE);
-
-        /* Check Output */
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWChannelBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
 
         /* Print Message */
         fprintf(stdout, "-----Source  Device-----\n");
@@ -210,42 +218,80 @@ int main(int argc, char* argv[]){
                             &targetType, &msgScope, &msgType, &opcode,
                             msgBody, &bodySize,
                             SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
-        
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }        
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
                                      COM_TEST_NUMCHN,
                                      COM_TEST_DATASIZE);
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWChannelBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
 
         /* Write Message */     
         bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
                                              sizeof(struct SmartWallHeader)),
                                       &data);
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: writeSWChannrlBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }        
         msgSize = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
                              &source, &destination,
                              targetType, msgScope, msgType, opcode,
                              msgBody, bodySize);
-     
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: writeSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
+
         /* Read Written Message */
         msgSize = readSWMsg(msg, msgSize,
                             &source, &destination,
                             &targetType, &msgScope, &msgType, &opcode,
                             msgBody, &bodySize,
                             SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
-        
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
                                      COM_TEST_NUMCHN,
                                      COM_TEST_DATASIZE);
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWChannelBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
 
         /* Write Message */
         bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
                                              sizeof(struct SmartWallHeader)),
                                       &data);
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: writeSWChannelBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
         msgSize = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
                              &source, &destination,
                              targetType, msgScope, msgType, opcode,
                              msgBody, bodySize);
-     
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: writeSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
+
         /* Print Output */
         fprintf(stdout, "msgSize: %" PRIswLength "\n",
                 msgSize);

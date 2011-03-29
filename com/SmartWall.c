@@ -218,20 +218,20 @@ extern swLength_t writeSWMsg(uint8_t* msg,
     /* Check msg */
     if(msg == NULL){
         fprintf(stderr, "writeSWMsg: Input 'msg' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     /* Check Body */
     if(bodyLength > 0){
-        if(bodyLength > maxLength){
+        if(bodyLength > maxLength - sizeof(struct SmartWallHeader)){
             fprintf(stderr, "writeSWMsg Error: "
                     "bodyLength greater than max!\n");
-            return ERROR_VAL;
+            return SWLENGTH_MAX;
         }
         else {
             if(body == NULL){
                 fprintf(stderr, "writeSWMsg: "
                         "Input 'body' must not be null!\n");
-                return ERROR_VAL;
+                return SWLENGTH_MAX;
             }
         }
     }
@@ -240,17 +240,17 @@ extern swLength_t writeSWMsg(uint8_t* msg,
         if(destination != NULL){
             if(source->groupID != destination->groupID){
                 fprintf(stderr, "writeSWMsg: groupID mismatch!\n");
-                return ERROR_VAL;
+                return SWLENGTH_MAX;
             }
         }
         else {
             fprintf(stderr, "writeSWMsg: destination must not be null!\n");
-            return ERROR_VAL;
+            return SWLENGTH_MAX;
         }
     }
     else {
         fprintf(stderr, "writeSWMsg: source must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
         
     /* Calculate Length */
@@ -261,7 +261,7 @@ extern swLength_t writeSWMsg(uint8_t* msg,
     /* Check Length Against Max */
     if(calcLength > maxLength){
         fprintf(stderr, "writeSWMsg Error: Length greater than max!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     /* Assemble SW Header */
@@ -294,7 +294,7 @@ extern swLength_t writeSWMsg(uint8_t* msg,
         fprintf(stderr, "writeMsg Error: calcLength not equal to length !\n");
 	fprintf(stderr, "calcLength: %" PRIswLength "\n", calcLength);
 	fprintf(stderr, "length: %" PRIswLength "\n", length);
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     return length;
@@ -316,13 +316,13 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
     if(msgBody == NULL){
         fprintf(stderr, "writeSWChannelBody: "
                 "Input 'msgBody' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     /* Check Data */
     if(data == NULL){
         fprintf(stderr, "writeSWChannelBody: "
                 "data must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     
     /* Calculate Length */
@@ -335,7 +335,7 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
     if(calcLength > maxLength){
         fprintf(stderr, "writeSWChannelBody: "
                 "Length greater than max!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     /* Zero Length */
@@ -350,7 +350,7 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
     if(data->data == NULL){
         fprintf(stderr,
                 "writeSWChannelBody: data->data must not be NULL!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     /* Copy Data to Msg*/
@@ -364,7 +364,7 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
             fprintf(stderr,
                     "writeSWChannelBody: "
                     "chanValue must not be NULL!\n");
-            return ERROR_VAL;
+            return SWLENGTH_MAX;
         }
         /* Copy chanValue */
         tmpLength = (data->header).dataLength;
@@ -378,7 +378,7 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
                 "calcLength not equal to length !\n");
 	fprintf(stderr, "calcLength: %" PRIswLength "\n", calcLength);
 	fprintf(stderr, "length: %" PRIswLength "\n", length);
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     return length;
@@ -410,36 +410,36 @@ extern swLength_t readSWMsg(const uint8_t* msg,
     /* Check Input */
     if(msg == NULL){
         fprintf(stderr, "readSWMsg: Input 'msg' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     if(source == NULL){
         fprintf(stderr, "readSWMsg: source must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     if(destination == NULL){
         fprintf(stderr, "readSWMsg: destination must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }    
     if(targetType == NULL){
         fprintf(stderr, "readSWMsg: 'targetType' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     if(msgScope == NULL){
         fprintf(stderr, "readSWMsg: 'msgScope' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     if(msgType == NULL){
         fprintf(stderr, "readSWMsg: 'msgType' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     if(opcode == NULL){
         fprintf(stderr, "readSWMsg: 'opcode' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     if(maxBodyLength != 0){
         if(body == NULL){
             fprintf(stderr, "readSWMsg: data must not be null!\n");
-            return ERROR_VAL;
+            return SWLENGTH_MAX;
         }
     }
 
@@ -449,7 +449,7 @@ extern swLength_t readSWMsg(const uint8_t* msg,
     /* Extract SW Header */
     if((size_t)(msgLength - offset) < sizeof(swHeader)){
         fprintf(stderr, "readSWMsg: msg too small to contain swHeader!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     else{
         /* Copy SW Header from Msg */
@@ -462,7 +462,7 @@ extern swLength_t readSWMsg(const uint8_t* msg,
     calcLength = swHeader.totalLength;
     if(msgLength != calcLength){
         fprintf(stderr, "readSWMsg: msg does not match declared size!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     /* Setup Output Device Structs and Data */
@@ -481,7 +481,7 @@ extern swLength_t readSWMsg(const uint8_t* msg,
     /* Check Body Size */
     if((size_t)(msgLength - offset) > maxBodyLength){
         fprintf(stderr, "readSWMsg: Body length exceeds maxBodyLength!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     else{
         /* Copy Msg Body */
@@ -509,11 +509,11 @@ extern swLength_t readSWChannelBody(const uint8_t* msgBody,
     if(msgBody == NULL){
         fprintf(stderr, "readSWChannelBody: "
                 "Input 'msgBody' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     if(data == NULL){
         fprintf(stderr, "readSWChannelBody: 'data' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     /* Zero Offset */
@@ -523,7 +523,7 @@ extern swLength_t readSWChannelBody(const uint8_t* msgBody,
     if((size_t)(bodyLength - offset) < sizeof(data->header)){
         fprintf(stderr, "readSWChannelBody: "
                 "'msgBody' too small to contain channel header!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     else{
         /* Copy Chan Header from Msg */
@@ -535,17 +535,17 @@ extern swLength_t readSWChannelBody(const uint8_t* msgBody,
     /* Check Limits */
     if((data->header).numChan > maxNumChan){
         fprintf(stderr, "readSWChannelBody: 'numChan' exceeds max!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
     if((data->header).dataLength > maxDataLength){
         fprintf(stderr, "readSWChannelBody: 'dataLength' exceeds max!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     /* Check data Pointer */
     if(data->data == NULL){
         fprintf(stderr, "readSWChannelBody: 'data->data' must not be null!\n");
-        return ERROR_VAL;
+        return SWLENGTH_MAX;
     }
 
     /* Extract Chan Data */
@@ -558,7 +558,7 @@ extern swLength_t readSWChannelBody(const uint8_t* msgBody,
         if(data->data[i].chanValue == NULL){
             fprintf(stderr, "readSWChannelBody: "
                     "'chanValue' must not be null!\n");
-            return ERROR_VAL;
+            return SWLENGTH_MAX;
         }
         /* Copy chanValue */
         tmpLength = (data->header).dataLength;
