@@ -109,14 +109,14 @@ int main(int argc, char* argv[]){
         data.data = dataEntries;
         
         source.version = COM_TEST_SWVERSION;
-        source.address = COM_TEST_SADDR;
+        source.swAddr = COM_TEST_SADDR;
         source.groupID = COM_TEST_GID;
-        source.types = COM_TEST_STYPES;
+        source.devTypes = COM_TEST_STYPES;
         
         destination.version = COM_TEST_SWVERSION;
-        destination.address = COM_TEST_DADDR;
+        destination.swAddr = COM_TEST_DADDR;
         destination.groupID = COM_TEST_GID;
-        destination.types = COM_TEST_DTYPES;
+        destination.devTypes = COM_TEST_DTYPES;
         
         bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
                                              sizeof(struct SmartWallHeader)),

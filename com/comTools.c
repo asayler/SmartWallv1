@@ -90,9 +90,10 @@ extern int print_swDev(const struct SmartWallDev* dev){
 
     /* Print */
     cnt += fprintf(stdout, "version: 0x%2.2" PRIxSWVer "\n", dev->version);
-    cnt += fprintf(stdout, "address: 0x%4.4" PRIxSWAddr "\n", dev->address);
+    cnt += fprintf(stdout, "address: 0x%4.4" PRIxSWAddr "\n", dev->swAddr);
     cnt += fprintf(stdout, "groupID: 0x%2.2" PRIxGrpID "\n", dev->groupID);
-    cnt += fprintf(stdout, "types:   0x%16.16" PRIxDevType "\n", dev->types);
+    cnt += fprintf(stdout, "types:   0x%16.16" PRIxDevType "\n",
+                   dev->devTypes);
 
     return cnt;
 }

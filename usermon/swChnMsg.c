@@ -31,12 +31,7 @@
 #define SENDPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
 #define BUFLEN SW_MAX_MSG_LENGTH
 
-#define MYSWUID 0x0001000000000001
-#define MYSWGROUP 0x01
 #define MYSWADDRESS 0x0001
-#define MYSWVER SW_VERSION
-#define MYSWTYPE SW_TYPE_MASTER | SW_TYPE_UNIVERSAL
-#define MYSWCHAN 0x00
 
 #define PGMNAME "swChnMsg"
 
@@ -57,39 +52,44 @@ int main(int argc, char *argv[]){
     /* Local Vars */
     enum OPTIONS mode;
     unsigned long utemp = 0;
-    long temp = 0;
-    int i;
-    unsigned int j, cnt;
-    cnt = 0;
+    int i = 0;
+    unsigned int cnt = 0;
 
-    /* Setup SW Vars */
-    const devUID_t mySWUID = MYSWUID;
-    const swVersion_t  mySWVersion = MYSWVER;
-    const devType_t  mySWType    = MYSWTYPE;
-    devType_t tgtSWType;
-    const swAddress_t mySWAddress = MYSWADDRESS;
-    swAddress_t tgtSWAddress;
+    /* Setup SW Message Vars */
     const msgScope_t msgScope = SW_SCP_CHANNEL;
-    msgType_t msgType;
-    swOpcode_t opcode;
-    struct SWDeviceEntry* tgtDeviceEntry;
-    struct SWDeviceEntry tgtDeviceInfo;
-    
+    msgType_t msgType = 0;
+    swOpcode_t opcode = 0;
     long int args[SW_MAX_CHN];
-
+    memset(&args, 0, sizeof(args));
     struct SWChannelEntry tgtChnEntries[SW_MAX_CHN];
     memset(&tgtChnEntries, 0, sizeof(tgtChnEntries));
     struct SWChannelData tgtChnData;
     memset(&tgtChnData, 0, sizeof(tgtChnData));
     tgtChnData.data = tgtChnEntries;
 
-    char devFilename[MAX_FILENAME_LENGTH]; 
+    /* Setup My SW Vars */
+    const swAddress_t mySWAddress = MYSWADDRESS;
+    struct SWDeviceEntry* myDeviceEntry = NULL;
+    struct SmartWallDev myDeviceInfo;
+    memset(&myDeviceInfo, 0, sizeof(myDeviceInfo));
+    
+    /* Setup Target SW vars */
+    devType_t tgtSWType = 0;
+    swAddress_t tgtSWAddress = 0;
+    struct SWDeviceEntry* tgtDeviceEntry = NULL;
+    struct SmartWallDev tgtDeviceInfo;
+    memset(&tgtDeviceInfo, 0, sizeof(tgtDeviceInfo));
+ 
+    /* Setup SW File Vras */
+    char devFilename[MAX_FILENAME_LENGTH] = "";
     FILE* devFile = NULL;
     struct SWDeviceEntry devices[MASTER_MAXDEVICES];
+    memset(&devices, 0, sizeof(devices));
     int numDevices = 0;
 
     /* Setup Network Vars */
     uint8_t buf[BUFLEN];
+    memset(&buf, 0, sizeof(buf));
 
     /* Setup Socket Vars */
     struct sockaddr_in si_me, si_tgt;
@@ -295,15 +295,22 @@ int main(int argc, char *argv[]){
             fprintf(stderr, "%s: Error sorting SW device list.\n", PGMNAME);
             exit(EXIT_FAILURE);
         }
-        tgtDeviceEntry = findDevice(tgtSWAddress, devices, numDevices);
+        /* Lookup My Device Info */
+        myDeviceEntry = findDevice(mySWAddress, devices, numDevices);
         if(tgtDeviceEntry == NULL){
-            fprintf(stderr, "%s: Error finding SW device.\n", PGMNAME);
+            fprintf(stderr, "%s: Error finding SW device with address 0x"
+                    PRIxSWAddr ".\n", PGMNAME);
             exit(EXIT_FAILURE);
         }
-        memcpy(&tgtDeviceInfo, tgtDeviceEntry, sizeof(tgtDeviceInfo));
+        /* Lookup Target Device Info */
+        tgtDeviceEntry = findDevice(tgtSWAddress, devices, numDevices);
+        if(tgtDeviceEntry == NULL){
+            fprintf(stderr, "%s: Error finding SW device with address 0x"
+                    PRIxSWAddr ".\n", PGMNAME);
+            exit(EXIT_FAILURE);
+        }
         
-
-        
+        /* Break Out Device Entry */
         
     }
 

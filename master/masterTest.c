@@ -39,12 +39,13 @@ int main(int argc, char *argv[]){
     }
 
     /* Write Test record */
-    newEntry.swAddr = 0x0003;
+    newEntry.devInfo.swAddr = 0x0003;
     newEntry.ipAddr = 0x33333333;
-    newEntry.devTypes = SW_TYPE_UNIVERSAL | SW_TYPE_OUTLET;
-    newEntry.numChan = 0x03;
-    newEntry.version = SW_VERSION;
-    newEntry.uid = 0x3333333333333333;
+    newEntry.devInfo.devTypes = SW_TYPE_UNIVERSAL | SW_TYPE_OUTLET;
+    newEntry.devInfo.numChan = 0x03;
+    newEntry.devInfo.groupID = 0x01;
+    newEntry.devInfo.version = SW_VERSION;
+    newEntry.devInfo.uid = 0x3333333333333333;
     newEntry.lineNum = -1;
     if(fseek(devFile, 0, SEEK_END) != 0){
         fprintf(stderr, "masterTest: Could not seek to end of devFile.\n");
@@ -71,7 +72,7 @@ int main(int argc, char *argv[]){
     }
 
     /* Find new device in array */
-    findDev = findDevice(newEntry.swAddr, devices, devCnt);
+    findDev = findDevice(newEntry.devInfo.swAddr, devices, devCnt);
     if(findDev == NULL){
         fprintf(stderr, "masterTest: Could not find new device.\n");
         exit(EXIT_FAILURE);

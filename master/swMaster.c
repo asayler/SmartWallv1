@@ -99,6 +99,7 @@ extern int readDevice(struct SWDeviceEntry* device, FILE* devFile,
     in_addr_t ipAddrTmp = 0;
     devType_t devTypeTmp = 0;
     numChan_t numChanTmp = 0;
+    groupID_t grpIDTmp = 0;
     swVersion_t versionTmp = 0;
     devUID_t uidTmp = 0;
     int numScn = 0;
@@ -147,6 +148,14 @@ extern int readDevice(struct SWDeviceEntry* device, FILE* devFile,
     else {
         count += numScn;
     }
+    /* Get SW Group ID */
+    if((numScn = fscanf(devFile, "%" SCNxGrpID, &grpIDTmp)) != 1){
+        fprintf(stderr, "Bad data near fourth pos.\n");
+        return errorVal;
+    }
+    else {
+        count += numScn;
+    }
     /* Get SW Protocol version */
     if((numScn = fscanf(devFile, "%" SCNxSWVer, &versionTmp)) != 1){
         fprintf(stderr, "Bad data near fifth pos.\n");
@@ -166,12 +175,13 @@ extern int readDevice(struct SWDeviceEntry* device, FILE* devFile,
     
     /* Add device info to struct*/
     if(device != NULL){
-        device->swAddr = swAddrTmp;
+        device->devInfo.swAddr = swAddrTmp;
         device->ipAddr = ipAddrTmp;
-        device->devTypes = devTypeTmp;
-        device->numChan = numChanTmp;
-        device->version = versionTmp;
-        device->uid = uidTmp;
+        device->devInfo.devTypes = devTypeTmp;
+        device->devInfo.numChan = numChanTmp;
+        device->devInfo.groupID = grpIDTmp;
+        device->devInfo.version = versionTmp;
+        device->devInfo.uid = uidTmp;
         device->lineNum = lineNum;
     }
     else {
@@ -211,7 +221,7 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
         count += numPri;
     }
     /* Write SW Address */
-    numPri = fprintf(devFile, "%4.4" PRIxSWAddr " ", device->swAddr);    
+    numPri = fprintf(devFile, "%4.4" PRIxSWAddr " ", device->devInfo.swAddr);  
     if(numPri < 1){
         fprintf(stderr, "Could not write near first pos\n");
         return errorVal;
@@ -220,7 +230,7 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
         count += numPri;
     }
     /* Write IP Address */
-    numPri = fprintf(devFile, "%8.8" PRIxIPAddr " ", device->ipAddr);    
+    numPri = fprintf(devFile, "%8.8" PRIxIPAddr " ", device->ipAddr);
     if(numPri < 1){
         fprintf(stderr, "Could not write near second pos.\n");
         return errorVal;
@@ -229,7 +239,8 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
         count += numPri;
     }
     /* Write Device Type */
-    numPri = fprintf(devFile, "%2.2" PRIxDevType " ", device->devTypes);    
+    numPri = fprintf(devFile, "%16.16" PRIxDevType " ",
+                     device->devInfo.devTypes);    
     if(numPri < 1){
         fprintf(stderr, "Could not write near third pos.\n");
         return errorVal;
@@ -238,7 +249,7 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
         count += numPri;
     }
     /* Write Number of Device Channels */
-    numPri = fprintf(devFile, "%2.2" PRIxNumChan " ", device->numChan);    
+    numPri = fprintf(devFile, "%2.2" PRIxNumChan " ", device->devInfo.numChan);
     if(numPri < 1){
         fprintf(stderr, "Could not write near fourth pos.\n");
         return errorVal;
@@ -246,8 +257,8 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
     else {
         count += numPri;
     }
-    /* Write SW Protocol version */
-    numPri = fprintf(devFile, "%1.1" PRIxSWVer " ", device->version);    
+    /* Write SW Group ID */
+    numPri = fprintf(devFile, "%2.2" PRIxGrpID " ", device->devInfo.groupID);
     if(numPri < 1){
         fprintf(stderr, "Could not write near fifth pos.\n");
         return errorVal;
@@ -255,10 +266,19 @@ extern int writeDevice(const struct SWDeviceEntry* device, FILE* devFile){
     else {
         count += numPri;
     }
-    /* Write Device Unique ID */
-    numPri = fprintf(devFile, "%16.16" PRIxDevUID, device->uid);    
+    /* Write SW Protocol version */
+    numPri = fprintf(devFile, "%2.2" PRIxSWVer " ", device->devInfo.version);
     if(numPri < 1){
         fprintf(stderr, "Could not write near sixth pos.\n");
+        return errorVal;
+    }
+    else {
+        count += numPri;
+    }
+    /* Write Device Unique ID */
+    numPri = fprintf(devFile, "%16.16" PRIxDevUID, device->devInfo.uid);
+    if(numPri < 1){
+        fprintf(stderr, "Could not write near seventh pos.\n");
         return errorVal;
     }
     else {
@@ -396,7 +416,7 @@ extern int sortDevices(struct SWDeviceEntry* devices, const int numDevices){
 
     /* Perform Quick Sort*/
     qsort(devices, numDevices, sizeof(*devices),
-          (int(*)(const void*, const void*)) compSWDeviceEntry);
+          (int(*)(const void*, const void*)) compSWDeviceEntryBySWAddr);
     
     return 0;
 
@@ -422,13 +442,13 @@ extern struct SWDeviceEntry* findDevice(const swAddress_t swAddress,
     
     /* Temp Key Device */
     struct SWDeviceEntry deviceKey;
-    deviceKey.swAddr = swAddress;
+    deviceKey.devInfo.swAddr = swAddress;
 
     /* Perform Binary Search */
     tmpDev = (struct SWDeviceEntry*) bsearch (&deviceKey, devices,
                                               numDevices, sizeof(*devices),
                                               (int(*)(const void*,const void*))
-                                              compSWDeviceEntry);
+                                              compSWDeviceEntryBySWAddr);
 
     /* Check Output and Copy Value If Appropriate*/
     if(tmpDev == NULL){
@@ -441,8 +461,8 @@ extern struct SWDeviceEntry* findDevice(const swAddress_t swAddress,
     }
 }
 
-extern int compSWDeviceEntry(const struct SWDeviceEntry* d1,
-                             const struct SWDeviceEntry* d2){
+extern int compSWDeviceEntryBySWAddr(const struct SWDeviceEntry* d1,
+                                     const struct SWDeviceEntry* d2){
     /* Check Input */
     if(d1 == NULL){
         fprintf(stderr, "compSWDeviceEntry: d1 NULL, returning -1\n");
@@ -454,5 +474,5 @@ extern int compSWDeviceEntry(const struct SWDeviceEntry* d1,
     }
 
     /* Compare */
-    return (d1->swAddr - d2->swAddr);
+    return (d1->devInfo.swAddr - d2->devInfo.swAddr);
 }

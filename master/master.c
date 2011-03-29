@@ -57,12 +57,11 @@ int main(int argc, char *argv[]){
     
     /* Setup Network Vars */
     struct SmartWallHeader myHeader;
-    uint8_t buf[BUFLEN];
-
+    
     /* Setup Socket Vars */
     struct sockaddr_in si_me, si_other;
     int s;
-    int a, b, r;
+    int a, r;
     unsigned int slen = sizeof(si_other);
 
     /* Init */

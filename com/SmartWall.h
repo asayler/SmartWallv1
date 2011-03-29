@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 /* Constants */
 #define SW_MAX_MSG_LENGTH 1024 /* In Bytes */
 #define SW_MAX_CHN 60 /* Max number of channels on a single device */
@@ -176,10 +177,12 @@ struct SWChannelData {
 
 /* SmartWall Device Struct */
 struct SmartWallDev {
-    swVersion_t version;
-    swAddress_t address;
-    groupID_t groupID;
-    devType_t types;
+    swAddress_t swAddr;  /* SW Address */
+    devType_t devTypes;  /* SW Device Types Mask */
+    numChan_t numChan;   /* Number of Channels on Device */
+    swVersion_t version; /* SW Protocol Version */
+    devUID_t uid;        /* SW Unique Device ID */
+    groupID_t groupID;   /* SW Group ID */
 };
 
 /* Public Functions */

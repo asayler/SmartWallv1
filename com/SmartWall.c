@@ -269,9 +269,9 @@ extern swLength_t writeSWMsg(uint8_t* msg,
     swHeader.msgScope = msgScope;
     swHeader.msgType = msgType;
     swHeader.groupID = destination->groupID;
-    swHeader.sourceAddress = source->address;
-    swHeader.destAddress = destination->address;
-    swHeader.sourceTypes = source->types;
+    swHeader.sourceAddress = source->swAddr;
+    swHeader.destAddress = destination->swAddr;
+    swHeader.sourceTypes = source->devTypes;
     swHeader.targetType = targetType;
     swHeader.opcode = opcode;
     swHeader.totalLength = calcLength;
@@ -467,13 +467,12 @@ extern swLength_t readSWMsg(const uint8_t* msg,
 
     /* Setup Output Device Structs and Data */
     source->version = swHeader.version;
-    source->address = swHeader.sourceAddress;
+    source->swAddr = swHeader.sourceAddress;
     source->groupID = swHeader.groupID;
-    source->types = swHeader.sourceTypes;
+    source->devTypes = swHeader.sourceTypes;
     destination->version = swHeader.version;
-    destination->address = swHeader.destAddress;
+    destination->swAddr = swHeader.destAddress;
     destination->groupID = swHeader.groupID;
-    destination->types = 0;
     *targetType = swHeader.targetType;
     *msgScope = swHeader.msgScope;
     *msgType = swHeader.msgType;
