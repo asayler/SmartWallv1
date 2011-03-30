@@ -23,7 +23,7 @@
 
 #include "SmartWall.h"
 
-/* print packet payload data (avoid printing binary data) */
+/* print packet payload data */
 extern int print_payload(const uint8_t* payload, int len);
 
 /* print SW Header data */

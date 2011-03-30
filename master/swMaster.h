@@ -30,11 +30,10 @@
 /* Structs */
 /* SmartWall Device Entry Struct */
 struct SWDeviceEntry {
-    
     struct SmartWallDev devInfo; /* SW Device Info */
     in_addr_t ipAddr;            /* IP Address - Host Byte Order */
     int lineNum;                 /* Line Number in Device File or -1 *
-                                  *  if not in file                  */
+                                  * if not in fi le                  */
 };
 
 extern int compSWDeviceEntryBySWAddr(const struct SWDeviceEntry* d1,

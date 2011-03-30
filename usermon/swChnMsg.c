@@ -93,9 +93,10 @@ int main(int argc, char *argv[]){
 
     /* Setup Socket Vars */
     struct sockaddr_in si_me, si_tgt;
+    memset(&si_me, 0, sizeof(si_me));
+    memset(&si_tgt, 0, sizeof(si_tgt));
     int s;
-    int a, b, r;
-    unsigned int slen = sizeof(si_tgt);
+    int r;
 
     /* Handel Input */
 
@@ -219,9 +220,6 @@ int main(int argc, char *argv[]){
                 if(cnt < SW_MAX_CHN){
                     tgtChnData.header.numChan++;
                     tgtChnData.data[cnt].chanTop.chanNum = utemp;
-                    fprintf(stderr, "%d: utemp = %lu\n", cnt, utemp);
-                    fprintf(stderr, "%d: chanNum = %" PRInumChan "\n", cnt,
-                            tgtChnData.data[cnt].chanTop.chanNum);
                 }
                 else{
                     fprintf(stderr, "%s: Max channels exceeded. " 
@@ -314,14 +312,16 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
         
-        /* Print Test Data */
-        fprintf(stderr, "Num Channels Effected: %d\n",
-                tgtChnData.header.numChan);
-        for(i = 0; i < tgtChnData.header.numChan; i++){
-            fprintf(stderr, "Entry %d: args[%d] = %ld\n", i, i, args[i]);
-            fprintf(stderr, "Entry %d: Chn %" PRInumChan " = %ld\n", i,
-                    tgtChnData.data[i].chanTop.chanNum,
-                    *((long int*) tgtChnData.data[i].chanValue));
+        /* Check for Channel Mismatch */
+        if(tgtChnData.header.numChan > tgtDeviceEntry->devInfo.numChan){
+            fprintf(stderr, "%s: Target device has %" PRInumChan
+                    " channel%s.\n" "You gave arguments for %" PRInumChan
+                    " channel%s.\n", PGMNAME,
+                    tgtDeviceEntry->devInfo.numChan,
+                    (tgtDeviceEntry->devInfo.numChan == 1) ? "":"s",
+                    tgtChnData.header.numChan,
+                    (tgtChnData.header.numChan == 1) ? "":"s");
+            exit(EXIT_FAILURE);
         }
 
         /* Assemble Message Body */
@@ -338,10 +338,47 @@ int main(int argc, char *argv[]){
         if(msgLen == SWLENGTH_MAX){
             fprintf(stderr, "%s: Error generating message.\n", PGMNAME);
             exit(EXIT_FAILURE);
-        }        
-                
+        }
+
+        /* Print Message (TEST) */
+        print_payload(msg, msgLen);
+
+        /* My IP */
+        si_me.sin_family = AF_INET;
+        si_me.sin_port = htons(SENDPORT);
+        si_me.sin_addr.s_addr = htonl(myDeviceEntry->ipAddr);
+        
+        /* TGT IP */
+        si_tgt.sin_family = AF_INET;
+        si_tgt.sin_port = htons(SENDPORT);
+        si_tgt.sin_addr.s_addr = htonl(tgtDeviceEntry->ipAddr);
+
+        /* Setup Socket */
+        s = socket(AF_INET, SOCK_DGRAM, 0);
+        if(s < 0){
+            perror("socket");
+            exit(EXIT_FAILURE);
+        }
+        
+        /* Send Message */
+        r = sendto(s, msg, msgLen, 0,
+                   (struct sockaddr*) &si_tgt, sizeof(si_tgt));
+        if(r < 0){
+            perror("sendto");
+            exit(EXIT_FAILURE);
+        }
+
+        /* Print Info (TEST) */
+        fprintf(stdout, "Sent packet to %s:%d\n",
+                inet_ntoa(si_tgt.sin_addr), ntohs(si_tgt.sin_port));
+        fprintf(stdout, "Message Size: %d\n", r);
+
+        /* Close Socket */
+        close(s);
+        
     }
-
+    
     return 0;
-
+    
 }
+
