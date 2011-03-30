@@ -21,7 +21,7 @@ $lookup = array();
 $lines = explode("\n", $raw); //break up on newline characters
 foreach($lines as $line) {
    $items = explode(" ", $line); //break up on spaces
-   $lookup[$items[6]] = array('swAdr' => $items[1], 'ipAdr' => $items[2], 'type' => $items[3], 'ch' => $items[4], 'ver' => $items[5]); 
+   $lookup[$items[7]] = array('swAdr' => $items[1], 'ipAdr' => $items[2], 'type' => $items[3], 'channels' => $items[4], 'grpId' => $items[5],'ver' => $items[6]); 
 }   
 
 foreach($lookup as $key => $value) {
