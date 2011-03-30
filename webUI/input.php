@@ -3,11 +3,62 @@
 ?>
 
 <html>
+<head>
+<title>SmartWall Home</title>
+<style type="text/css">
+	body{
+		margin: 0;
+             	padding: 0;
+		background: #ccc;
+	}
+	#container{
+		width: 960px;
+		margin: 0 auto;
+	}		
+	#header{
+		padding: 5px;
+		background: #bbb;
+	}
+	#navigation{
+		float: left;
+		width: 150px;
+		background: #eee;
+	}
+	#content{
+		float: right;
+		width: 810px;
+		background: #fff;
+	}
+	#navigation a{
+		display: block;
+		margin: 0 0 10px 0;
+	}
+	#footer{
+		clear: both;
+		background: #aaa;
+		padding: 10px;
+	}
+	ul{
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+		width: 525px;
+	}
+
+</style>
+</head>
+
 <body>
+<div id="containter">
 
-All active outlets:  <br />
+<div id="header">
+<h1>SmartWall Homepage</h1>
+</div>
+
+<div id="content">
+	     	  
+<h4> All active outlets: </h4>  
 <?php
-
 //get outlet list from Andy's compiled swls.c program
 
 //change directory for relative path purposes
@@ -75,7 +126,7 @@ if (isset($_GET['submit'])){
 
    //convert possibly aliased UID into normal UID
 
-   //query for device state 
+   //query for device state: call format
    // ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> 
    //        <SW Opcode> <Chn Arg Size (bytes)> <Chn#> <Chn Arg> ...
 
@@ -89,6 +140,21 @@ if (isset($_GET['submit'])){
    }
 }
 ?>
+
+</div> <!-- end container -->
+
+<div id="navigation">
+     <ul>
+     <li><a href="#">Home</a></li>
+     <li><a href="#">Next</a></li>
+     </ul>
+</div>  <!-- end navigation -->
+
+<div id="footer">
+     Footer
+</div> <!-- end footer -->
+
+</div> <!-- end container -->
 
 </body>
 </html>
