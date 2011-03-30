@@ -78,8 +78,11 @@ if (isset($_GET['submit'])){
    //query for device state 
    // ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> 
    //        <SW Opcode> <Chn Arg Size (bytes)> <Chn#> <Chn Arg> ...
-   echo "./swChnMsg ".$lookup[$outlet]['swAdr']." QUERY OUTLET 0x01 1 0x01 x 0x02 x \n";         
-   $temp = shell_exec("./swChnMsg $lookup[$outlet]['swAdr'] QUERY OUTLET 0x01 1 0x01 x 0x02 x 2>&1");
+
+   echo "./swChnMsg ".$lookup[$outlet]['swAdr']." QUERY OUTLET 0x01 1 0x01 x 0x02 x \n"; //debug  
+   echo "<br />";       
+   $swAdr = $lookup[$outlet]['swAdr']; //shell_exec can't handle
+   $temp = shell_exec("./swChnMsg $swAdr QUERY OUTLET 0x01 1 0x01 x 0x02 x 2>&1");
    echo $temp."\n";
    } else {
       echo "First, select an outlet.\n";
