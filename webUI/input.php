@@ -76,12 +76,11 @@ if (isset($_GET['submit'])){
    //convert possibly aliased UID into normal UID
 
    //query for device state 
-   // ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> <SW Opcode> 
-   //        <Chn Arg Size (bytes)> <Chn#> <Chn Arg> ...
-   echo "./swChnMsg ".$lookup[$outlet][swAdr]." 0x03 ".$lookup[$outlet]['type']." 0x0010 1 0x01 x 0x02 x \n";         
-   $temp = shell_exec("./swChnMsg $lookup[$outlet][swAdr] 0x03 $lookup[$outlet]['type'] 0x0010 1 0x01 x 0x02 x 2>&1");
+   // ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> 
+   //        <SW Opcode> <Chn Arg Size (bytes)> <Chn#> <Chn Arg> ...
+   echo "./swChnMsg ".$lookup[$outlet]['swAdr']." QUERY OUTLET 0x01 1 0x01 x 0x02 x \n";         
+   $temp = shell_exec("./swChnMsg $lookup[$outlet]['swAdr'] QUERY OUTLET 0x01 1 0x01 x 0x02 x 2>&1");
    echo $temp."\n";
-   //echo "Outlet ".$outlet." is on/off"; //debug
    } else {
       echo "First, select an outlet.\n";
    }
