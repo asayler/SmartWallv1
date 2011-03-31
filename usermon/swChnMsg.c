@@ -25,16 +25,14 @@
 #include <fcntl.h>
 #include <netdb.h>
 
-#include "../master/swMaster.h"
+#include "../com/SmartWall.h"
 #include "../com/comTools.h"
+#include "../master/swMaster.h"
 
-#define SENDPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
+#define SENDPORT SWOUTPORT
+#define LISTENPORT SWINPORT
 
 #define MYSWADDRESS 0x0001
-
-#define PGMNAME "swChnMsg"
-
-/* Private Functions */
 
 /* Option enum */
 enum OPTIONS{
@@ -88,9 +86,6 @@ int main(int argc, char *argv[]){
     memset(&devices, 0, sizeof(devices));
     int numDevices = 0;
 
-    /* Setup Network Vars */
-    
-
     /* Setup Socket Vars */
     struct sockaddr_in si_me, si_tgt;
     memset(&si_me, 0, sizeof(si_me));
@@ -117,49 +112,49 @@ int main(int argc, char *argv[]){
         utemp = strtoul(argv[1], NULL, 0);
         if(utemp == 0){
             fprintf(stderr, "%s: Could not convert 1st arg to long int.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         if(utemp == ULONG_MAX){
-            perror(PGMNAME);
+            perror(argv[0]);
             fprintf(stderr, "%s: 1st arg out of range.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         if(utemp > SWADDRESS_MAX){
             fprintf(stderr, "%s: Target Address out of range.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         tgtSWAddress = utemp;
         /* Message Type */
         if(strToMT(argv[2], strlen(argv[2]), &msgType) < 0){
             fprintf(stderr, "%s: Invalid Message Type in 2nd arg.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         /* Target Device Type */
         if(strToDT(argv[3], strlen(argv[3]), &tgtSWType) < 0){
             fprintf(stderr, "%s: Invalid Target Device Type in 3rd arg.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         /* Opcode */
         utemp = strtoul(argv[4], NULL, 0);
         if(utemp == 0){
             fprintf(stderr, "%s: Could not convert 4th arg to long int.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         if(utemp == ULONG_MAX){
-            perror(PGMNAME);
+            perror(argv[0]);
             fprintf(stderr, "%s: 4th arg out of range.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         if(utemp > SWOPCODE_MAX){
             fprintf(stderr, "%s: Opcode out of range.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         opcode = utemp;
@@ -168,20 +163,20 @@ int main(int argc, char *argv[]){
         utemp = strtoul(argv[5], NULL, 0);
         if(utemp == 0){
             fprintf(stderr, "%s: Could not convert 5th arg to long int.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         if(utemp == ULONG_MAX){
-            perror(PGMNAME);
+            perror(argv[0]);
             fprintf(stderr, "%s: 5th arg out of range.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         if(utemp > (SW_MAX_MSG_LENGTH - sizeof(struct SmartWallHeader) -
                     sizeof(struct SmartWallChannelHeader) -
                     (sizeof(struct SmartWallChannelTop) * ((argc - 6) / 2 )))){
             fprintf(stderr, "%s: Arg Size exceeds max possible arg bytes.\n",
-                    PGMNAME);
+                    argv[0]);
             exit(EXIT_FAILURE);
         }
         /* Limit to long ints */
@@ -189,7 +184,7 @@ int main(int argc, char *argv[]){
         if(utemp > sizeof(long int)){
             fprintf(stderr, "%s: Arg Size currently limited to "
                     "sizeof(long int) which is %lu bytes.\n",
-                    PGMNAME, sizeof(long int));
+                    argv[0], sizeof(long int));
             exit(EXIT_FAILURE);
         }
         tgtChnData.header.dataLength = sizeof(long int);
@@ -202,19 +197,19 @@ int main(int argc, char *argv[]){
                 /* Channel Number */
                 if(!isnumeric(argv[i])){
                     fprintf(stderr, "%s: Arg %d is not a number.\n",
-                            PGMNAME, i);
+                            argv[0], i);
                     exit(EXIT_FAILURE);
                 }
                 utemp = strtoul(argv[i], NULL, 0);
                 if(utemp == ULONG_MAX){
-                    perror(PGMNAME);
+                    perror(argv[0]);
                     fprintf(stderr, "%s: Arg %d out of range.\n",
-                            PGMNAME, i);
+                            argv[0], i);
                     exit(EXIT_FAILURE);
                 }
                 if(utemp > (SW_MAX_CHN - 1)){
                     fprintf(stderr, "%s: Arg %d exceeds max chn number.\n",
-                            PGMNAME, i);
+                            argv[0], i);
                     exit(EXIT_FAILURE);
                 }
                 if(cnt < SW_MAX_CHN){
@@ -224,7 +219,7 @@ int main(int argc, char *argv[]){
                 else{
                     fprintf(stderr, "%s: Max channels exceeded. " 
                             "Ignoring Arg %d and all following args.\n",
-                            PGMNAME, i);
+                            argv[0], i);
                     break;
                 }
             }
@@ -235,20 +230,20 @@ int main(int argc, char *argv[]){
                     /* Has Argument */
                     if(!isnumeric(argv[i])){
                         fprintf(stderr, "%s: Arg %d is not a number.\n",
-                                PGMNAME, i);
+                                argv[0], i);
                         exit(EXIT_FAILURE);
                     }
                     args[cnt] = strtoul(argv[i], NULL, 0);
                     if(args[cnt] == LONG_MIN){
-                        perror(PGMNAME);
+                        perror(argv[0]);
                         fprintf(stderr,  "%s: Arg %d under range.\n",
-                                PGMNAME, i);
+                                argv[0], i);
                         exit(EXIT_FAILURE);
                     }
                     if(args[cnt] == LONG_MAX){
-                        perror(PGMNAME);
+                        perror(argv[0]);
                         fprintf(stderr, "%s: Arg %d over range.\n",
-                                PGMNAME, i);
+                                argv[0], i);
                         exit(EXIT_FAILURE);
                     }
                 }
@@ -269,46 +264,46 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "%s: Usage Format\n"
                 "<SW Dest Address> <SW Msg Type> <SW Tgt Type> <SW Opcode> "
                 "<Chn Arg Size (bytes)> <Chn#> <Chn Arg (long int)> ...\n",
-                PGMNAME);
+                argv[0]);
     }
     
     if(mode == SEND){
         /* Retrieve Device Data From File*/
         if(buildDevFileName(devFilename, MAX_FILENAME_LENGTH) < 0){
-            fprintf(stderr, "%s: Error building device filename.\n", PGMNAME);
+            fprintf(stderr, "%s: Error building device filename.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
         devFile = openDevFile(devFilename);
         if(devFile == NULL){
-            fprintf(stderr, "%s: Error opening device file.\n", PGMNAME);
+            fprintf(stderr, "%s: Error opening device file.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
         numDevices = getDevices(devices, MASTER_MAXDEVICES, devFile);
         if(numDevices <= 0){
-            fprintf(stderr, "%s: Error getting SW device list.\n", PGMNAME);
+            fprintf(stderr, "%s: Error getting SW device list.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
         if(closeDevFile(devFile) < 0){
-            fprintf(stderr, "%s: Error closing device file.\n", PGMNAME);
+            fprintf(stderr, "%s: Error closing device file.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
         devFile = NULL;
         if(sortDevices(devices, numDevices) < 0){
-            fprintf(stderr, "%s: Error sorting SW device list.\n", PGMNAME);
+            fprintf(stderr, "%s: Error sorting SW device list.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
         /* Lookup My Device Info */
         myDeviceEntry = findDevice(mySWAddress, devices, numDevices);
         if(myDeviceEntry == NULL){
             fprintf(stderr, "%s: Error finding my SW device with address "
-                    "0x%4.4" PRIxSWAddr ".\n", PGMNAME, mySWAddress);
+                    "0x%4.4" PRIxSWAddr ".\n", argv[0], mySWAddress);
             exit(EXIT_FAILURE);
         }
         /* Lookup Target Device Info */
         tgtDeviceEntry = findDevice(tgtSWAddress, devices, numDevices);
         if(tgtDeviceEntry == NULL){
             fprintf(stderr, "%s: Error finding tgt SW device with address "
-                    "0x%4.4" PRIxSWAddr ".\n", PGMNAME, tgtSWAddress);
+                    "0x%4.4" PRIxSWAddr ".\n", argv[0], tgtSWAddress);
             exit(EXIT_FAILURE);
         }
         
@@ -316,7 +311,7 @@ int main(int argc, char *argv[]){
         if(tgtChnData.header.numChan > tgtDeviceEntry->devInfo.numChan){
             fprintf(stderr, "%s: Target device has %" PRInumChan
                     " channel%s.\n" "You gave arguments for %" PRInumChan
-                    " channel%s.\n", PGMNAME,
+                    " channel%s.\n", argv[0],
                     tgtDeviceEntry->devInfo.numChan,
                     (tgtDeviceEntry->devInfo.numChan == 1) ? "":"s",
                     tgtChnData.header.numChan,
@@ -327,7 +322,7 @@ int main(int argc, char *argv[]){
         /* Assemble Message Body */
         bodyLen = writeSWChannelBody(body, SW_MAX_BODY_LENGTH, &tgtChnData);
         if(bodyLen == SWLENGTH_MAX){
-            fprintf(stderr, "%s: Error generating message body.\n", PGMNAME);
+            fprintf(stderr, "%s: Error generating message body.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
 
@@ -336,7 +331,7 @@ int main(int argc, char *argv[]){
                             &(tgtDeviceEntry->devInfo), tgtSWType, msgScope,
                             msgType, opcode, body, bodyLen);
         if(msgLen == SWLENGTH_MAX){
-            fprintf(stderr, "%s: Error generating message.\n", PGMNAME);
+            fprintf(stderr, "%s: Error generating message.\n", argv[0]);
             exit(EXIT_FAILURE);
         }
 
@@ -345,7 +340,7 @@ int main(int argc, char *argv[]){
 
         /* My IP */
         si_me.sin_family = AF_INET;
-        si_me.sin_port = htons(SENDPORT);
+        si_me.sin_port = htons(LISTENPORT);
         si_me.sin_addr.s_addr = htonl(myDeviceEntry->ipAddr);
         
         /* TGT IP */

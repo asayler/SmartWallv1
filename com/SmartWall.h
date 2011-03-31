@@ -26,6 +26,9 @@
 #define SW_MAX_MSG_LENGTH 1024 /* In Bytes */
 #define SW_MAX_BODY_LENGTH (1024 - sizeof(struct SmartWallHeader))
 #define SW_MAX_CHN 60 /* Max number of channels on a single device */
+#define SWOUTPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
+#define SWINPORT 4334 /* 4329 to 4339 Free as of 2/1/2011 */
+#define SWCFGPORT 4339 /* 4329 to 4339 Free as of 2/1/2011 */
 
 /* Data Types */
 #define PRIipAddr  PRIu32
@@ -96,6 +99,10 @@ typedef uint64_t devUID_t;
 #define SCNdevUID  SCNu64
 #define SCNxDevUID SCNx64
 
+/* SmartWall Reserved Addresses */
+#define SW_ADDR_BROADCAST 0xffff
+#define SW_ADDR_NETWORK   0x0000
+
 /* SmartWall Message Types */
 #define SW_MSG_SET     0x01
 #define SW_MSG_REQUEST 0x02
@@ -121,10 +128,6 @@ extern int strToDT(const char* typeStr, const size_t maxLength,
                    devType_t* type);
 extern int DTtoStr(char* typeStr, const size_t maxLength,
                    const devType_t* type);
-
-/* SmartWall Special Addresses */
-#define SW_ADDR_NETWORK   0x0000
-#define SW_ADDR_BROADCAST 0xffff
 
 /* SmartWall Header Struct  - 32 Bytes */
 struct SmartWallHeader {
