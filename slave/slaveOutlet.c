@@ -48,11 +48,13 @@ int main(int argc, char *argv[]){
     
     /* Temp Vars */
     int i;
+    numChan_t j;
 
     /* Setup State Vars */
-    uint8_t ch0State = CHAN0_INITSTATE;
-    uint8_t ch1State = CHAN1_INITSTATE;
-
+    unsigned long chState[MYSWCHAN];
+    unsigned long* temp = NULL;
+    memset(&chState, 0, sizeof(chState));
+    
     /* Setup SW Message Vars */
     struct SmartWallDev sourceDeviceInfo;
     memset(&sourceDeviceInfo, 0, sizeof(sourceDeviceInfo));
@@ -64,7 +66,7 @@ int main(int argc, char *argv[]){
     swOpcode_t opcode = 0;
     long int args[MYSWCHAN];
     memset(&args, 0, sizeof(args));
-    struct SWChannelEntry tgtChnEntries[SW_MAX_CHN];
+    struct SWChannelEntry tgtChnEntries[MYSWCHAN];
     memset(&tgtChnEntries, 0, sizeof(tgtChnEntries));
     struct SWChannelData tgtChnData;
     memset(&tgtChnData, 0, sizeof(tgtChnData));
@@ -79,7 +81,6 @@ int main(int argc, char *argv[]){
     /* Init chanData Buffer */
     for(i = 0; i < MYSWCHAN; i++){
         tgtChnData.data[i].chanValue = &(args[i]);
-        tgtChnData.header.numChan++;
     }
 
     /* Setup SW Vars */
@@ -99,19 +100,6 @@ int main(int argc, char *argv[]){
     socklen_t slen = sizeof(struct sockaddr_in);
     int in, out;
     int b, r;
-    
-    /*Print Base Data */
-    /*
-    fprintf(stdout, "I am a SW_TYPE_OUTLET.\n");
-    fprintf(stdout, "SmartWall UID:     0x%" PRIxDevUID "\n", mySWUID);
-    fprintf(stdout, "Device Type:       0x%" PRIxDevType "\n", mySWType);
-    fprintf(stdout, "SmartWall Version: 0x%" PRIxSWVer "\n", mySWVersion);
-    fprintf(stdout, "SmartWall Address: 0x%" PRIxSWAddr "\n", mySWAddress);
-    fprintf(stdout, "SmartWall Group:   0x%" PRIxGrpID "\n", mySWGroup);
-
-    fprintf(stdout, "Channel 1 State:   %u\n", ch1State);
-    fprintf(stdout, "Channel 2 State:   %u\n", ch2State);
-    */
 
     /* My IP */
     si_me.sin_family = AF_INET;
@@ -182,18 +170,122 @@ int main(int argc, char *argv[]){
                 fprintf(stderr, "Dest swAddr: 0x%x\n", destDeviceInfo.swAddr);
                 continue;
             }
+            if(!(myDeviceInfo.devTypes & targetType)){
+                fprintf(stderr, "%s: Type mismatch\n", argv[0]);
+                continue;
+            }
+            /* TODO: Confirm it's from a master */
             /* Switch on Message Scope */
             switch(msgScope){
             case SW_SCP_CHANNEL:
                 {
-                    fprintf(stderr, "Received Channel Message\n");
+                    fprintf(stdout, "Received Channel Message\n");
                     /* TODO: Remove 8 byte limit*/
                     bodyLen = readSWChannelBody(body, bodyLen, &tgtChnData,
-                                                myDeviceInfo.numChan, 8);
+                                                myDeviceInfo.numChan,
+                                                sizeof(unsigned long));
                     if(bodyLen == SWLENGTH_MAX){
                         fprintf(stderr, "%s: Could not read SW body\n",
                                 argv[0]);
                         exit(EXIT_FAILURE);
+                    }
+                    /* Switch on Opcode */
+                    switch(opcode){
+                    case OUTLET_CH_OP_STATE:
+                        {
+                            /* Switch on Message Type: SET OR QUERY */
+                            switch(msgType){
+                            case SW_MSG_SET:
+                                /* Set State */
+                                for(i = 0; i < tgtChnData.header.numChan; i++){
+                                    j = tgtChnData.data[i].chanTop.chanNum;
+                                    if(j < myDeviceInfo.numChan){
+                                        /* TODO: Check valid state */
+                                        temp = tgtChnData.data[i].chanValue;
+                                        chState[j] = *temp;
+                                        fprintf(stdout, "Ch %u Set to %lu\n",
+                                                j, chState[j]);
+                                    }
+                                    else{
+                                        fprintf(stderr,
+                                                "%s: Invalid chanNum\n",
+                                                argv[0]);
+                                    }
+                                }
+                            case SW_MSG_QUERY:
+                                /* Report State */
+                                for(i = 0; i < tgtChnData.header.numChan; i++){
+                                    j = tgtChnData.data[i].chanTop.chanNum;
+                                    if(j < myDeviceInfo.numChan){
+                                        temp = tgtChnData.data[i].chanValue;
+                                        *temp = chState[j];
+                                    }
+                                    else{
+                                        fprintf(stderr,
+                                                "%s: Invalid chanNum\n",
+                                                argv[0]);
+                                    }
+                                }
+                                /* TODO: Remove 8 byte limit */
+                                tgtChnData.header.dataLength = 
+                                    sizeof(unsigned long);
+                                /* Assemble Message Body */
+                                bodyLen=writeSWChannelBody(body,
+                                                           SW_MAX_BODY_LENGTH,
+                                                           &tgtChnData);
+                                if(bodyLen == SWLENGTH_MAX){
+                                    fprintf(stderr, "%s: Error generating "
+                                            "message body.\n", argv[0]);
+                                    exit(EXIT_FAILURE);
+                                }
+                                /* Assemble Message */
+                                msgLen = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
+                                                    &myDeviceInfo,
+                                                    &sourceDeviceInfo,
+                                                    SW_TYPE_OUTLET,
+                                                    SW_SCP_CHANNEL,
+                                                    SW_MSG_REPORT, opcode,
+                                                    body, bodyLen);
+                                if(msgLen == SWLENGTH_MAX){
+                                    fprintf(stderr, "%s: Error generating "
+                                            "message.\n", argv[0]);
+                                    exit(EXIT_FAILURE);
+                                }
+                                /* Print Test payload */
+                                fprintf(stdout, "Response: \n");
+                                print_payload(msg, msgLen);
+                                /* Set Port */
+                                si_tgt.sin_port = htons(SENDPORT);
+                                /* Send Message */
+                                r = sendto(out, msg, msgLen, 0,
+                                           (struct sockaddr*) &si_tgt,
+                                           sizeof(si_tgt));
+                                if(r < 0){
+                                    perror("sendto");
+                                    exit(EXIT_FAILURE);
+                                }
+                                /* Print Info (TEST) */
+                                fprintf(stdout, "Sent packet to %s:%d\n",
+                                        inet_ntoa(si_tgt.sin_addr),
+                                        ntohs(si_tgt.sin_port));
+                                fprintf(stdout, "Message Size: %d\n", r);
+
+                                break;
+                            default:
+                                fprintf(stderr, "%s: Unhandeled msgType\n",
+                                        argv[0]);
+                                continue;
+                                break;
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            fprintf(stderr, "%s: Unhandeled Opcode\n",
+                                    argv[0]);
+                            continue;
+                            break;
+                        }
                     }
                     break;
                 }
@@ -201,6 +293,7 @@ int main(int argc, char *argv[]){
                 {
                     fprintf(stderr, "%s: Unhandeled Message Scope\n", argv[0]);
                     continue;
+                    break;
                 }
             }
         }
