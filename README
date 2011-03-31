@@ -18,6 +18,7 @@ run should complete without errors.
 
 com
 master
+slave
 usermon
 
 Additional instruction: 
