@@ -34,7 +34,7 @@ static swLength_t genSWChannelRefMsg(uint8_t* msg, swLength_t maxLength);
 
 /* Option enum */
 enum OPTIONS{
-    WRITE, READ, RW, REF, MEMSIZE
+    WRITE, READ, RW, REF, MEMSIZE, ENDIAN
 };
 
 int main(int argc, char* argv[]){
@@ -79,6 +79,9 @@ int main(int argc, char* argv[]){
         }
         else if(strcmp(argv[1], "-mem") == 0){
             mode = MEMSIZE;
+        }
+        else if(strcmp(argv[1], "-end") == 0){
+            mode = ENDIAN;
         }
         else{
             fprintf(stderr, "Unknown option: %s\n", argv[1]);
@@ -315,6 +318,28 @@ int main(int argc, char* argv[]){
         fprintf(stdout, "uint32_t is %lu bytes\n", sizeof(test32));
         fprintf(stdout, "Max value of uint32_t is 0x%" PRIx32 "\n", test32);
 
+    }
+    else if(mode == ENDIAN){
+        fprintf(stdout, "hton16(0x1122) = %" PRIx16 "\n", hton16(0x1122));
+        fprintf(stdout, "ntoh16(0x1122) = %" PRIx16 "\n", ntoh16(0x1122));
+        fprintf(stdout, "hton16(ntoh16(0x1122)) = %" PRIx16 "\n",
+                hton16(ntoh16(0x1122)));
+        fprintf(stdout, "hton32(0x11223344) = %" PRIx32 "\n",
+                hton32(0x11223344));
+        fprintf(stdout, "ntoh32(0x11223344) = %" PRIx32 "\n",
+                ntoh32(0x11223344));
+        fprintf(stdout, "hton32(ntoh32(0x11223344)) = %" PRIx32 "\n",
+                hton32(ntoh32(0x11223344)));
+        fprintf(stdout, "hton64(0x1122334455667788) = %" PRIx64 "\n",
+                hton64(0x1122334455667788));
+        fprintf(stdout, "ntoh64(0x1122334455667788) = %" PRIx64 "\n",
+                ntoh64(0x1122334455667788));
+        fprintf(stdout, "hton64(ntoh64(0x1122334455667788)) = %" PRIx64 "\n",
+                hton64(ntoh64(0x1122334455667788)));
+    }
+    else{
+        fprintf(stderr, "Unhandeled mode\n");
+        exit(EXIT_FAILURE);
     }
    
     return EXIT_SUCCESS;

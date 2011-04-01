@@ -24,6 +24,11 @@ static int print_hex_ascii_line(const uint8_t *payload, int len, int offset);
 static int print_hex_line(const uint8_t *payload, int len, int offset);
 /* print channel header */
 static int print_swChanHeader(const struct SmartWallChannelHeader* header);
+/* Byte Swap */
+static inline uint16_t bswap16(uint16_t v);
+static inline uint32_t bswap32(uint32_t v);
+static inline uint64_t bswap64(uint64_t v);
+static inline int isBigEndian(void);
 
 /* External Implmentation */
 /* print packet payload data (avoid printing binary data) */
@@ -355,4 +360,101 @@ extern int isnumeric(char* input){
     }
     
     return 1;
+}
+
+/* Byte Swpas */
+static inline uint16_t bswap16(uint16_t v){
+    return ((v << 8) | (v >> 8));
+}
+
+static inline uint32_t bswap32(uint32_t v){
+    return
+        (((v & 0x000000ff) << 24) | ((v & 0x0000ff00) <<  8) |
+         ((v & 0x00ff0000) >>  8) | ((v & 0xff000000) >> 24));
+}
+
+static inline uint64_t bswap64(uint64_t v){
+    return
+        (((v & 0x00000000000000ff) << 56) | ((v & 0x000000000000ff00) << 40) |
+         ((v & 0x0000000000ff0000) << 24) | ((v & 0x00000000ff000000) <<  8) |
+         ((v & 0x000000ff00000000) >>  8) | ((v & 0x0000ff0000000000) >> 24) |
+         ((v & 0x00ff000000000000) >> 40) | ((v & 0xff00000000000000) >> 56));
+}
+
+/* Function to detect byte order */
+static inline int isBigEndian()
+{
+    uint16_t word = 0x4321;
+    uint8_t* byte = (uint8_t*) &word;
+    return (*byte == 0x43);
+}
+
+/* Functions to convert N bit numbers between host and network byte order */
+extern uint16_t hton16(uint16_t v){
+    static int firstRun = 1;
+    static int bigEndian = 0;
+
+    if(firstRun){
+        bigEndian = isBigEndian();
+        firstRun = 0;
+        fprintf(stderr, "isBigEndian() = %d\n", bigEndian);
+    }
+
+    if(bigEndian){
+        return v;
+    }
+    else{
+        return bswap16(v);
+    }
+    
+}
+
+extern uint16_t ntoh16(uint16_t v){
+    return hton16(v);
+}
+
+extern uint32_t hton32(uint32_t v){
+    static int firstRun = 1;
+    static int bigEndian = 0;
+
+    if(firstRun){
+        bigEndian = isBigEndian();
+        firstRun = 0;
+        fprintf(stderr, "isBigEndian() = %d\n", bigEndian);
+    }
+
+    if(bigEndian){
+        return v;
+    }
+    else{
+        return bswap32(v);
+    }
+    
+}
+
+extern uint32_t ntoh32(uint32_t v){
+    return hton32(v);
+}
+
+extern uint64_t hton64(uint64_t v){
+    static int firstRun = 1;
+    static int bigEndian = 0;
+
+    if(firstRun){
+        bigEndian = isBigEndian();
+        firstRun = 0;
+        fprintf(stderr, "isBigEndian() = %d\n", bigEndian);
+    }
+
+    if(bigEndian){
+        return v;
+    }
+    else{
+        return bswap64(v);
+    }
+    
+}
+
+extern uint64_t ntoh64(uint64_t v){
+    return hton64(v);
 }
