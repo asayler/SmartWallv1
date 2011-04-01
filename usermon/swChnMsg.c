@@ -28,7 +28,6 @@
 #include "../com/SmartWall.h"
 #include "../com/comTools.h"
 #include "../master/swMaster.h"
-#include "../slave/swOutlet.h"
 
 #define SENDPORT SWOUTPORT
 #define LISTENPORT SWINPORT
@@ -472,52 +471,38 @@ int main(int argc, char *argv[]){
                         exit(EXIT_FAILURE);
                     }
                     /* ToDo: Switch on target device type */
-                    /* Switch on Opcode */
-                    switch(opcode){
-                    case OUTLET_CH_OP_STATE:
-                        {
-                            /* Switch on Message Type: SET OR QUERY */
-                            switch(msgType){
-                            case SW_MSG_REPORT:
-                                /* Report State */
-                                MTtoStr(mtStrTemp, sizeof(mtStrTemp),
-                                        &msgType); 
-                                DTtoStr(dtStrTemp, sizeof(dtStrTemp),
-                                        &targetType); 
-                                fprintf(stdout, "0x%4.4" PRIxSWAddr
-                                        " %s %s 0x%4.4" PRIxSWOpcode,
-                                        sourceDeviceInfo.swAddr,
-                                        mtStrTemp, dtStrTemp, opcode);
-                                for(i = 0; i < tgtChnData.header.numChan; i++){
-                                    j = tgtChnData.data[i].chanTop.chanNum;
-                                    if(j < tgtDeviceInfo.numChan){
-                                        temp = tgtChnData.data[i].chanValue;
-                                        fprintf(stdout, " %" PRIxNumChan 
-                                                " %ld", j, *temp);
-                                    }
-                                    else{
-                                        fprintf(stderr,
-                                                "\n%s: Invalid chanNum: %u\n",
-                                                argv[0], j);
-                                    }
-                                }
-                                fprintf(stdout, "\n");
-                                break;
-                            default:
-                                fprintf(stderr, "%s: Unhandeled msgType\n",
-                                        argv[0]);
-                                exit(EXIT_FAILURE);
-                                break;
+                    /* Switch on Message Type: SET OR QUERY */
+                    switch(msgType){
+                    case SW_MSG_REPORT:
+                        /* Report State */
+                        MTtoStr(mtStrTemp, sizeof(mtStrTemp),
+                                &msgType); 
+                        DTtoStr(dtStrTemp, sizeof(dtStrTemp),
+                                &targetType); 
+                        fprintf(stdout, "0x%4.4" PRIxSWAddr
+                                " %s %s 0x%4.4" PRIxSWOpcode,
+                                sourceDeviceInfo.swAddr,
+                                mtStrTemp, dtStrTemp, opcode);
+                        for(i = 0; i < tgtChnData.header.numChan; i++){
+                            j = tgtChnData.data[i].chanTop.chanNum;
+                            if(j < tgtDeviceInfo.numChan){
+                                temp = tgtChnData.data[i].chanValue;
+                                fprintf(stdout, " %" PRIxNumChan 
+                                        " %ld", j, *temp);
                             }
-                            break;
+                            else{
+                                fprintf(stderr,
+                                        "\n%s: Invalid chanNum: %u\n",
+                                        argv[0], j);
+                            }
                         }
+                        fprintf(stdout, "\n");
+                        break;
                     default:
-                        {
-                            fprintf(stderr, "%s: Unhandeled Opcode\n",
-                                    argv[0]);
-                            exit(EXIT_FAILURE);
-                            break;
-                        }
+                        fprintf(stderr, "%s: Unhandeled msgType\n",
+                                argv[0]);
+                        exit(EXIT_FAILURE);
+                        break;
                     }
                     break;
                 }

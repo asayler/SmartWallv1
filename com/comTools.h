@@ -39,3 +39,11 @@ extern int print_swChanMsgBody(const struct SWChannelData* data,
 
 /* Function to check if input is a valid number in hex, octal, or decimal */
 extern int isnumeric(char* input);
+
+/* Functions to convert N bit numbers between host and network byte order */
+extern uint16_t hton16(uint16_t v);
+extern uint16_t ntoh16(uint16_t v);
+extern uint32_t hton32(uint32_t v);
+extern uint32_t ntoh32(uint32_t v);
+extern uint64_t hton64(uint64_t v);
+extern uint64_t ntoh64(uint64_t v);
