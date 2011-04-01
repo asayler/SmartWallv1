@@ -29,22 +29,25 @@
 		width: 810px;
 		background: #fff;
 	}
-	#navigation a{
+	#navigation a:link,a:visited{
 		display: block;
-		margin: 0 0 10px 0;
+		padding: 4px;
+		text-decoration: none;
+	}
+	#navigation a:hover,a:active{
+		    background-color: #bbf
 	}
 	#footer{
 		clear: both;
-		background: #aaa;
+		background: #bbb;
 		padding: 10px;
 	}
 	ul{
 		margin: 0;
 		padding: 0;
 		list-style-type: none;
-		width: 525px;
+		width: 150px;
 	}
-
 </style>
 </head>
 
@@ -53,13 +56,12 @@
 
 <div id="header">
 <h1>SmartWall Homepage</h1>
-</div>
+</div> <!-- end header -->
 
 <div id="content">
-	     	  
 <h4> All active outlets: </h4>  
-<?php
-//get outlet list from Andy's compiled swls.c program
+
+<?php //get outlet list from Andy's compiled swls.c program
 
 //change directory for relative path purposes
 chdir('/home/laura/senior/code/SmartWallv1/usermon');
@@ -130,10 +132,16 @@ if (isset($_GET['submit'])){
    // ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> 
    //        <SW Opcode> <Chn Arg Size (bytes)> <Chn#> <Chn Arg> ...
 
-   echo "./swChnMsg ".$lookup[$outlet]['swAdr']." QUERY OUTLET 0x01 1 0x01 x 0x02 x \n"; //debug  
+   echo "./swChnMsg ".$lookup[$outlet]['swAdr']." QUERY OUTLET 0x0010 1 0x01 x\n"; //debug  
    echo "<br />";       
    $swAdr = $lookup[$outlet]['swAdr']; //shell_exec can't handle
-   $temp = shell_exec("./swChnMsg $swAdr QUERY OUTLET 0x01 1 0x01 x 0x02 x 2>&1");
+   //NOTE: only outlet 0x0011 working right now! Others cause hang.
+   $temp = shell_exec("./swChnMsg $swAdr QUERY OUTLET 0x0010 1 0x01 x 2>&1");
+   //IMPORTANT: when swChnMsg fails, it does so silently and hangs
+   //for now, kill it with:
+   // >> sudo killall swChnMsg
+   // check for hung programs with:
+   // >> ps aux | grep swChnMsg
    echo $temp."\n";
    } else {
       echo "First, select an outlet.\n";
@@ -141,7 +149,7 @@ if (isset($_GET['submit'])){
 }
 ?>
 
-</div> <!-- end container -->
+</div> <!-- end content -->
 
 <div id="navigation">
      <ul>
