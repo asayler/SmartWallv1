@@ -26,6 +26,7 @@
 
 #include "../com/SmartWall.h"
 #include "../com/comTools.h"
+#include "../com/comPrint.h"
 #include "swOutlet.h"
 
 #define SENDPORT SWINPORT

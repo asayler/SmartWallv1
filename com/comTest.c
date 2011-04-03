@@ -11,7 +11,10 @@
 
 #include "SmartWall.h"
 #include "comTools.h"
-#include "string.h"
+#include "comPrint.h"
+
+#include <string.h>
+#include <stdio.h>
 
 #define COM_TEST_SWVERSION 0x01
 #define COM_TEST_GID 0x01
@@ -377,42 +380,52 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     /* Build ref message */
     /* SW Header */
     swVersion_t refSWver = COM_TEST_SWVERSION;
+    refSWver = htonswVersion(refSWver);
     tmpLength = sizeof(refSWver);
     memcpy((refmsg + length), &refSWver, tmpLength);
     length += tmpLength;
     msgScope_t refMsgScope = SW_SCP_CHANNEL;
+    refMsgScope = htonmsgScope(refMsgScope);
     tmpLength = sizeof(refMsgScope);
     memcpy((refmsg + length), &refMsgScope, tmpLength);
     length += tmpLength;
     msgType_t refMsgType = COM_TEST_MSGTYPE;
+    refMsgType = htonmsgType(refMsgType);
     tmpLength = sizeof(refMsgType);
     memcpy((refmsg + length), &refMsgType, tmpLength);
     length += tmpLength;
     groupID_t refgid = COM_TEST_GID;
+    refgid = htongroupID(refgid);
     tmpLength = sizeof(refgid);
     memcpy((refmsg + length), &refgid, tmpLength);
     length += tmpLength;
     swAddress_t refSAddr = COM_TEST_SADDR;
+    refSAddr = htonswAddress(refSAddr);
     tmpLength = sizeof(refSAddr);
     memcpy((refmsg + length), &refSAddr, tmpLength);
     length += tmpLength;
     swAddress_t refDAddr = COM_TEST_DADDR;
+    refDAddr = htonswAddress(refDAddr);
     tmpLength = sizeof(refDAddr);
     memcpy((refmsg + length), &refDAddr, tmpLength);
     length += tmpLength;
     devType_t refSTypes = COM_TEST_STYPES;
+    refSTypes = htondevType(refSTypes);
     tmpLength = sizeof(refSTypes);
     memcpy((refmsg + length), &refSTypes, tmpLength);
     length += tmpLength;
     devType_t refTType = COM_TEST_TRGTYPE;
+    refTType = htondevType(refTType);
     tmpLength = sizeof(refTType);
     memcpy((refmsg + length), &refTType, tmpLength);
     length += tmpLength;
     swOpcode_t refOpcode = COM_TEST_OPCODE;
+    refOpcode = htonswOpcode(refOpcode);
     tmpLength = sizeof(refOpcode);
     memcpy((refmsg + length), &refOpcode, tmpLength);
     length += tmpLength;
     swLength_t refLength = calcLength;
+    refLength = htonswLength(refLength);
     tmpLength = sizeof(refLength);
     memcpy((refmsg + length), &refLength, tmpLength);
     length += tmpLength;
@@ -422,6 +435,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     length += tmpLength;
     /* Chan Scope Header */
     numChan_t refNumChn = COM_TEST_NUMCHN;
+    refNumChn = htonnumChan(refNumChn);
     tmpLength = sizeof(refNumChn);
     memcpy((refmsg + length), &refNumChn, tmpLength);
     length += tmpLength;
@@ -430,6 +444,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     memcpy((refmsg + length), &unused1, tmpLength);
     length += tmpLength;
     swLength_t refDataLen = COM_TEST_DATASIZE;
+    refDataLen = htonswLength(refDataLen);
     tmpLength = sizeof(refDataLen);
     memcpy((refmsg + length), &refDataLen, tmpLength);
     length += tmpLength;
@@ -439,6 +454,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     length += tmpLength;
     /* Chan 0 Head */
     numChan_t refChnNum0 = 0;
+    refChnNum0 = htonnumChan(refChnNum0);
     tmpLength = sizeof(refChnNum0);
     memcpy((refmsg + length), &refChnNum0, tmpLength);
     length += tmpLength;
@@ -461,6 +477,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     length += tmpLength;
     /* Chan 1 Head */
     numChan_t refChnNum1 = 1;
+    refChnNum1 = htonnumChan(refChnNum1);
     tmpLength = sizeof(refChnNum1);
     memcpy((refmsg + length), &refChnNum1, tmpLength);
     length += tmpLength;
@@ -483,6 +500,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     length += tmpLength;
     /* Chan 2 Head */
     numChan_t refChnNum2 = 2;
+    refChnNum2 = htonnumChan(refChnNum2);
     tmpLength = sizeof(refChnNum2);
     memcpy((refmsg + length), &refChnNum2, tmpLength);
     length += tmpLength;
@@ -498,7 +516,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     tmpLength = sizeof(unused11);
     memcpy((refmsg + length), &unused11, tmpLength);
     length += tmpLength;
-    /* Chan 1 Data */
+    /* Chan 2 Data */
     char* payload2 = COM_TEST_PAYLOAD2;
     tmpLength = COM_TEST_DATASIZE;
     memcpy((refmsg + length), payload2, tmpLength);
