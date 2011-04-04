@@ -192,6 +192,117 @@ extern int DTtoStr(char* typeStr, const size_t maxLength,
     return SUCCESS_VAL;
 }
 
+extern int ntohSmartWallHeader(struct SmartWallHeader* header){
+    
+    /* check input */
+    if(header == NULL){
+        fprintf(stderr, "ntohSmartWallheader: 'header' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* Endian Conversion */
+    header->version = ntohswVersion(header->version);
+    header->msgScope = ntohmsgScope(header->msgScope);
+    header->msgType = ntohmsgType(header->msgType);
+    header->groupID = ntohgroupID(header->groupID);
+    header->sourceAddress = ntohswAddress(header->sourceAddress);
+    header->destAddress = ntohswAddress(header->destAddress);
+    header->sourceTypes = ntohdevType(header->sourceTypes);
+    header->targetType = ntohdevType(header->targetType);
+    header->opcode = ntohswOpcode(header->opcode);
+    header->totalLength = ntohswLength(header->totalLength);
+
+    return SUCCESS_VAL;
+
+}
+
+extern int htonSmartWallHeader(struct SmartWallHeader* header){
+    
+    /* check input */
+    if(header == NULL){
+        fprintf(stderr, "htonSmartWallheader: 'header' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* Endian Conversion */
+    header->version = htonswVersion(header->version);
+    header->msgScope = htonmsgScope(header->msgScope);
+    header->msgType = htonmsgType(header->msgType);
+    header->groupID = htongroupID(header->groupID);
+    header->sourceAddress = htonswAddress(header->sourceAddress);
+    header->destAddress = htonswAddress(header->destAddress);
+    header->sourceTypes = htondevType(header->sourceTypes);
+    header->targetType = htondevType(header->targetType);
+    header->opcode = htonswOpcode(header->opcode);
+    header->totalLength = htonswLength(header->totalLength);
+
+    return SUCCESS_VAL;
+}
+
+extern int ntohSmartWallChannelHeader(struct SmartWallChannelHeader* header){
+    
+    /* check input */
+    if(header == NULL){
+        fprintf(stderr, "ntohSmartWallChannelHeader: "
+                "'header' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* Endian Conversion */
+    header->numChan = ntohnumChan(header->numChan);
+    header->dataLength = ntohswLength(header->dataLength);
+
+    return SUCCESS_VAL;
+}
+
+extern int htonSmartWallChannelHeader(struct SmartWallChannelHeader* header){
+    
+    /* check input */
+    if(header == NULL){
+        fprintf(stderr, "htonSmartWallChannelHeader: "
+                "'header' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* Endian Conversion */
+    header->numChan = htonnumChan(header->numChan);
+    header->dataLength = htonswLength(header->dataLength);
+
+    return SUCCESS_VAL;
+}
+
+
+extern int ntohSmartWallChannelTop(struct SmartWallChannelTop* top){
+    
+    /* check input */
+    if(top == NULL){
+        fprintf(stderr, "ntohSmartWallChannelTop: "
+                "'top' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* Endian Conversion */
+    top->chanNum = ntohnumChan(top->chanNum);
+    
+    return SUCCESS_VAL;
+}
+
+
+extern int htonSmartWallChannelTop(struct SmartWallChannelTop* top){
+    
+    /* check input */
+    if(top == NULL){
+        fprintf(stderr, "htonSmartWallChannelTop: "
+                "'top' must not be NULL.\n");
+        return ERROR_VAL;
+    }
+
+    /* Endian Conversion */
+    top->chanNum = htonnumChan(top->chanNum);
+    
+    return SUCCESS_VAL;
+}
+
 extern swLength_t writeSWMsg(uint8_t* msg,
                              const swLength_t maxLength,
                              const struct SmartWallDev* source,
@@ -276,6 +387,11 @@ extern swLength_t writeSWMsg(uint8_t* msg,
     swHeader.opcode = opcode;
     swHeader.totalLength = calcLength;
 
+    /* Convert Header Endianness */
+    if(htonSmartWallHeader(&swHeader)){
+        fprintf(stderr, "writeMsg Error: Could not convert Endianess!\n");
+    }
+
     /* Zero Length */
     length = 0;
 
@@ -310,6 +426,8 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
     swLength_t calcLength = 0;
     swLength_t tmpLength = 0;    
     int i;
+    struct SmartWallChannelHeader chHeader;
+    struct SmartWallChannelTop chTop;
     
     /* Check Input */
     /* Check Msg*/
@@ -338,12 +456,19 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
         return SWLENGTH_MAX;
     }
 
+    /* Convert Endianness*/
+    memcpy(&chHeader, &(data->header), sizeof(chHeader));
+    if(htonSmartWallChannelHeader(&chHeader)){
+        fprintf(stderr, "writeSWChannelBody: "
+                "Could not convert channel header Endianess!\n");
+    }
+
     /* Zero Length */
     length = 0;
 
     /* Copy SW Channel Scope Header to Msg */
-    tmpLength = sizeof(data->header);
-    memcpy((msgBody + length), &(data->header), tmpLength);
+    tmpLength = sizeof(chHeader);
+    memcpy((msgBody + length), &chHeader, tmpLength);
     length += tmpLength;
 
     /* Check Data */
@@ -355,9 +480,15 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
 
     /* Copy Data to Msg*/
     for(i=0; i<((data->header).numChan); i++){
+        /* Convert Top Endianness*/
+        memcpy(&chTop, &(data->data[i].chanTop), sizeof(chTop));
+        if(htonSmartWallChannelTop(&chTop)){
+            fprintf(stderr, "writeSWChannelBody: "
+                    "Could not convert channel top Endianess!\n");
+        }
         /* Copy chanTop */
-        tmpLength = sizeof(data->data[i].chanTop);
-        memcpy((msgBody + length), &((data->data[i]).chanTop), tmpLength);
+        tmpLength = sizeof(chTop);
+        memcpy((msgBody + length), &chTop, tmpLength);
         length += tmpLength;
         /* Check value */
         if((data->data)[i].chanValue == NULL){
@@ -458,6 +589,11 @@ extern swLength_t readSWMsg(const uint8_t* msg,
         offset += tmpLength;
     }
     
+    /* Convert Header Endianness */
+    if(ntohSmartWallHeader(&swHeader)){
+        fprintf(stderr, "readSWMsg: Could not convert Endianess!\n");
+    }
+
     /* Calculate and Check Length */
     calcLength = swHeader.totalLength;
     if(msgLength != calcLength){
@@ -531,6 +667,12 @@ extern swLength_t readSWChannelBody(const uint8_t* msgBody,
         memcpy(&(data->header), (msgBody + offset), tmpLength);
         offset += tmpLength;
     }
+
+    /* Convert Endianness*/
+    if(ntohSmartWallChannelHeader(&(data->header))){
+        fprintf(stderr, "readSWChannelBody: "
+                "Could not convert channel header Endianess!\n");
+    }
     
     /* Check Limits */
     if((data->header).numChan > maxNumChan){
@@ -554,6 +696,11 @@ extern swLength_t readSWChannelBody(const uint8_t* msgBody,
         tmpLength = sizeof(data->data[i].chanTop);
         memcpy(&(data->data[i].chanTop), (msgBody + offset), tmpLength);
         offset += tmpLength;
+        /* Convert Endianness*/
+        if(ntohSmartWallChannelTop(&(data->data[i].chanTop))){
+            fprintf(stderr, "readSWChannelBody: "
+                    "Could not convert channel top Endianess!\n");
+        }
         /* Check value Pointer */
         if(data->data[i].chanValue == NULL){
             fprintf(stderr, "readSWChannelBody: "

@@ -12,30 +12,16 @@
  *
  * Change Log:
  * 03/03/11 - Created
+ * 04/03/11 - Split out print functions into comPrint.h
  * ---
  */
 
 #include <stdint.h>
 #include <inttypes.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <ctype.h>
-
-#include "SmartWall.h"
-
-/* print packet payload data */
-extern int print_payload(const uint8_t* payload, int len);
-
-/* print SW Header data */
-extern int print_swHeader(const struct SmartWallHeader* header);
-
-/* print SW Device data */
-extern int print_swDev(const struct SmartWallDev* dev);
-
-/* print SW Channel Message data */
-extern int print_swChanMsgBody(const struct SWChannelData* data,
-                               const swLength_t maxNumChan,
-                               const swLength_t maxDataLength);
+#include <string.h>
 
 /* Function to check if input is a valid number in hex, octal, or decimal */
 extern int isnumeric(char* input);

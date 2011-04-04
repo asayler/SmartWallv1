@@ -22,6 +22,9 @@
 #include <stdio.h>
 #include <string.h>
 
+/* Local Includes */
+#include "comTools.h"
+
 /* Constants */
 #define SW_MAX_MSG_LENGTH 1024 /* In Bytes */
 #define SW_MAX_BODY_LENGTH (1024 - sizeof(struct SmartWallHeader))
@@ -41,24 +44,32 @@ typedef uint8_t swVersion_t;
 #define PRIxSWVer PRIx8
 #define SCNswVer  SCNu8
 #define SCNxSWVer SCNx8
+#define ntohswVersion(x) (x)
+#define htonswVersion(x) (x)
 
 typedef uint8_t msgScope_t;
 #define PRImsgScope  PRIu8
 #define PRIxMsgScope PRIx8
 #define SCNmsgScope  SCNu8
 #define SCNxMsgScope SCNx8
+#define ntohmsgScope(x) (x)
+#define htonmsgScope(x) (x)
 
 typedef uint8_t msgType_t;
 #define PRImsgType  PRIu8
 #define PRIxMsgType PRIx8
 #define SCNmsgType  SCNu8
 #define SCNxMsgType SCNx8
+#define ntohmsgType(x) (x)
+#define htonmsgType(x) (x)
 
 typedef uint8_t groupID_t;
 #define PRIgrpID  PRIu8
 #define PRIxGrpID PRIx8
 #define SCNgrpID  SCNu8
 #define SCNxGrpID SCNx8
+#define ntohgroupID(x) (x)
+#define htongroupID(x) (x)
 
 typedef uint16_t swAddress_t;
 #define PRIswAddr  PRIu16
@@ -66,12 +77,16 @@ typedef uint16_t swAddress_t;
 #define SCNswAddr  SCNu16
 #define SCNxSWAddr SCNx16
 #define SWADDRESS_MAX 65535
+#define ntohswAddress(x) ntoh16(x)
+#define htonswAddress(x) ntoh16(x)
 
 typedef uint64_t devType_t;
 #define PRIdevType  PRIu64
 #define PRIxDevType PRIx64
 #define SCNdevType  SCNu64
 #define SCNxDevType SCNx64
+#define ntohdevType(x) ntoh64(x)
+#define htondevType(x) ntoh64(x)
 
 typedef uint16_t swOpcode_t;
 #define PRIswOpcode  PRIu16
@@ -79,6 +94,8 @@ typedef uint16_t swOpcode_t;
 #define SCNswOpcode  SCNu16
 #define SCNxSWOpcode SCNx16
 #define SWOPCODE_MAX 65535
+#define ntohswOpcode(x) ntoh16(x)
+#define htonswOpcode(x) ntoh16(x)
 
 typedef uint16_t swLength_t;
 #define PRIswLength  PRIu16
@@ -86,18 +103,24 @@ typedef uint16_t swLength_t;
 #define SCNswLength  SCNu16
 #define SCNxSWLength SCNx16
 #define SWLENGTH_MAX UINT16_MAX
+#define ntohswLength(x) ntoh16(x)
+#define htonswLength(x) ntoh16(x)
 
 typedef uint8_t numChan_t;
 #define PRInumChan  PRIu8
 #define PRIxNumChan PRIx8
 #define SCNnumChan  SCNu8
 #define SCNxNumChan SCNx8
+#define ntohnumChan(x) (x)
+#define htonnumChan(x) (x)
 
 typedef uint64_t devUID_t;
 #define PRIdevUID  PRIu64
 #define PRIxDevUID PRIx64
 #define SCNdevUID  SCNu64
 #define SCNxDevUID SCNx64
+#define ntohdevUID(x) ntoh64(x)
+#define htondevUID(x) ntoh64(x)
 
 /* SmartWall Reserved Addresses */
 #define SW_ADDR_BROADCAST 0xffff
@@ -143,6 +166,8 @@ struct SmartWallHeader {
     swLength_t totalLength;    /* Total Length in bytes (Header + Data) */
     uint32_t unused0;          /* For Allignment, Future CRC32? */
 };
+extern int ntohSmartWallHeader(struct SmartWallHeader* header);
+extern int htonSmartWallHeader(struct SmartWallHeader* header);
 
 /* SmartWall Device Scope Header */
 struct SmartWallDeviceHeader {
@@ -158,6 +183,8 @@ struct SmartWallChannelHeader {
     swLength_t dataLength; /* Operand Bytes per channel */
     uint32_t unused1;      /* Alignment Padding */
 };
+extern int ntohSmartWallChannelHeader(struct SmartWallChannelHeader* header);
+extern int htonSmartWallChannelHeader(struct SmartWallChannelHeader* header);
 
 /* SmartWall Channel Scope Channel Header - 8 Bytes*/
 struct SmartWallChannelTop {
@@ -166,6 +193,8 @@ struct SmartWallChannelTop {
     uint16_t unused1;  /* Alignment Padding */
     uint32_t unused2;  /* Alignment Padding */
 };
+extern int ntohSmartWallChannelTop(struct SmartWallChannelTop* top);
+extern int htonSmartWallChannelTop(struct SmartWallChannelTop* top);
 
 /* SmartWall Channel Entry Struct */
 struct SWChannelEntry {
