@@ -14,6 +14,13 @@
 <?php include("header.inc"); ?>
 
 <div id="content">
+
+<?php
+//<SW opcode> (i.e. what you're querying for or setting)
+$state = "0x0010";
+$power = "0x0022";
+?>
+
 <h4> All active outlets: </h4>  
 
 <?php //get outlet list from Andy's compiled swls.c program
@@ -74,35 +81,33 @@ chdir('/var/www/');
 
     ?>
   </select>
-  <input type="submit" value="Get Status" name="submit">
+  <input type="submit" value="View Energy Usage" name="usage">
 </form>
 
 
-<?php
-//Notice button press of submit, display outlet info
-if (isset($_GET['submit'])){
-   if($_GET["outlets"] != NULL) { //check that an outlet has been selected
-   $outlet = $_GET["outlets"]; //selected outlet
-   chdir('/home/laura/senior/code/SmartWallv1/usermon');
-
-   //convert possibly aliased UID into normal UID
-   if(array_key_exists($outlet, $alias_UID)){ //check if this is an alias
-       $outlet = $alias_UID[$outlet]; //replace $outlet with UID
-   }
-
-   //query for device state: call format
-   // ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> 
-   //        <SW Opcode> <Chn Arg Size (bytes)> <Chn#> <Chn Arg>
- 
-   $swAdr = $lookup[$outlet]['swAdr']; //shell_exec can't handle
-   //NOTE: only outlet 0x0011 working right now! Others cause hang.
-   $temp = shell_exec("./swChnMsg $swAdr QUERY OUTLET 0x0010 1 0 x 2>&1");
-   //IMPORTANT: when swChnMsg fails, it does so silently and hangs
-   //for now, kill it with:
-   // >> sudo killall swChnMsg
-   // check for hung programs with:
-   // >> ps aux | grep swChnMsg
-   echo $temp;
+  <?php
+  //Notice button press of submit, display outlet info
+  if (isset($_GET['usage'])){
+    if($_GET["outlets"] != NULL) { //check that an outlet has been selected
+      $outlet = $_GET["outlets"]; //selected outlet
+      chdir('/home/laura/senior/code/SmartWallv1/usermon');
+      
+      //convert possibly aliased UID into normal UID
+      if(array_key_exists($outlet, $alias_UID)){ //check if this is an alias
+	$outlet = $alias_UID[$outlet]; //replace $outlet with UID
+      }
+      
+     //query for device state: call format
+     // ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> 
+     //        <SW Opcode> <Chn Arg Size (bytes)> <Chn#> <Chn Arg>
+     
+      $swAdr = $lookup[$outlet]['swAdr']; //shell_exec can't handle
+      //NOTE: only outlet 0x0011 working right now! Others cause hang.
+      $temp = shell_exec("./swChnMsg $swAdr QUERY OUTLET $state 1 0 x 2>&1"); //temp until power query ready
+      echo $temp; //temp until power query ready
+      //uncomment when power query for swChnMsg is ready
+      //$energy = shell_exec("./swChnMsg $swAdr QUERY OUTLET $power 1 0 x 2>&1");
+      //echo $energy;
    } else {
       echo "First, select an outlet.\n";
    }
