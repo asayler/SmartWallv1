@@ -72,7 +72,7 @@
 int CHANNEL1 = 0;
 int CHANNEL2 = 0;
 
-void SET_CHANNEL_STATE(int, int);
+int SET_CHANNEL_STATE(int, int);
 int GET_CHANNEL_STATE(int);
 
 
@@ -156,21 +156,17 @@ int main(void)
 		mPORTDToggleBits(BIT_2);     // toggle LED2 (same as LATDINV = 0x0004)
 		DBPRINTF("GREEN BLINK... \n");
 
-		CHANNEL1 = 1;
-		CoreSetSoftwareInterrupt0();
-		DelayMs(5000);
+		SET_CHANNEL_STATE(1,1);
+		DelayMs(2000);
 
-		CHANNEL2 = 1;
-		CoreSetSoftwareInterrupt0();
-		DelayMs(5000);
+		SET_CHANNEL_STATE(2,1);
+		DelayMs(2000);
 
-		CHANNEL1 = 0;
-		CoreSetSoftwareInterrupt0();
-		DelayMs(5000);
+		SET_CHANNEL_STATE(1,0);
+		DelayMs(2000);
 
-		CHANNEL2 = 0;
-		CoreSetSoftwareInterrupt0();
-		DelayMs(5000);
+		SET_CHANNEL_STATE(2,0);
+		DelayMs(2000);
 
    };
 
@@ -251,39 +247,38 @@ void DelayMs(unsigned int msec)
 *	SET_CHANNEL_STATE()
 *
 *	This function sets the state of a specified channel
+*
+*	returns 1 if state-change is successful
+*	returns 0 if state-change is unsuccessful
+*
 ******************************************************************************/
-void SET_CHANNEL_STATE(int channel, int state)
+int SET_CHANNEL_STATE(int channel, int state)
 {
-	if (channel == 1)
-		{
-			if (state == 0)
-				{	
-					CHANNEL1 = 0;
-					mPORTEClearBits(BIT_1);
-				}
-			else
-				{	
-					CHANNEL1 = 1;	
-					mPORTESetBits(BIT_1);
-				}
-		}
-	if (channel == 2)
-		{
-			if (state == 0)
-				{	
-					CHANNEL2 = 0;
-					mPORTEClearBits(BIT_2);
-				}
-			else
-				{	
-					CHANNEL2 = 1;	
-					mPORTESetBits(BIT_2);
-				}
-		}
-	if ((channel != 1) && (channel != 2))
-		{
-			DBPRINTF("IMPROPER CHANNEL SELECTION ERROR.  PLEASE TRY AGAIN. \n");
-		}
+	if (state == 1 || state == 0)
+	{
+		if (channel == 1)
+			{
+				CHANNEL1 = state;
+				CoreSetSoftwareInterrupt0();
+				return 1;
+			}
+		if (channel == 2)
+			{
+				CHANNEL2 = state;
+				CoreSetSoftwareInterrupt0();
+				return 1;
+			}
+		if ((channel != 1) && (channel != 2))
+			{
+				DBPRINTF("IMPROPER CHANNEL SELECTION ERROR.  PLEASE TRY AGAIN. \n");
+				return 0;
+			}
+	}
+	else
+	{
+		DBPRINTF("IMPROPER STATE SELECTION ERROR.  PLEASE TRY AGAIN. \n");
+		return 0;
+	}
 }
 
 
@@ -294,6 +289,10 @@ void SET_CHANNEL_STATE(int channel, int state)
 *	GET_CHANNEL_STATE()
 *
 *	This function returns the current state of a specified channel
+*
+* 	returns the state of the selected channel
+*	returns -1 if an invalid channel is selected
+*
 ******************************************************************************/
 int GET_CHANNEL_STATE(int channel)
 {
