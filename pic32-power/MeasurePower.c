@@ -32,7 +32,6 @@
 
 
 #include <plib.h>
-#include "db_utils.h"
 
 // Configuration Bit settings
 // SYSCLK = 80 MHz (8MHz Crystal/ FPLLIDIV * FPLLMUL / FPLLODIV)
@@ -65,18 +64,33 @@
 #define INTERRUPT       (CHANGE_INT_ON | CHANGE_INT_PRI_2)
 
 
+typedef struct
+{
+	unsigned long	nChars;		// number of characters in the packet
+	unsigned long	data[1];	// data itself
+}SpiPkt;	// a transferred SPI packet. assumes we're working in 32 bits mode
+
 // application defines
 #define SYS_FREQ		(80000000)
 
+//
+int num_samples = 1;
+unsigned long cycle_sample_data[1];
 
 // prototype
 void DelayMs(unsigned int);
 
+void SAMPLE();
+void CONFIG_3909();
+int MEASURE_POWER();
+
 
 int main(void)
 {
+	DBINIT();
+	DBPRINTF("MAIN.... \n");
    	unsigned int temp;
-	//int POWER;
+	int POWER;
 	//bool RELAY;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,7 +112,7 @@ int main(void)
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // STEP 5. read port(s) to clear mismatch on change notice pins
-    // temp = mPORTDRead();
+    temp = mPORTDRead();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // STEP 6. clear change notice interrupt flag
@@ -110,11 +124,10 @@ int main(void)
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// STEP 8. configure SPI port and MCP3909
-	OpenSPI1(FRAME_ENABLE_OFF | ENABLE_SDO_PIN | SPI_MODE32_ON | SPI_SMP_ON | SPI_CKE_OFF | SLAVE_ENABLE_OFF | CLK_POL_ACTIVE_LOW | MASTER_ENABLE_ON , SPI_ENABLE | SPI_FRZ_CONTINUE | SPI_IDLE_STOP | SPI_RX_OVERFLOW_CLR);
-	mSPIEIntEnable(1);
-	mSPITXIntEnable(1);
-	mSPIRXIntEnable(1);
+	OpenSPI1(FRAME_ENABLE_ON | ENABLE_SDO_PIN | SPI_MODE32_ON | SPI_CKE_ON | SLAVE_ENABLE_OFF | CLK_POL_ACTIVE_LOW | MASTER_ENABLE_ON , SPI_ENABLE | SPI_FRZ_CONTINUE | SPI_IDLE_STOP | SPI_RX_OVFLOW_CLR);
 	CONFIG_3909();
+
+	DBPRINTF("CONFIGURED.... \n");
 
 
    while(1)
@@ -122,7 +135,11 @@ int main(void)
 		// Toggle LED's to signify code is looping
 		mPORTDToggleBits(BIT_0);     // toggle LED1 (same as LATDINV = 0x0002)
 
+		SAMPLE();
+
 		POWER = MEASURE_POWER();
+
+		DBPRINTF("power measured! \n");
 
 		DelayMs(1000);
 
@@ -182,26 +199,29 @@ void DelayMs(unsigned int msec)
 *****************************************************************************/
 int MEASURE_POWER()
 {
+	DBPRINTF("MEASURE POWER.... \n");
 	// local variable declarations
 	int MASK = 0x0000FFFF;
-	int num_samples = 500;
 	int Csamples[num_samples];
 	int Vsamples[num_samples];
 	int Power = 0;
 	int i = 0;
 
 	// get array of samples from the MCP3909
-	int * sample_data = SAMPLE();
+	SAMPLE();
 	
+/*
 	// sample the current and voltage enough to calculate avg active power
 	for (i=0 ; i<num_samples ; i++)
 	{
-		Vsamples[i] = sample_data[i] AND MASK;
-		Csamples[i] = (sample_data[i] >> 16) AND MASK;
+		Vsamples[i] = cycle_sample_data[i] & MASK;
+		Csamples[i] = (cycle_sample_data[i] >> 16) & MASK;
+		DBPRINTF("Vsamples \n");
+		DBPRINTF("Csamples \n");
 	}
 
 	/* process sample data received from MCP3909
-	********************************************/
+	********************************************
 
 		// Pinst = Vinst * Iinst
 		for (i=0 ; i<num_samples ; i++)
@@ -210,9 +230,12 @@ int MEASURE_POWER()
 		}
 
 		Power = Power/num_samples;
+*/
 
 		return Power;
 }
+
+
 
 
 
@@ -222,18 +245,30 @@ int MEASURE_POWER()
 *	This function reads the digitally sampled voltage and current readings
 *	from the MCP3909 via the SPI port
 *****************************************************************************/
-int SAMPLE()
+void SAMPLE()
 {
-	// local variable declarations
-	int num_samples = 500;
-	int * data[num_samples];
+	DBPRINTF("sample....\n");
+	/*	
+	int		txferSize = 5;
+	SpiPkt*	pTxPkt;
+	SpiPkt*	pRxPkt;
+
+	pTxPkt=(SpiPkt*)malloc(txferSize*sizeof(long)+2);
+	pRxPkt=(SpiPkt*)malloc(txferSize*sizeof(long)+2);
+
+	SpiChnChangeMode(1, 1, 1, 1);		// set slave mode
+	SpiChnGetS(1, (unsigned int*)pRxPkt, 1);
+	*/
 
 	// get data
-	SpiChnGetS(1, data, num_samples);
-
-	// return data
-`	return data;
+	int data;
+	data = getcSPI1();
+	
+	// SpiChnGetS(1, (unsigned int*)cycle_sample_data, num_samples);
+	DBPRINTF("SUCCESS!!!! \n");
 }
+
+
 
 
 
@@ -245,20 +280,40 @@ int SAMPLE()
 *****************************************************************************/
 void CONFIG_3909()
 {
+	
+	DBPRINTF("CONFIG_3909...\n");
+
 	// SPI mode code
 	int code = 0xA4;
 	
 	// set CS high
 	mPORTDSetBits(BIT_9);
 	// set MCLR low 
-	mPORTEClearBits(BIT_1);
+	mPORTEClearBits(BIT_0);
 	// delay
 	DelayMs(5);
 	// set MCLR high
-	mPORTESetBits(BIT_1);
+	mPORTESetBits(BIT_0);
 	// set CS low
 	mPORTDClearBits(BIT_9);
 
 	// feed SPI mode code to MCP3909
 	SpiChnPutC(1, code);
+
+	DelayMs(1000);
+
+	SpiChnPutC(1, 0x12345678);
+	
+	int data;
+	data = getcSPI1();
+	char a = (char)data;
+	char * c;
+	c = &a;
+	DBPUTC(c);
+
+	data = getcSPI1();
+	a = (char)data;
+	c = &a;
+	DBPUTC(c);
 }
+
