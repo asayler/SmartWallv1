@@ -126,8 +126,17 @@ int main(void)
     // STEP 7. enable multi-vector interrupts
     INTEnableSystemMultiVectoredInt();
 
-	mINT1SetIntPriority(1);
-	mINT1IntEnable(1);
+	// set up the core software interrupt with a prioirty of 3 and zero sub-priority
+    INTSetVectorPriority(INT_CORE_SOFTWARE_0_VECTOR, INT_PRIORITY_LEVEL_3);
+    INTSetVectorSubPriority(INT_CORE_SOFTWARE_0_VECTOR, INT_SUB_PRIORITY_LEVEL_0);
+    INTClearFlag(INT_CS0);
+    INTEnable(INT_CS0, INT_ENABLED);
+
+    // set up the core software interrupt with a prioirty of 4 and zero sub-priority
+    INTSetVectorPriority(INT_CORE_SOFTWARE_1_VECTOR, INT_PRIORITY_LEVEL_7);
+    INTSetVectorSubPriority(INT_CORE_SOFTWARE_1_VECTOR, INT_SUB_PRIORITY_LEVEL_0);
+    INTClearFlag(INT_CS1);
+    INTEnable(INT_CS1, INT_ENABLED);
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// STEP 8. configure SPI port and MCP3909
@@ -147,8 +156,21 @@ int main(void)
 		mPORTDToggleBits(BIT_2);     // toggle LED2 (same as LATDINV = 0x0004)
 		DBPRINTF("GREEN BLINK... \n");
 
-		//POWER = MEASURE_POWER();
-		//DBPRINTF("power measured successfully... \n");
+		CHANNEL1 = 1;
+		CoreSetSoftwareInterrupt0();
+		DelayMs(5000);
+
+		CHANNEL2 = 1;
+		CoreSetSoftwareInterrupt0();
+		DelayMs(5000);
+
+		CHANNEL1 = 0;
+		CoreSetSoftwareInterrupt0();
+		DelayMs(5000);
+
+		CHANNEL2 = 0;
+		CoreSetSoftwareInterrupt0();
+		DelayMs(5000);
 
    };
 
@@ -397,3 +419,82 @@ void CONFIG_3909()
 
 */
 
+
+
+
+/*********************************************************************
+ * Function:       void _CoreSoftwareInt0Handler(void)
+ *
+ * PreCondition:    none
+ *
+ * Input:           none
+ *
+ * Output:          none
+ *
+ * Side Effects:    none
+ *
+ * Overview:        The interrupt handler function for the core software
+ *                  interrupt
+ *
+ * Note:           The handler is placed directly into the vector location
+ ********************************************************************/
+void __ISR(_CORE_SOFTWARE_0_VECTOR, ipl3) _CoreSoftwareInt0Handler(void)
+{
+    INTClearFlag(INT_CS0);                      // clear the interrupt flag
+    CoreClearSoftwareInterrupt0();              // clear the core int flag
+    
+	if (CHANNEL1 == 1)
+	{
+		mPORTDSetBits(BIT_0);
+		mPORTESetBits(BIT_1);
+		DBPRINTF("CHANNEL 1 ON \n");
+	}
+	if (CHANNEL1 == 0)
+	{
+		mPORTDClearBits(BIT_0);
+		mPORTEClearBits(BIT_1);
+		DBPRINTF("CHANNEL 1 OFF \n");
+	}
+	if (CHANNEL2 == 1)
+	{
+		mPORTDSetBits(BIT_1);
+		mPORTESetBits(BIT_2);
+		DBPRINTF("CHANNEL 2 ON \n");
+	}
+	if (CHANNEL2 == 0)
+	{
+		mPORTDClearBits(BIT_1);
+		mPORTEClearBits(BIT_2);
+		DBPRINTF("CHANNEL 2 OFF \n");
+	}
+
+}
+
+
+
+
+/*********************************************************************
+ * Function:       void _CoreSoftwareInt1Handler(void)
+ *
+ * PreCondition:    none
+ *
+ * Input:           none
+ *
+ * Output:          none
+ *
+ * Side Effects:    none
+ *
+ * Overview:        The interrupt handler fucntion for the core software
+ *                  interrupt
+ *
+ * Note:            The jump to this handler will be placed in the vactor
+ *                  location
+ ********************************************************************
+void __ISR(_CORE_SOFTWARE_1_VECTOR, ipl4) _CoreSoftwareInt1Handler(void)
+{
+    INTClearFlag(INT_CS1);                      // clear the interrupt flag
+    CoreClearSoftwareInterrupt1();                // clear the core int flag
+    PORTToggleBits(LED_PORT, CORE_SW_1_LED);
+}
+
+*/
