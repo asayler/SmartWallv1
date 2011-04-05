@@ -76,10 +76,14 @@ int SET_CHANNEL_STATE(int, int);
 int GET_CHANNEL_STATE(int);
 
 
+// define power measuring
+int CHANNEL_MEASURE;
+int CHANNEL_POWER;
+int MEASURE_POWER(int);
+
 // prototype
 void DelayMs(unsigned int);
-void SAMPLE();
-int MEASURE_POWER();
+void SAMPLE(int);
 void CONFIG_3909();
 
 
@@ -135,7 +139,7 @@ int main(void)
     INTEnable(INT_CS0, INT_ENABLED);
 
     // set up the core software interrupt with a prioirty of 4 and zero sub-priority
-    INTSetVectorPriority(INT_CORE_SOFTWARE_1_VECTOR, INT_PRIORITY_LEVEL_7);
+    INTSetVectorPriority(INT_CORE_SOFTWARE_1_VECTOR, INT_PRIORITY_LEVEL_4);
     INTSetVectorSubPriority(INT_CORE_SOFTWARE_1_VECTOR, INT_SUB_PRIORITY_LEVEL_0);
     INTClearFlag(INT_CS1);
     INTEnable(INT_CS1, INT_ENABLED);
@@ -326,40 +330,42 @@ int GET_CHANNEL_STATE(int channel)
 *
 *	This function measures how much power is being used by the outlet's load
 *	at a given instant
-*****************************************************************************
-int MEASURE_POWER()
+*
+*	returns the power being used in Watts as an integer
+*
+*****************************************************************************/
+int MEASURE_POWER(int channel)
 {
-	// local variable declarations
-	int MASK = 0x0000FFFF;
-	int Csamples[num_samples];
-	int Vsamples[num_samples];
-	int Power = 0;
-	int i = 0;
-
-	// get array of samples from the MCP3909
-	SAMPLE();
-	
-	// sample the current and voltage enough to calculate avg active power
-	for (i=0 ; i<num_samples ; i++)
+	if (channel == 1)
 	{
-		Vsamples[i] = cycle_sample_data[i] & MASK;
-		Csamples[i] = (cycle_sample_data[i] >> 16) & MASK;
-		DBPRINTF("Vsamples \n");
-		DBPRINTF("Csamples \n");
-	}
-
-	/* process sample data received from MCP3909
-	********************************************
-
-		// Pinst = Vinst * Iinst
-		for (i=0 ; i<num_samples ; i++)
+		if (CHANNEL1 == 0)
 		{
-			Power += Csamples[i] * Vsamples[i];
+			return 0;		// no need to measure power if channel is off
+			DBPRINTF("CHANNEL 1 IS OFF \n");
 		}
 
-		Power = Power/num_samples;
+		CHANNEL_MEASURE = 1;		// set channel 1 to be measured
+		CoreSetSoftwareInterrupt1();
 
-		return Power;
+	}
+
+	if (channel == 2)
+	{
+		if (CHANNEL2 == 0)
+		{
+			return 0;		// no need to measure power if channel is off
+			DBPRINTF("CHANNEL 2 IS OFF \n");
+		}
+
+		CHANNEL_MEASURE = 2;		// set channel 2 to be measured
+		CoreSetSoftwareInterrupt1();
+
+	}
+	
+	Power = CHANNEL_POWER;
+	CHANNEL_POWER = 0;
+
+	return Power;
 }
 
 
@@ -367,17 +373,17 @@ int MEASURE_POWER()
 
 
 /*****************************************************************************
-*	SAMPLE()
+*	SAMPLE(int channel)
 *
 *	This function reads the digitally sampled voltage and current readings
 *	from the MCP3909 via the SPI port
 *****************************************************************************
-void SAMPLE()
+void SAMPLE(int channel)
 {
 	DBPRINTF("sample....\n");
 
 	// get data
-	SpiChnGetS(1, (unsigned long*)cycle_sample_data, num_samples);
+	SpiChnGetS(channel, (unsigned long*)cycle_sample_data, num_samples);
 }
 
 
@@ -494,12 +500,37 @@ void __ISR(_CORE_SOFTWARE_0_VECTOR, ipl3) _CoreSoftwareInt0Handler(void)
  *
  * Note:            The jump to this handler will be placed in the vactor
  *                  location
- ********************************************************************
+ ********************************************************************/
 void __ISR(_CORE_SOFTWARE_1_VECTOR, ipl4) _CoreSoftwareInt1Handler(void)
 {
     INTClearFlag(INT_CS1);                      // clear the interrupt flag
     CoreClearSoftwareInterrupt1();                // clear the core int flag
-    PORTToggleBits(LED_PORT, CORE_SW_1_LED);
+    
+	
+	// local variable declarations
+	int MASK = 0x0000FFFF;
+	int Csamples[num_samples];
+	int Vsamples[num_samples];
+	int Power = 0;
+	int i = 0;
+
+	// get array of samples from the MCP3909
+	// SAMPLE(CHANNEL_MEASURE);
+	
+	// sample the current and voltage enough to calculate avg active power
+	for (i=0 ; i<num_samples ; i++)
+	{
+		Vsamples[i] = cycle_sample_data[i] & MASK;
+		Csamples[i] = (cycle_sample_data[i] >> 16) & MASK;
+	}
+
+	// process sample data received from MCP3909
+	// Pinst = Vinst * Iinst
+	for (i=0 ; i<num_samples ; i++)
+	{
+		Power += Csamples[i] * Vsamples[i];
+	}
+
+	CHANNEL_POWER = Power/num_samples;
 }
 
-*/
