@@ -91,6 +91,8 @@ int main(void)
 	DBPRINTF("MAIN... \n");
    	unsigned int temp;
 
+	int state;
+
 	int POWER;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -159,13 +161,17 @@ int main(void)
 		SET_CHANNEL_STATE(1,1);
 		DelayMs(2000);
 
-		SET_CHANNEL_STATE(2,1);
-		DelayMs(2000);
+		state = GET_CHANNEL_STATE(1);
 
-		SET_CHANNEL_STATE(1,0);
+		SET_CHANNEL_STATE(2,state);
 		DelayMs(2000);
 
 		SET_CHANNEL_STATE(2,0);
+		DelayMs(2000);
+
+		state = GET_CHANNEL_STATE(2);
+
+		SET_CHANNEL_STATE(1,state);
 		DelayMs(2000);
 
    };
