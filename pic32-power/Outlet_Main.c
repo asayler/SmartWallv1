@@ -80,10 +80,12 @@ int GET_CHANNEL_STATE(int);
 int CHANNEL_MEASURE;
 int CHANNEL_POWER;
 int MEASURE_POWER(int);
+unsigned int cycle_sample_data[5];
+int num_samples = 5;
 
 // prototype
 void DelayMs(unsigned int);
-void SAMPLE(int);
+int SAMPLE(int);
 void CONFIG_3909();
 
 
@@ -105,7 +107,7 @@ int main(void)
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // STEP 2. configure the port registers
-    mPORTDSetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2);
+    mPORTDSetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2 | BIT_9);
 	mPORTESetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2);
 
     //PORTSetPinsDigitalIn(IOPORT_D, BIT_6);
@@ -146,37 +148,57 @@ int main(void)
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// STEP 8. configure SPI port and MCP3909
-	//OpenSPI1(FRAME_ENABLE_OFF | ENABLE_SDO_PIN | SPI_MODE32_ON | SPI_SMP_ON | SPI_CKE_OFF | SLAVE_ENABLE_OFF | CLK_POL_ACTIVE_LOW | MASTER_ENABLE_ON , SPI_ENABLE | SPI_FRZ_CONTINUE | SPI_IDLE_STOP | SPI_RX_OVFLOW_CLR | FRAME_POL_ACTIVE_LOW | FRAME_SYNC_EDGE_COINCIDE);
-	//DBPRINTF("openspi1... \n");
-	//ConfigIntSPI1(SPI_FAULT_INT_EN | SPI_TX_INT_DIS | SPI_RX_INT_EN | SPI_INT_PRI_3);
-	//DBPRINTF("configintspi1... \n");
-	//CONFIG_3909();
+	SpiChnOpen(1, SPI_OPEN_MSTEN | SPI_OPEN_MSSEN | SPI_OPEN_SMP_END | SPI_OPEN_FRMEN | SPI_OPEN_FSP_IN | SPI_OPEN_FSP_HIGH | SPI_OPEN_MODE32 | SPI_OPEN_SIDL, 4);
+	SpiChnEnable(1,1);
+	DBPRINTF("openspi1... \n");
+	//mSpiChnClrRxIntFlag(1);
+	//mSpiChnClrTxIntFlag(1);
+	//ConfigIntSPI1(SPI_TX_INT_DIS | SPI_RX_INT_DIS | SPI_INT_PRI_2);
+	DBPRINTF("configintspi1... \n");
+	CONFIG_3909();
 	
-	//DBPRINTF("Begin Relay Toggling.... \n");
+	DBPRINTF("Begin Relay Toggling.... \n");
 
 
    while(1)
    {
 		// Toggle LED's to signify code is looping
-		DelayMs(1000);
 		mPORTDToggleBits(BIT_2);     // toggle LED2 (same as LATDINV = 0x0004)
 		DBPRINTF("GREEN BLINK... \n");
 
 		SET_CHANNEL_STATE(1,1);
-		DelayMs(2000);
+		DelayMs(500000);
+
+
+		POWER = 0;
+
+		POWER = MEASURE_POWER(1);
+		
+		if (POWER > 0)
+		{
+			DBPRINTF("positive power reading \n");
+		}
+		if (POWER < 0)
+		{
+			DBPRINTF("negative power reading \n");
+		}
+		if (POWER == 0)
+		{
+			DBPRINTF("power reading failed \n");
+		}
 
 		state = GET_CHANNEL_STATE(1);
 
 		SET_CHANNEL_STATE(2,state);
-		DelayMs(2000);
+		DelayMs(500000);
 
 		SET_CHANNEL_STATE(2,0);
-		DelayMs(2000);
+		DelayMs(500000);
 
 		state = GET_CHANNEL_STATE(2);
 
 		SET_CHANNEL_STATE(1,state);
-		DelayMs(2000);
+		DelayMs(500000);
 
    };
 
@@ -244,7 +266,7 @@ void DelayMs(unsigned int msec)
 {
 	unsigned int tWait, tStart;
 		
-    tWait=(SYS_FREQ/2000)*msec;
+    tWait=(SYS_FREQ/20000000)*msec;
     tStart=ReadCoreTimer();
     while((ReadCoreTimer()-tStart)<tWait);		// wait for the time to pass
 
@@ -340,8 +362,8 @@ int MEASURE_POWER(int channel)
 	{
 		if (CHANNEL1 == 0)
 		{
-			return 0;		// no need to measure power if channel is off
 			DBPRINTF("CHANNEL 1 IS OFF \n");
+			return 0;		// no need to measure power if channel is off
 		}
 
 		CHANNEL_MEASURE = 1;		// set channel 1 to be measured
@@ -353,8 +375,8 @@ int MEASURE_POWER(int channel)
 	{
 		if (CHANNEL2 == 0)
 		{
-			return 0;		// no need to measure power if channel is off
 			DBPRINTF("CHANNEL 2 IS OFF \n");
+			return 0;		// no need to measure power if channel is off
 		}
 
 		CHANNEL_MEASURE = 2;		// set channel 2 to be measured
@@ -362,7 +384,7 @@ int MEASURE_POWER(int channel)
 
 	}
 	
-	Power = CHANNEL_POWER;
+	int Power = CHANNEL_POWER;
 	CHANNEL_POWER = 0;
 
 	return Power;
@@ -377,13 +399,28 @@ int MEASURE_POWER(int channel)
 *
 *	This function reads the digitally sampled voltage and current readings
 *	from the MCP3909 via the SPI port
-*****************************************************************************
-void SAMPLE(int channel)
+*****************************************************************************/
+int SAMPLE(int channel)
 {
 	DBPRINTF("sample....\n");
-
 	// get data
-	SpiChnGetS(channel, (unsigned long*)cycle_sample_data, num_samples);
+	int data;
+	data = SpiChnGetC(channel);
+	char * c;
+	char a = (char)data;
+	c = &a;
+	DBPUTC(c);
+	DBPRINTF("\n");
+	data = data & 0x7FFFFFFF;
+
+	DBPRINTF("sample....\n");
+	data = SpiChnGetC(channel);
+	a = (char)data;
+	c = &a;
+	DBPUTC(c);
+	DBPRINTF("\n");
+
+	return data;
 }
 
 
@@ -395,40 +432,42 @@ void SAMPLE(int channel)
 *
 *	This function configures the MCP3909 to transmit data from its two
 *	A/D converters to the PIC32 via the SPI port
-*****************************************************************************
+*****************************************************************************/
 void CONFIG_3909()
 {
 	
 	DBPRINTF("CONFIG_3909...\n");
 
 	// SPI mode code
-	int code = 0xA4;
+	int code = 0b10100100;
 	
 	// set CS high
 	mPORTDSetBits(BIT_9);
 	// set MCLR low 
 	mPORTEClearBits(BIT_0);
 	// delay
-	DelayMs(5);
+	DelayMs(10000);
 	// set MCLR high
 	mPORTESetBits(BIT_0);
 	// set CS low
 	mPORTDClearBits(BIT_9);
 
+	DelayMs(3);
+
 	// feed SPI mode code to MCP3909
-	SpiChnPutC(1, code);
-
-	DelayMs(1000);
-
-	SpiChnPutC(1, 0x00000000);
+	SpiChnPutC(1, 0b10100100);
 	
-	int data;
-	data = getcSPI1();
+	mPORTDSetBits(BIT_9);
+
+	DelayMs(5000);
+
+	int txdata = 0;
+	SpiChnPutC(1, txdata);
 }
 
 
 
-*/
+
 
 
 
@@ -515,8 +554,9 @@ void __ISR(_CORE_SOFTWARE_1_VECTOR, ipl4) _CoreSoftwareInt1Handler(void)
 	int i = 0;
 
 	// get array of samples from the MCP3909
-	// SAMPLE(CHANNEL_MEASURE);
+	int data = SAMPLE(CHANNEL_MEASURE);
 	
+/*
 	// sample the current and voltage enough to calculate avg active power
 	for (i=0 ; i<num_samples ; i++)
 	{
@@ -530,7 +570,8 @@ void __ISR(_CORE_SOFTWARE_1_VECTOR, ipl4) _CoreSoftwareInt1Handler(void)
 	{
 		Power += Csamples[i] * Vsamples[i];
 	}
+*/
 
-	CHANNEL_POWER = Power/num_samples;
+	CHANNEL_POWER = data;
 }
 
