@@ -68,12 +68,19 @@
 // application defines
 #define SYS_FREQ		(80000000)
 
+
+
+
 // define channel states
 int CHANNEL1 = 0;
 int CHANNEL2 = 0;
 
 int SET_CHANNEL_STATE(int, int);
 int GET_CHANNEL_STATE(int);
+
+
+
+
 
 
 // define power measuring
