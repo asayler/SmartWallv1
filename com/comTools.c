@@ -12,258 +12,206 @@
  *
  * Change Log:
  * 03/03/11 - Created
+ * 04/03/11 - Split print functions out into comPrint.c
  * ---
  */
 
 #include "comTools.h"
 
-/* Local Prtotypes */
-/* print line of payload data (avoid printing binary data) */
-static int print_hex_ascii_line(const uint8_t *payload, int len, int offset);
-/* print line of payload data (binary data only) */
-static int print_hex_line(const uint8_t *payload, int len, int offset);
-/* print channel header */
-static int print_swChanHeader(const struct SmartWallChannelHeader* header);
+/* Local Prototypes */
+/* Byte Swap */
+static inline uint16_t bswap16(uint16_t v);
+static inline uint32_t bswap32(uint32_t v);
+static inline uint64_t bswap64(uint64_t v);
+/* Endian Test */
+static inline int isBigEndian(void);
 
-/* External Implmentation */
-/* print packet payload data (avoid printing binary data) */
-extern int print_payload(const uint8_t* payload, int len){
+/*** External Implmentation ***/
+
+/* Function to check if input is a valid number in hex, octal, or decimal */
+enum numType{OCTAL, DECIMAL, HEX};
+extern int isnumeric(char* input){
+ 
+    /* Local Vars */
+    enum numType type;
+    unsigned int i = 0;
+    unsigned int j = 0;
     
-    int len_rem = len;
-    int line_width = 8; /* number of bytes per line */
-    int line_len;
-    int offset = 0;	 /* zero-based offset counter */
-    int count = 0;
-    const uint8_t* ch = payload;
-    
-    if(len <= 0){
-        return EXIT_FAILURE;
+    /* read through leading whitespace */
+    while(isspace(input[i])){
+        i++;
     }
-    
-    if(len <= line_width){
-        /* data fits on one line */
-        count += print_hex_ascii_line(ch, len, offset);
+
+    /* All whitespace or empty */
+    if(input[i] == '\0'){
+        return 0;
+    }
+
+    /* allow negative sign if present */
+    if(input[i] == '-'){
+        i++;
+    }
+
+    /* Lone '-' */
+    if(input[i] == '\0'){
+        return 0;
+    }
+
+    /* determine mode */
+    if(input[i] == '0'){
+        i++;
+        if(input[i] != '\0'){
+            if(input[i] == 'x' || input[i] == 'X'){
+                i++;
+                type = HEX;
+            }
+            else{
+                type = OCTAL;
+            }
+        }
     }
     else{
-        /* data spans multiple lines */
-        for( ;; ){
-            /* compute current line length */
-            line_len = line_width % len_rem;
-            /* print line */
-            count += print_hex_ascii_line(ch, line_len, offset);
-            /* compute total remaining */
-            len_rem = len_rem - line_len;
-            /* shift pointer to remaining bytes to print */
-            ch = ch + line_len;
-            /* add offset */
-            offset = offset + line_width;
-            /* check if we have line width chars or less */
-            if (len_rem <= line_width) {
-                /* print last line and get out */
-                count += print_hex_ascii_line(ch, len_rem, offset);
-                break;
+        type = DECIMAL;
+    }
+
+    /* Loop through input chars and check for legal input */
+    for(j = i; j < strlen(input); j++){
+        /* Check for legal numeric input */
+        if(!isdigit(input[j])){
+            /* Not digit */
+            switch(type){
+            case OCTAL:
+                {
+                    return 0;
+                    break;
+                }
+            case DECIMAL:
+                {
+                    return 0;
+                    break;
+                }
+            case HEX:
+                {
+                    if(isalpha(input[j])){
+                        if((toupper(input[j]) < 'A') ||
+                           (toupper(input[j]) > 'F')){
+                            return 0;
+                        }
+                    }
+                    else{
+                        return 0;
+                    }
+                    break;
+                }
+            default:
+                {
+                    fprintf(stderr, "isnumeric: Unhandeled number type!\n");
+                    return 0;
+                    break;
+                }
             }
         }
     }
     
-    return count;
+    return 1;
 }
 
-/* print SW Header data */
-extern int print_swHeader(const struct SmartWallHeader* header){
-    (void) header;
-    fprintf(stderr, "print_swHeader not yet implmented!\n");
-    return 0;
+/* Function to detect byte order */
+static inline int isBigEndian()
+{
+    uint16_t word = 0x4321;
+    uint8_t* byte = (uint8_t*) &word;
+    return (*byte == 0x43);
 }
 
-/* print SW Device data */
-extern int print_swDev(const struct SmartWallDev* dev){
+/* Functions to convert N bit numbers between host and network byte order */
+extern uint16_t hton16(uint16_t v){
+    static int firstRun = 1;
+    static int bigEndian = 0;
 
-    /* Loval Vars */
-    int cnt = 0;
-    
-    /* Input Check */
-    if(dev == NULL){
-        cnt += fprintf(stderr, "print_swDev: dev must not be NULL!\n");
-        return (-1 * cnt);
+    if(firstRun){
+        bigEndian = isBigEndian();
+        firstRun = 0;
     }
 
-    /* Print */
-    cnt += fprintf(stdout, "version: 0x%2.2" PRIxSWVer "\n", dev->version);
-    cnt += fprintf(stdout, "address: 0x%4.4" PRIxSWAddr "\n", dev->address);
-    cnt += fprintf(stdout, "groupID: 0x%2.2" PRIxGrpID "\n", dev->groupID);
-    cnt += fprintf(stdout, "types:   0x%16.16" PRIxDevType "\n", dev->types);
-
-    return cnt;
+    if(bigEndian){
+        return v;
+    }
+    else{
+        return bswap16(v);
+    }
+    
 }
 
-/* print SW Channel Message data */
-extern int print_swChanMsgBody(const struct SWChannelData* data,
-                               const swLength_t maxNumChan,
-                               const swLength_t maxDataLength){
-    
-    /* Local Vars */
-    int cnt = 0;
-    int i = 0;
-    
-    /* Input Check */
-    if(data == NULL){
-        cnt += fprintf(stderr,
-                       "print_swChanMsgBody: data must not be NULL!\n");
-        return (-1 * cnt);
-    }
-
-    /* Size Check */
-    if((data->header).numChan > maxNumChan){
-        cnt += fprintf(stderr, "print_swChanMsgBody: numChan exceeds max!\n");
-        return (-1 * cnt);
-    }
-    if((data->header).dataLength > maxDataLength){
-        cnt += fprintf(stderr,
-                       "print_swChanMsgBody: dataLength exceeds max!\n");
-        return (-1 * cnt);
-    }
-
-    /* Print Chan Header */
-    cnt += print_swChanHeader(&(data->header));
-    
-    /* Check Data */
-    if(data->data == NULL){
-        cnt += fprintf(stderr,
-                       "print_swChanMsgBody: data->data must not be NULL!\n");
-        return (-1 * cnt);
-    }
-
-    /* Print Data */
-    for(i = 0; i < (data->header).numChan; i++){
-        cnt += fprintf(stdout, "Chan #: 0x%2.2" PRIxNumChan "\n",
-                       (data->data)[i].chanTop.chanNum);
-        /* Check value */
-        if((data->data)[i].chanValue == NULL){
-            cnt += fprintf(stderr,
-                           "print_swChanMsgBody: "
-                           "chanValue must not be NULL!\n");
-            return (-1 * cnt);
-        }
-        cnt += fprintf(stdout, "Value:\n");
-        cnt += print_hex_ascii_line((data->data)[i].chanValue,
-                                    (data->header).dataLength,
-                                    0);
-    }
-
-    return 0;
+extern uint16_t ntoh16(uint16_t v){
+    return hton16(v);
 }
 
-/* Local Implmentation */
-/* print line of payload data (avoid printing binary data) */
-static int print_hex_ascii_line(const uint8_t* payload, int len, int offset) {
-    
-    /* local vars */
-    int i;
-    int gap;
-    int count = 0;
-    const uint8_t *ch;
-    
-    /* input check */
-    if(payload == NULL){
-        count += fprintf(stderr, "print_hex_ascii_line: "
-                         "payload must not be NULL!\n");
-        return (-1 * count);
+extern uint32_t hton32(uint32_t v){
+
+    static int firstRun = 1;
+    static int bigEndian = 0;
+
+    if(firstRun){
+        bigEndian = isBigEndian();
+        firstRun = 0;
     }
 
-    /* offset */
-    count += fprintf(stdout, "%05d   ", offset);
-    
-    /* hex */
-    ch = payload;
-    for(i = 0; i < len; i++){
-        count += fprintf(stdout, "%02" PRIx8 " ", *ch);
-        ch++;
+    if(bigEndian){
+        return v;
     }
-        
-    /* fill hex gap with spaces if not full line */
-    if(len < 8){
-        gap = 8 - len;
-        for(i = 0; i < gap; i++){
-            count += fprintf(stdout, "   ");
-        }
+    else{
+        return bswap32(v);
     }
-    fprintf(stdout, "| ");
-    
-    /* ascii (if printable) */
-    ch = payload;
-    for(i = 0; i < len; i++){
-        if(isprint(*ch)){
-            count += fprintf(stdout, "%c", *ch);
-        }
-        else{
-            count += fprintf(stdout, ".");
-        }
-        ch++;
-    }
-    
-    count += fprintf(stdout, "\n");
-    
-    return count;
 }
 
-/* print line of payload data (binary only) */
-static int print_hex_line(const uint8_t *payload, int len, int offset) {
-    
-    /* local vars */
-    int i;
-    int gap;
-    int count = 0;
-    const uint8_t *ch;
-
-    /* input check */
-    if(payload == NULL){
-        count += fprintf(stderr, "print_hex_ascii_line: "
-                         "payload must not be NULL!\n");
-        return (-1 * count);
-    }
-    
-    /* offset */
-    count += fprintf(stdout, "%05d   ", offset);
-    
-    /* hex */
-    ch = payload;
-    for(i = 0; i < len; i++){
-        count += fprintf(stdout, "%02" PRIx8 " ", *ch);
-        ch++;
-    }
-        
-    /* fill hex gap with spaces if not full line */
-    if(len < 8){
-        gap = 8 - len;
-        for(i = 0; i < gap; i++){
-            count += fprintf(stdout, "   ");
-        }
-    }
-    
-    count += fprintf(stdout, "\n");
-    
-    return count;
+extern uint32_t ntoh32(uint32_t v){
+    return hton32(v);
 }
 
-/* print channel header */
-static int print_swChanHeader(const struct SmartWallChannelHeader* header){
-   
-    /* Local vars */
-    int cnt = 0;
+extern uint64_t hton64(uint64_t v){
+    static int firstRun = 1;
+    static int bigEndian = 0;
 
-    /* Input Check */
-    if(header == NULL){
-        cnt += fprintf(stderr,
-                       "print_swChanHeader: header must not be NULL!\n");
-        return (-1 * cnt);
+    if(firstRun){
+        bigEndian = isBigEndian();
+        firstRun = 0;
     }
 
-    /* Print */
-    cnt += fprintf(stdout, "numChan: 0x%2.2" PRIxNumChan "\n",
-                   header->numChan);
-    cnt += fprintf(stdout, "dataLength: 0x%4.4" PRIxSWLength "\n",
-                   header->dataLength);
+    if(bigEndian){
+        return v;
+    }
+    else{
+        return bswap64(v);
+    }
+    
+}
 
-    return cnt;
+extern uint64_t ntoh64(uint64_t v){
+    return hton64(v);
+}
+
+/*** Local Implmentation */
+
+/* Byte Swaps */
+static inline uint16_t bswap16(uint16_t v){
+    return (((v & 0x00ffu) << 8) | ((v & 0xff00u ) >> 8));
+}
+
+static inline uint32_t bswap32(uint32_t v){
+    return
+        (((v & 0x000000fful) << 24) | ((v & 0x0000ff00ul) <<  8) |
+         ((v & 0x00ff0000ul) >>  8) | ((v & 0xff000000ul) >> 24));
+}
+
+static inline uint64_t bswap64(uint64_t v){
+    return
+        (((v & 0x00000000000000ffull) << 56) |
+         ((v & 0x000000000000ff00ull) << 40) |
+         ((v & 0x0000000000ff0000ull) << 24) |
+         ((v & 0x00000000ff000000ull) <<  8) |
+         ((v & 0x000000ff00000000ull) >>  8) |
+         ((v & 0x0000ff0000000000ull) >> 24) |
+         ((v & 0x00ff000000000000ull) >> 40) |
+         ((v & 0xff00000000000000ull) >> 56));
 }

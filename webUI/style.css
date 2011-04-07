@@ -1,0 +1,67 @@
+body{
+    margin: 0;
+    padding: 0;
+    background: #ccc;
+}
+#container{
+    width: 960px;
+    margin: 0 auto;
+}		
+#header{
+    padding: 5px;
+    background: #bbb;
+}
+#navigation{
+    float: left;
+    width: 150px;
+    background: #eee;
+}
+#content{
+    float: right;
+    width: 810px;
+    background: #fff;
+}
+#navigation a:link,a:visited{
+    font-size: 14pt;
+    color: #4E387E;
+    display: block;
+    padding: 4px;
+    text-decoration: none;
+}
+#navigation a:hover,a:active{
+    background-color: #bbf
+}
+#footer{
+    clear: both;
+    background: #bbb;
+    padding: 10px;
+}
+ul{
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    width: 150px;
+}
+ul li a{
+    border-top: 1px solid #fff;    
+}
+
+/* table.pretty adapted from Ivan Lutrov 
+http://lutrov.com/blog/pretty-html-tables-with-css*/
+table.pretty{
+    margin: 1em 1em 1em 1em;
+    background: whitesmoke;
+    border-collapse: collapse;
+}
+table.pretty th table.pretty td {
+    border: 1px silver solid;
+    padding 0.2em;
+}
+table.pretty th{
+    background: gainsboro;
+    text-align: center;
+}
+table.pretty caption{
+    margin-left: inherit;
+    margin-right: inherit;
+}

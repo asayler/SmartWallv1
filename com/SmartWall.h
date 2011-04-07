@@ -22,8 +22,16 @@
 #include <stdio.h>
 #include <string.h>
 
+/* Local Includes */
+#include "comTools.h"
+
 /* Constants */
 #define SW_MAX_MSG_LENGTH 1024 /* In Bytes */
+#define SW_MAX_BODY_LENGTH (1024 - sizeof(struct SmartWallHeader))
+#define SW_MAX_CHN 60 /* Max number of channels on a single device */
+#define SWOUTPORT 4333 /* 4329 to 4339 Free as of 2/1/2011 */
+#define SWINPORT 4334 /* 4329 to 4339 Free as of 2/1/2011 */
+#define SWCFGPORT 4339 /* 4329 to 4339 Free as of 2/1/2011 */
 
 /* Data Types */
 #define PRIipAddr  PRIu32
@@ -36,24 +44,32 @@ typedef uint8_t swVersion_t;
 #define PRIxSWVer PRIx8
 #define SCNswVer  SCNu8
 #define SCNxSWVer SCNx8
+#define ntohswVersion(x) (x)
+#define htonswVersion(x) (x)
 
 typedef uint8_t msgScope_t;
 #define PRImsgScope  PRIu8
 #define PRIxMsgScope PRIx8
 #define SCNmsgScope  SCNu8
 #define SCNxMsgScope SCNx8
+#define ntohmsgScope(x) (x)
+#define htonmsgScope(x) (x)
 
 typedef uint8_t msgType_t;
 #define PRImsgType  PRIu8
 #define PRIxMsgType PRIx8
 #define SCNmsgType  SCNu8
 #define SCNxMsgType SCNx8
+#define ntohmsgType(x) (x)
+#define htonmsgType(x) (x)
 
 typedef uint8_t groupID_t;
 #define PRIgrpID  PRIu8
 #define PRIxGrpID PRIx8
 #define SCNgrpID  SCNu8
 #define SCNxGrpID SCNx8
+#define ntohgroupID(x) (x)
+#define htongroupID(x) (x)
 
 typedef uint16_t swAddress_t;
 #define PRIswAddr  PRIu16
@@ -61,12 +77,16 @@ typedef uint16_t swAddress_t;
 #define SCNswAddr  SCNu16
 #define SCNxSWAddr SCNx16
 #define SWADDRESS_MAX 65535
+#define ntohswAddress(x) ntoh16(x)
+#define htonswAddress(x) ntoh16(x)
 
 typedef uint64_t devType_t;
 #define PRIdevType  PRIu64
 #define PRIxDevType PRIx64
 #define SCNdevType  SCNu64
 #define SCNxDevType SCNx64
+#define ntohdevType(x) ntoh64(x)
+#define htondevType(x) ntoh64(x)
 
 typedef uint16_t swOpcode_t;
 #define PRIswOpcode  PRIu16
@@ -74,24 +94,37 @@ typedef uint16_t swOpcode_t;
 #define SCNswOpcode  SCNu16
 #define SCNxSWOpcode SCNx16
 #define SWOPCODE_MAX 65535
+#define ntohswOpcode(x) ntoh16(x)
+#define htonswOpcode(x) ntoh16(x)
 
 typedef uint16_t swLength_t;
 #define PRIswLength  PRIu16
 #define PRIxSWLength PRIx16
 #define SCNswLength  SCNu16
 #define SCNxSWLength SCNx16
+#define SWLENGTH_MAX UINT16_MAX
+#define ntohswLength(x) ntoh16(x)
+#define htonswLength(x) ntoh16(x)
 
 typedef uint8_t numChan_t;
 #define PRInumChan  PRIu8
 #define PRIxNumChan PRIx8
 #define SCNnumChan  SCNu8
 #define SCNxNumChan SCNx8
+#define ntohnumChan(x) (x)
+#define htonnumChan(x) (x)
 
 typedef uint64_t devUID_t;
 #define PRIdevUID  PRIu64
 #define PRIxDevUID PRIx64
 #define SCNdevUID  SCNu64
 #define SCNxDevUID SCNx64
+#define ntohdevUID(x) ntoh64(x)
+#define htondevUID(x) ntoh64(x)
+
+/* SmartWall Reserved Addresses */
+#define SW_ADDR_BROADCAST 0xffff
+#define SW_ADDR_NETWORK   0x0000
 
 /* SmartWall Message Types */
 #define SW_MSG_SET     0x01
@@ -119,10 +152,6 @@ extern int strToDT(const char* typeStr, const size_t maxLength,
 extern int DTtoStr(char* typeStr, const size_t maxLength,
                    const devType_t* type);
 
-/* SmartWall Special Addresses */
-#define SW_ADDR_NETWORK   0x0000
-#define SW_ADDR_BROADCAST 0xffff
-
 /* SmartWall Header Struct  - 32 Bytes */
 struct SmartWallHeader {
     swVersion_t version;       /* SmartWall Protocol version */
@@ -137,6 +166,8 @@ struct SmartWallHeader {
     swLength_t totalLength;    /* Total Length in bytes (Header + Data) */
     uint32_t unused0;          /* For Allignment, Future CRC32? */
 };
+extern int ntohSmartWallHeader(struct SmartWallHeader* header);
+extern int htonSmartWallHeader(struct SmartWallHeader* header);
 
 /* SmartWall Device Scope Header */
 struct SmartWallDeviceHeader {
@@ -152,6 +183,8 @@ struct SmartWallChannelHeader {
     swLength_t dataLength; /* Operand Bytes per channel */
     uint32_t unused1;      /* Alignment Padding */
 };
+extern int ntohSmartWallChannelHeader(struct SmartWallChannelHeader* header);
+extern int htonSmartWallChannelHeader(struct SmartWallChannelHeader* header);
 
 /* SmartWall Channel Scope Channel Header - 8 Bytes*/
 struct SmartWallChannelTop {
@@ -160,6 +193,8 @@ struct SmartWallChannelTop {
     uint16_t unused1;  /* Alignment Padding */
     uint32_t unused2;  /* Alignment Padding */
 };
+extern int ntohSmartWallChannelTop(struct SmartWallChannelTop* top);
+extern int htonSmartWallChannelTop(struct SmartWallChannelTop* top);
 
 /* SmartWall Channel Entry Struct */
 struct SWChannelEntry {
@@ -175,13 +210,17 @@ struct SWChannelData {
 
 /* SmartWall Device Struct */
 struct SmartWallDev {
-    swVersion_t version;
-    swAddress_t address;
-    groupID_t groupID;
-    devType_t types;
+    swAddress_t swAddr;  /* SW Address */
+    devType_t devTypes;  /* SW Device Types Mask */
+    numChan_t numChan;   /* Number of Channels on Device */
+    swVersion_t version; /* SW Protocol Version */
+    devUID_t uid;        /* SW Unique Device ID */
+    groupID_t groupID;   /* SW Group ID */
 };
 
 /* Public Functions */
+/* Function to compose SW Message */
+/* Returns: Message length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t writeSWMsg(uint8_t* msg,
                              const swLength_t maxLength,
                              const struct SmartWallDev* source,
@@ -193,6 +232,8 @@ extern swLength_t writeSWMsg(uint8_t* msg,
                              const void* body,
                              const swLength_t bodyLength);
 
+/* Function to read SW Message */
+/* Returns: Message length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t readSWMsg(const uint8_t* msg,
                             const swLength_t msgLength,
                             struct SmartWallDev* source,
@@ -205,10 +246,14 @@ extern swLength_t readSWMsg(const uint8_t* msg,
                             swLength_t* bodyLength,
                             const swLength_t maxBodyLength);
 
+/* Function to compose SW Channel Body */
+/* Returns: Body length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t writeSWChannelBody(uint8_t* msgBody,
                                      const swLength_t maxLength,
                                      const struct SWChannelData* data); 
 
+/* Function to read SW Channel Body */
+/* Returns: Body length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t readSWChannelBody(const uint8_t* msgBody,
                                     const swLength_t bodyLength,
                                     struct SWChannelData* data,

@@ -11,7 +11,10 @@
 
 #include "SmartWall.h"
 #include "comTools.h"
-#include "string.h"
+#include "comPrint.h"
+
+#include <string.h>
+#include <stdio.h>
 
 #define COM_TEST_SWVERSION 0x01
 #define COM_TEST_GID 0x01
@@ -34,7 +37,7 @@ static swLength_t genSWChannelRefMsg(uint8_t* msg, swLength_t maxLength);
 
 /* Option enum */
 enum OPTIONS{
-    WRITE, READ, RW, REF, MEMSIZE
+    WRITE, READ, RW, REF, MEMSIZE, ENDIAN
 };
 
 int main(int argc, char* argv[]){
@@ -80,6 +83,9 @@ int main(int argc, char* argv[]){
         else if(strcmp(argv[1], "-mem") == 0){
             mode = MEMSIZE;
         }
+        else if(strcmp(argv[1], "-end") == 0){
+            mode = ENDIAN;
+        }
         else{
             fprintf(stderr, "Unknown option: %s\n", argv[1]);
             exit(EXIT_FAILURE);
@@ -109,14 +115,14 @@ int main(int argc, char* argv[]){
         data.data = dataEntries;
         
         source.version = COM_TEST_SWVERSION;
-        source.address = COM_TEST_SADDR;
+        source.swAddr = COM_TEST_SADDR;
         source.groupID = COM_TEST_GID;
-        source.types = COM_TEST_STYPES;
+        source.devTypes = COM_TEST_STYPES;
         
         destination.version = COM_TEST_SWVERSION;
-        destination.address = COM_TEST_DADDR;
+        destination.swAddr = COM_TEST_DADDR;
         destination.groupID = COM_TEST_GID;
-        destination.types = COM_TEST_DTYPES;
+        destination.devTypes = COM_TEST_DTYPES;
         
         bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
                                              sizeof(struct SmartWallHeader)),
@@ -161,13 +167,21 @@ int main(int argc, char* argv[]){
                             &targetType, &msgScope, &msgType, &opcode,
                             msgBody, &bodySize,
                             SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
         
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
                                      COM_TEST_NUMCHN,
                                      COM_TEST_DATASIZE);
-
-        /* Check Output */
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWChannelBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
 
         /* Print Message */
         fprintf(stdout, "-----Source  Device-----\n");
@@ -210,42 +224,80 @@ int main(int argc, char* argv[]){
                             &targetType, &msgScope, &msgType, &opcode,
                             msgBody, &bodySize,
                             SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
-        
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }        
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
                                      COM_TEST_NUMCHN,
                                      COM_TEST_DATASIZE);
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWChannelBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
 
         /* Write Message */     
         bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
                                              sizeof(struct SmartWallHeader)),
                                       &data);
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: writeSWChannrlBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }        
         msgSize = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
                              &source, &destination,
                              targetType, msgScope, msgType, opcode,
                              msgBody, bodySize);
-     
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: writeSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
+
         /* Read Written Message */
         msgSize = readSWMsg(msg, msgSize,
                             &source, &destination,
                             &targetType, &msgScope, &msgType, &opcode,
                             msgBody, &bodySize,
                             SW_MAX_MSG_LENGTH-sizeof(struct SmartWallHeader));
-        
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
                                      COM_TEST_NUMCHN,
                                      COM_TEST_DATASIZE);
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: readSWChannelBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
 
         /* Write Message */
         bodySize = writeSWChannelBody(msgBody, (SW_MAX_MSG_LENGTH -
                                              sizeof(struct SmartWallHeader)),
                                       &data);
+        if(bodySize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: writeSWChannelBody returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
         msgSize = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
                              &source, &destination,
                              targetType, msgScope, msgType, opcode,
                              msgBody, bodySize);
-     
+        if(msgSize == SWLENGTH_MAX){
+            fprintf(stderr, "%s: writeSWMsg returned error.\n",
+                    argv[0]);
+            exit(EXIT_FAILURE);
+        }
+
         /* Print Output */
         fprintf(stdout, "msgSize: %" PRIswLength "\n",
                 msgSize);
@@ -269,6 +321,28 @@ int main(int argc, char* argv[]){
         fprintf(stdout, "uint32_t is %lu bytes\n", sizeof(test32));
         fprintf(stdout, "Max value of uint32_t is 0x%" PRIx32 "\n", test32);
 
+    }
+    else if(mode == ENDIAN){
+        fprintf(stdout, "hton16(0x1122) = %" PRIx16 "\n", hton16(0x1122));
+        fprintf(stdout, "ntoh16(0x1122) = %" PRIx16 "\n", ntoh16(0x1122));
+        fprintf(stdout, "hton16(ntoh16(0x1122)) = %" PRIx16 "\n",
+                hton16(ntoh16(0x1122)));
+        fprintf(stdout, "hton32(0x11223344) = %" PRIx32 "\n",
+                hton32(0x11223344));
+        fprintf(stdout, "ntoh32(0x11223344) = %" PRIx32 "\n",
+                ntoh32(0x11223344));
+        fprintf(stdout, "hton32(ntoh32(0x11223344)) = %" PRIx32 "\n",
+                hton32(ntoh32(0x11223344)));
+        fprintf(stdout, "hton64(0x1122334455667788) = %" PRIx64 "\n",
+                hton64(0x1122334455667788));
+        fprintf(stdout, "ntoh64(0x1122334455667788) = %" PRIx64 "\n",
+                ntoh64(0x1122334455667788));
+        fprintf(stdout, "hton64(ntoh64(0x1122334455667788)) = %" PRIx64 "\n",
+                hton64(ntoh64(0x1122334455667788)));
+    }
+    else{
+        fprintf(stderr, "Unhandeled mode\n");
+        exit(EXIT_FAILURE);
     }
    
     return EXIT_SUCCESS;
@@ -306,42 +380,52 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     /* Build ref message */
     /* SW Header */
     swVersion_t refSWver = COM_TEST_SWVERSION;
+    refSWver = htonswVersion(refSWver);
     tmpLength = sizeof(refSWver);
     memcpy((refmsg + length), &refSWver, tmpLength);
     length += tmpLength;
     msgScope_t refMsgScope = SW_SCP_CHANNEL;
+    refMsgScope = htonmsgScope(refMsgScope);
     tmpLength = sizeof(refMsgScope);
     memcpy((refmsg + length), &refMsgScope, tmpLength);
     length += tmpLength;
     msgType_t refMsgType = COM_TEST_MSGTYPE;
+    refMsgType = htonmsgType(refMsgType);
     tmpLength = sizeof(refMsgType);
     memcpy((refmsg + length), &refMsgType, tmpLength);
     length += tmpLength;
     groupID_t refgid = COM_TEST_GID;
+    refgid = htongroupID(refgid);
     tmpLength = sizeof(refgid);
     memcpy((refmsg + length), &refgid, tmpLength);
     length += tmpLength;
     swAddress_t refSAddr = COM_TEST_SADDR;
+    refSAddr = htonswAddress(refSAddr);
     tmpLength = sizeof(refSAddr);
     memcpy((refmsg + length), &refSAddr, tmpLength);
     length += tmpLength;
     swAddress_t refDAddr = COM_TEST_DADDR;
+    refDAddr = htonswAddress(refDAddr);
     tmpLength = sizeof(refDAddr);
     memcpy((refmsg + length), &refDAddr, tmpLength);
     length += tmpLength;
     devType_t refSTypes = COM_TEST_STYPES;
+    refSTypes = htondevType(refSTypes);
     tmpLength = sizeof(refSTypes);
     memcpy((refmsg + length), &refSTypes, tmpLength);
     length += tmpLength;
     devType_t refTType = COM_TEST_TRGTYPE;
+    refTType = htondevType(refTType);
     tmpLength = sizeof(refTType);
     memcpy((refmsg + length), &refTType, tmpLength);
     length += tmpLength;
     swOpcode_t refOpcode = COM_TEST_OPCODE;
+    refOpcode = htonswOpcode(refOpcode);
     tmpLength = sizeof(refOpcode);
     memcpy((refmsg + length), &refOpcode, tmpLength);
     length += tmpLength;
     swLength_t refLength = calcLength;
+    refLength = htonswLength(refLength);
     tmpLength = sizeof(refLength);
     memcpy((refmsg + length), &refLength, tmpLength);
     length += tmpLength;
@@ -351,6 +435,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     length += tmpLength;
     /* Chan Scope Header */
     numChan_t refNumChn = COM_TEST_NUMCHN;
+    refNumChn = htonnumChan(refNumChn);
     tmpLength = sizeof(refNumChn);
     memcpy((refmsg + length), &refNumChn, tmpLength);
     length += tmpLength;
@@ -359,6 +444,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     memcpy((refmsg + length), &unused1, tmpLength);
     length += tmpLength;
     swLength_t refDataLen = COM_TEST_DATASIZE;
+    refDataLen = htonswLength(refDataLen);
     tmpLength = sizeof(refDataLen);
     memcpy((refmsg + length), &refDataLen, tmpLength);
     length += tmpLength;
@@ -368,6 +454,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     length += tmpLength;
     /* Chan 0 Head */
     numChan_t refChnNum0 = 0;
+    refChnNum0 = htonnumChan(refChnNum0);
     tmpLength = sizeof(refChnNum0);
     memcpy((refmsg + length), &refChnNum0, tmpLength);
     length += tmpLength;
@@ -390,6 +477,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     length += tmpLength;
     /* Chan 1 Head */
     numChan_t refChnNum1 = 1;
+    refChnNum1 = htonnumChan(refChnNum1);
     tmpLength = sizeof(refChnNum1);
     memcpy((refmsg + length), &refChnNum1, tmpLength);
     length += tmpLength;
@@ -412,6 +500,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     length += tmpLength;
     /* Chan 2 Head */
     numChan_t refChnNum2 = 2;
+    refChnNum2 = htonnumChan(refChnNum2);
     tmpLength = sizeof(refChnNum2);
     memcpy((refmsg + length), &refChnNum2, tmpLength);
     length += tmpLength;
@@ -427,7 +516,7 @@ swLength_t genSWChannelRefMsg(uint8_t* refmsg, const swLength_t maxLength){
     tmpLength = sizeof(unused11);
     memcpy((refmsg + length), &unused11, tmpLength);
     length += tmpLength;
-    /* Chan 1 Data */
+    /* Chan 2 Data */
     char* payload2 = COM_TEST_PAYLOAD2;
     tmpLength = COM_TEST_DATASIZE;
     memcpy((refmsg + length), payload2, tmpLength);
