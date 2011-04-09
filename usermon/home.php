@@ -6,13 +6,15 @@
 <head>
 <title>SmartWall Home</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
-    
+
 </head>
-    
+
 <body>
 <div id="containter">
 
-<?php include("header.inc"); ?>
+<div id="header">
+<h1>SmartWall Home Control Pannel</h1>
+</div> <!-- end header -->
 
 <div id="content">
 
@@ -69,7 +71,7 @@ foreach($UIDs as $value) {
 <?php
   chdir('/home/laura/senior/code/SmartWallv1/usermon');
 echo "<table class=\"pretty\" border=\"1\">";
-echo "<th>Outlet</th><th>Status</th>";
+echo "<th>Status</th><th>Outlet</th>";
 foreach($aliased_UIDs as $value) {
   //    	$swAdr = $lookup[$outlet]['swAdr']; //shell_exec can't convert
   //	$swAdr = "0x0000000000000011"; //debug tool until all outlets available
@@ -83,14 +85,12 @@ foreach($aliased_UIDs as $value) {
     $on = "";
     $off = "checked";
   }
-  echo "<tr><td>&nbsp $value &nbsp</td>";
-  echo "<td> <input type=\"radio\" name=$value value=\"On\" $on>On";
-  echo "<input type=\"radio\" name=$value value=\"Off\" $off>Off &nbsp</td></tr>";
-
+  echo "<tr><td> <input type=\"radio\" name=$value value=\"On\" $on>On";
+  echo "<input type=\"radio\" name=$value value=\"Off\" $off>Off &nbsp</td>";
+  echo "<td>&nbsp $value &nbsp</td></tr>";
 }
 echo "</tr></table>";
 ?>
-&nbsp&nbsp
 <input type="submit" value="Apply Changes" name="apply">
   </form>
   
@@ -129,8 +129,18 @@ if (isset($_GET['apply'])){
 
 </div> <!-- end content -->
 
-<?php include("navigation.inc"); ?>
-<?php include("footer.inc"); ?>
+<div id="navigation">
+     <ul>
+     <li><a href="http://localhost/home.php">Home</a></li>
+     <li><a href="http://localhost/timers.php">Timers</a></li>
+     <li><a href="#">Trends</a></li>
+     <li><a href="#">Rename</a></li>
+     </ul>
+</div>  <!-- end navigation -->
+
+<div id="footer">
+     Footer
+</div> <!-- end footer -->
 
 </div> <!-- end container -->
 
