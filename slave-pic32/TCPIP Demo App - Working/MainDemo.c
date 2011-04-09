@@ -1,9 +1,8 @@
 /*********************************************************************
  *
- *  Main Application Entry Point and TCP/IP Stack Demo
- *  Module for Microchip TCP/IP Stack
- *   -Demonstrates how to call and use the Microchip TCP/IP stack
- *	 -Reference: Microchip TCP/IP Stack Help (TCPIP Stack Help.chm)
+ *  Main Application Entry Point and TCP/IP Stack
+ *  SmartWall Slave
+ *  Andy Sayler
  *
  *********************************************************************
  * FileName:        MainDemo.c
@@ -16,73 +15,8 @@
  *
  * Software License Agreement
  *
- * Copyright (C) 2002-2010 Microchip Technology Inc.  All rights
- * reserved.
- *
- * Microchip licenses to you the right to use, modify, copy, and
- * distribute:
- * (i)  the Software when embedded on a Microchip microcontroller or
- *      digital signal controller product ("Device") which is
- *      integrated into Licensee's product; or
- * (ii) ONLY the Software driver source files ENC28J60.c, ENC28J60.h,
- *		ENCX24J600.c and ENCX24J600.h ported to a non-Microchip device
- *		used in conjunction with a Microchip ethernet controller for
- *		the sole purpose of interfacing with the ethernet controller.
- *
- * You should refer to the license agreement accompanying this
- * Software for additional information regarding your rights and
- * obligations.
- *
- * THE SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT
- * WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT
- * LIMITATION, ANY WARRANTY OF MERCHANTABILITY, FITNESS FOR A
- * PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT SHALL
- * MICROCHIP BE LIABLE FOR ANY INCIDENTAL, SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF
- * PROCUREMENT OF SUBSTITUTE GOODS, TECHNOLOGY OR SERVICES, ANY CLAIMS
- * BY THIRD PARTIES (INCLUDING BUT NOT LIMITED TO ANY DEFENSE
- * THEREOF), ANY CLAIMS FOR INDEMNITY OR CONTRIBUTION, OR OTHER
- * SIMILAR COSTS, WHETHER ASSERTED ON THE BASIS OF CONTRACT, TORT
- * (INCLUDING NEGLIGENCE), BREACH OF WARRANTY, OR OTHERWISE.
- *
- *
- * Author              Date         Comment
- *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * Nilesh Rajbharti		4/19/01		Original (Rev. 1.0)
- * Nilesh Rajbharti		2/09/02		Cleanup
- * Nilesh Rajbharti		5/22/02		Rev 2.0 (See version.log for detail)
- * Nilesh Rajbharti		7/9/02		Rev 2.1 (See version.log for detail)
- * Nilesh Rajbharti		4/7/03		Rev 2.11.01 (See version log for detail)
- * Howard Schlunder		10/1/04		Beta Rev 0.9 (See version log for detail)
- * Howard Schlunder		10/8/04		Beta Rev 0.9.1 Announce support added
- * Howard Schlunder		11/29/04	Beta Rev 0.9.2 (See version log for detail)
- * Howard Schlunder		2/10/05		Rev 2.5.0
- * Howard Schlunder		1/5/06		Rev 3.00
- * Howard Schlunder		1/18/06		Rev 3.01 ENC28J60 fixes to TCP, 
- *									UDP and ENC28J60 files
- * Howard Schlunder		3/01/06		Rev. 3.16 including 16-bit micro support
- * Howard Schlunder		4/12/06		Rev. 3.50 added LCD for Explorer 16
- * Howard Schlunder		6/19/06		Rev. 3.60 finished dsPIC30F support, added PICDEM.net 2 support
- * Howard Schlunder		8/02/06		Rev. 3.75 added beta DNS, NBNS, and HTTP client (GenericTCPClient.c) services
- * Howard Schlunder		12/28/06	Rev. 4.00RC added SMTP, Telnet, substantially modified TCP layer
- * Howard Schlunder		04/09/07	Rev. 4.02 added TCPPerformanceTest, UDPPerformanceTest, Reboot and fixed some bugs
- * Howard Schlunder		xx/xx/07	Rev. 4.03
- * HSchlunder & EWood	08/27/07	Rev. 4.11
- * HSchlunder & EWood	10/08/07	Rev. 4.13
- * HSchlunder & EWood	11/06/07	Rev. 4.16
- * HSchlunder & EWood	11/08/07	Rev. 4.17
- * HSchlunder & EWood	11/12/07	Rev. 4.18
- * HSchlunder & EWood	02/11/08	Rev. 4.19
- * HSchlunder & EWood   04/26/08    Rev. 4.50 Moved most code to other files for clarity
- * KHesky               07/07/08    Added ZG2100-specific support
- * HSchlunder & EWood   07/24/08    Rev. 4.51
- * Howard Schlunder		11/10/08    Rev. 4.55
- * Howard Schlunder		04/14/09    Rev. 5.00
- * Howard Schlunder		07/10/09    Rev. 5.10
- * Howard Schlunder		11/18/09    Rev. 5.20
- * Howard Schlunder		04/28/10    Rev. 5.25
- * Howard Schlunder		10/19/10	Rev. 5.31
- ********************************************************************/
+ */
+
 /*
  * This macro uniquely defines this file as the main entry point.
  * There should only be one such definition in the entire project,
@@ -105,7 +39,6 @@ BYTE AN0String[8];
 // These may or may not be present in all applications.
 static void InitAppConfig(void);
 static void InitializeBoard(void);
-static void ProcessIO(void);
 
 // C30 and C32 Exception Handlers
 // If your code gets here, you either tried to read or write
@@ -192,37 +125,9 @@ int main(void)
 		// Any custom modules or processing you need to do should
 		// go here.
 
-		ProcessIO();
+		//ProcessIO();
 	}
 }
-
-// Processes A/D data from the potentiometer
-static void ProcessIO(void)
-{
-#if defined(__C30__) || defined(__C32__)
-    // Convert potentiometer result into ASCII string
-    uitoa((WORD)ADC1BUF0, AN0String);
-#else
-    // AN0 should already be set up as an analog input
-    ADCON0bits.GO = 1;
-
-    // Wait until A/D conversion is done
-    while(ADCON0bits.GO);
-
-	// AD converter errata work around (ex: PIC18F87J10 A2)
-	#if !defined(__18F87J50) && !defined(_18F87J50) && !defined(__18F87J11) && !defined(_18F87J11) 
-	{
-		BYTE temp = ADCON2;
-		ADCON2 |= 0x7;	// Select Frc mode by setting ADCS0/ADCS1/ADCS2
-		ADCON2 = temp;
-	}
-	#endif
-
-    // Convert 10-bit value into ASCII string
-    uitoa(*((WORD*)(&ADRESL)), AN0String);
-#endif
-}
-
 
 /****************************************************************************
   Function:
@@ -258,177 +163,51 @@ static void InitializeBoard(void)
 	LED7_TRIS = 0;
 	LED_PUT(0x00);
 
-#if defined(__18CXX)
-	// Enable 4x/5x/96MHz PLL on PIC18F87J10, PIC18F97J60, PIC18F87J50, etc.
-    OSCTUNE = 0x40;
 
-	// Set up analog features of PORTA
-
-	// PICDEM.net 2 board has POT on AN2, Temp Sensor on AN3
-	#if defined(PICDEMNET2)
-		ADCON0 = 0x09;		// ADON, Channel 2
-		ADCON1 = 0x0B;		// Vdd/Vss is +/-REF, AN0, AN1, AN2, AN3 are analog
-	#elif defined(PICDEMZ)
-		ADCON0 = 0x81;		// ADON, Channel 0, Fosc/32
-		ADCON1 = 0x0F;		// Vdd/Vss is +/-REF, AN0, AN1, AN2, AN3 are all digital
-	#elif defined(__18F87J11) || defined(_18F87J11) || defined(__18F87J50) || defined(_18F87J50)
-		ADCON0 = 0x01;		// ADON, Channel 0, Vdd/Vss is +/-REF
-		WDTCONbits.ADSHR = 1;
-		ANCON0 = 0xFC;		// AN0 (POT) and AN1 (temp sensor) are anlog
-		ANCON1 = 0xFF;
-		WDTCONbits.ADSHR = 0;		
-	#else
-		ADCON0 = 0x01;		// ADON, Channel 0
-		ADCON1 = 0x0E;		// Vdd/Vss is +/-REF, AN0 is analog
-	#endif
-	ADCON2 = 0xBE;		// Right justify, 20TAD ACQ time, Fosc/64 (~21.0kHz)
-
-
-    // Enable internal PORTB pull-ups
-    INTCON2bits.RBPU = 0;
-
-	// Configure USART
-    TXSTA = 0x20;
-    RCSTA = 0x90;
-
-	// See if we can use the high baud rate setting
-	#if ((GetPeripheralClock()+2*BAUD_RATE)/BAUD_RATE/4 - 1) <= 255
-		SPBRG = (GetPeripheralClock()+2*BAUD_RATE)/BAUD_RATE/4 - 1;
-		TXSTAbits.BRGH = 1;
-	#else	// Use the low baud rate setting
-		SPBRG = (GetPeripheralClock()+8*BAUD_RATE)/BAUD_RATE/16 - 1;
-	#endif
-
-
-	// Enable Interrupts
-	RCONbits.IPEN = 1;		// Enable interrupt priorities
-    INTCONbits.GIEH = 1;
-    INTCONbits.GIEL = 1;
-
-    // Do a calibration A/D conversion
-	#if defined(__18F87J10) || defined(__18F86J15) || defined(__18F86J10) || defined(__18F85J15) || defined(__18F85J10) || defined(__18F67J10) || defined(__18F66J15) || defined(__18F66J10) || defined(__18F65J15) || defined(__18F65J10) || defined(__18F97J60) || defined(__18F96J65) || defined(__18F96J60) || defined(__18F87J60) || defined(__18F86J65) || defined(__18F86J60) || defined(__18F67J60) || defined(__18F66J65) || defined(__18F66J60) || \
-	     defined(_18F87J10) ||  defined(_18F86J15) || defined(_18F86J10)  ||  defined(_18F85J15) ||  defined(_18F85J10) ||  defined(_18F67J10) ||  defined(_18F66J15) ||  defined(_18F66J10) ||  defined(_18F65J15) ||  defined(_18F65J10) ||  defined(_18F97J60) ||  defined(_18F96J65) ||  defined(_18F96J60) ||  defined(_18F87J60) ||  defined(_18F86J65) ||  defined(_18F86J60) ||  defined(_18F67J60) ||  defined(_18F66J65) ||  defined(_18F66J60)
-		ADCON0bits.ADCAL = 1;
-	    ADCON0bits.GO = 1;
-		while(ADCON0bits.GO);
-		ADCON0bits.ADCAL = 0;
-	#elif defined(__18F87J11) || defined(__18F86J16) || defined(__18F86J11) || defined(__18F67J11) || defined(__18F66J16) || defined(__18F66J11) || \
-		   defined(_18F87J11) ||  defined(_18F86J16) ||  defined(_18F86J11) ||  defined(_18F67J11) ||  defined(_18F66J16) ||  defined(_18F66J11) || \
-		  defined(__18F87J50) || defined(__18F86J55) || defined(__18F86J50) || defined(__18F67J50) || defined(__18F66J55) || defined(__18F66J50) || \
-		   defined(_18F87J50) ||  defined(_18F86J55) ||  defined(_18F86J50) ||  defined(_18F67J50) ||  defined(_18F66J55) ||  defined(_18F66J50)
-		ADCON1bits.ADCAL = 1;
-	    ADCON0bits.GO = 1;
-		while(ADCON0bits.GO);
-		ADCON1bits.ADCAL = 0;
-	#endif
-
-#else	// 16-bit C30 and and 32-bit C32
-	#if defined(__PIC32MX__)
-	{
-		// Enable multi-vectored interrupts
-		INTEnableSystemMultiVectoredInt();
-		
-		// Enable optimal performance
-		SYSTEMConfigPerformance(GetSystemClock());
-		mOSCSetPBDIV(OSC_PB_DIV_1);				// Use 1:1 CPU Core:Peripheral clocks
-		
-		// Disable JTAG port so we get our I/O pins back, but first
-		// wait 50ms so if you want to reprogram the part with 
-		// JTAG, you'll still have a tiny window before JTAG goes away.
-		// The PIC32 Starter Kit debuggers use JTAG and therefore must not 
-		// disable JTAG.
-		DelayMs(50);
-		#if !defined(__MPLAB_DEBUGGER_PIC32MXSK) && !defined(__MPLAB_DEBUGGER_FS2)
-			DDPCONbits.JTAGEN = 0;
-		#endif
-		LED_PUT(0x00);				// Turn the LEDs off
-		
-		CNPUESET = 0x00098000;		// Turn on weak pull ups on CN15, CN16, CN19 (RD5, RD7, RD13), which is connected to buttons on PIC32 Starter Kit boards
-	}
-	#endif
-
-	#if defined(__dsPIC33F__) || defined(__PIC24H__)
-		// Crank up the core frequency
-		PLLFBD = 38;				// Multiply by 40 for 160MHz VCO output (8MHz XT oscillator)
-		CLKDIV = 0x0000;			// FRC: divide by 2, PLLPOST: divide by 2, PLLPRE: divide by 2
+#if defined(__PIC32MX__)
+{
+	// Enable multi-vectored interrupts
+	INTEnableSystemMultiVectoredInt();
 	
-		// Port I/O
-		AD1PCFGHbits.PCFG23 = 1;	// Make RA7 (BUTTON1) a digital input
-		AD1PCFGHbits.PCFG20 = 1;	// Make RA12 (INT1) a digital input for MRF24WB0M PICtail Plus interrupt
-
-		// ADC
-	    AD1CHS0 = 0;				// Input to AN0 (potentiometer)
-		AD1PCFGLbits.PCFG5 = 0;		// Disable digital input on AN5 (potentiometer)
-		AD1PCFGLbits.PCFG4 = 0;		// Disable digital input on AN4 (TC1047A temp sensor)
-	#else	//defined(__PIC24F__) || defined(__PIC32MX__)
-		#if defined(__PIC24F__)
-			CLKDIVbits.RCDIV = 0;		// Set 1:1 8MHz FRC postscalar
-		#endif
-		
-		// ADC
-	    #if defined(__PIC24FJ256DA210__) || defined(__PIC24FJ256GB210__)
-	    	// Disable analog on all pins
-	    	ANSA = 0x0000;
-	    	ANSB = 0x0000;
-	    	ANSC = 0x0000;
-	    	ANSD = 0x0000;
-	    	ANSE = 0x0000;
-	    	ANSF = 0x0000;
-	    	ANSG = 0x0000;
-		#else
-		    AD1CHS = 0;					// Input to AN0 (potentiometer)
-			AD1PCFGbits.PCFG4 = 0;		// Disable digital input on AN4 (TC1047A temp sensor)
-			#if defined(__32MX460F512L__) || defined(__32MX795F512L__)	// PIC32MX460F512L and PIC32MX795F512L PIMs has different pinout to accomodate USB module
-				AD1PCFGbits.PCFG2 = 0;		// Disable digital input on AN2 (potentiometer)
-			#else
-				AD1PCFGbits.PCFG5 = 0;		// Disable digital input on AN5 (potentiometer)
-			#endif
-		#endif
-	#endif
-
-	// ADC
-	AD1CON1 = 0x84E4;			// Turn on, auto sample start, auto-convert, 12 bit mode (on parts with a 12bit A/D)
-	AD1CON2 = 0x0404;			// AVdd, AVss, int every 2 conversions, MUXA only, scan
-	AD1CON3 = 0x1003;			// 16 Tad auto-sample, Tad = 3*Tcy
-	#if defined(__32MX460F512L__) || defined(__32MX795F512L__)	// PIC32MX460F512L and PIC32MX795F512L PIMs has different pinout to accomodate USB module
-		AD1CSSL = 1<<2;				// Scan pot
-	#else
-		AD1CSSL = 1<<5;				// Scan pot
-	#endif
-
-	// UART
-	#if defined(STACK_USE_UART)
-		UARTTX_TRIS = 0;
-		UARTRX_TRIS = 1;
-		UMODE = 0x8000;			// Set UARTEN.  Note: this must be done before setting UTXEN
-
-		#if defined(__C30__)
-			USTA = 0x0400;		// UTXEN set
-			#define CLOSEST_UBRG_VALUE ((GetPeripheralClock()+8ul*BAUD_RATE)/16/BAUD_RATE-1)
-			#define BAUD_ACTUAL (GetPeripheralClock()/16/(CLOSEST_UBRG_VALUE+1))
-		#else	//defined(__C32__)
-			USTA = 0x00001400;		// RXEN set, TXEN set
-			#define CLOSEST_UBRG_VALUE ((GetPeripheralClock()+8ul*BAUD_RATE)/16/BAUD_RATE-1)
-			#define BAUD_ACTUAL (GetPeripheralClock()/16/(CLOSEST_UBRG_VALUE+1))
-		#endif
+	// Enable optimal performance
+	SYSTEMConfigPerformance(GetSystemClock());
+	mOSCSetPBDIV(OSC_PB_DIV_1);				// Use 1:1 CPU Core:Peripheral clocks
 	
-		#define BAUD_ERROR ((BAUD_ACTUAL > BAUD_RATE) ? BAUD_ACTUAL-BAUD_RATE : BAUD_RATE-BAUD_ACTUAL)
-		#define BAUD_ERROR_PRECENT	((BAUD_ERROR*100+BAUD_RATE/2)/BAUD_RATE)
-		#if (BAUD_ERROR_PRECENT > 3)
-			#warning UART frequency error is worse than 3%
-		#elif (BAUD_ERROR_PRECENT > 2)
-			#warning UART frequency error is worse than 2%
-		#endif
-	
-		UBRG = CLOSEST_UBRG_VALUE;
+	// Disable JTAG port so we get our I/O pins back, but first
+	// wait 50ms so if you want to reprogram the part with 
+	// JTAG, you'll still have a tiny window before JTAG goes away.
+	// The PIC32 Starter Kit debuggers use JTAG and therefore must not 
+	// disable JTAG.
+	DelayMs(50);
+	#if !defined(__MPLAB_DEBUGGER_PIC32MXSK) && !defined(__MPLAB_DEBUGGER_FS2)
+		DDPCONbits.JTAGEN = 0;
 	#endif
+	LED_PUT(0x00);				// Turn the LEDs off
+	
+	CNPUESET = 0x00098000;		// Turn on weak pull ups on CN15, CN16, CN19 (RD5, RD7, RD13), which is connected to buttons on PIC32 Starter Kit boards
+}
+#endif
 
+AD1CHS = 0;					// Input to AN0 (potentiometer)
+AD1PCFGbits.PCFG4 = 0;		// Disable digital input on AN4 (TC1047A temp sensor)
+#if defined(__32MX460F512L__) || defined(__32MX795F512L__)	// PIC32MX460F512L and PIC32MX795F512L PIMs has different pinout to accomodate USB module
+	AD1PCFGbits.PCFG2 = 0;		// Disable digital input on AN2 (potentiometer)
+#else
+	AD1PCFGbits.PCFG5 = 0;		// Disable digital input on AN5 (potentiometer)
+#endif
+
+// ADC
+AD1CON1 = 0x84E4;			// Turn on, auto sample start, auto-convert, 12 bit mode (on parts with a 12bit A/D)
+AD1CON2 = 0x0404;			// AVdd, AVss, int every 2 conversions, MUXA only, scan
+AD1CON3 = 0x1003;			// 16 Tad auto-sample, Tad = 3*Tcy
+#if defined(__32MX460F512L__) || defined(__32MX795F512L__)	// PIC32MX460F512L and PIC32MX795F512L PIMs has different pinout to accomodate USB module
+	AD1CSSL = 1<<2;				// Scan pot
+#else
+	AD1CSSL = 1<<5;				// Scan pot
 #endif
 
 // Deassert all chip select lines so there isn't any problem with 
-// initialization order.  Ex: When ENC28J60 is on SPI2 with Explorer 16, 
-// MAX3232 ROUT2 pin will drive RF12/U2CTS ENC28J60 CS line asserted, 
-// preventing proper 25LC256 EEPROM operation.
+// initialization order.
 #if defined(ENC_CS_TRIS)
 	ENC_CS_IO = 1;
 	ENC_CS_TRIS = 0;
@@ -448,109 +227,6 @@ static void InitializeBoard(void)
 #if defined(SPIFLASH_CS_TRIS)
 	SPIFLASH_CS_IO = 1;
 	SPIFLASH_CS_TRIS = 0;
-#endif
-#if defined(WF_CS_TRIS)
-	WF_CS_IO = 1;
-	WF_CS_TRIS = 0;
-#endif
-
-#if defined(PIC24FJ64GA004_PIM)
-	__builtin_write_OSCCONL(OSCCON & 0xBF);  // Unlock PPS
-
-	// Remove some LED outputs to regain other functions
-	LED1_TRIS = 1;		// Multiplexed with BUTTON0
-	LED5_TRIS = 1;		// Multiplexed with EEPROM CS
-	LED7_TRIS = 1;		// Multiplexed with BUTTON1
-	
-	// Inputs
-	RPINR19bits.U2RXR = 19;			//U2RX = RP19
-	RPINR22bits.SDI2R = 20;			//SDI2 = RP20
-	RPINR20bits.SDI1R = 17;			//SDI1 = RP17
-	
-	// Outputs
-	RPOR12bits.RP25R = U2TX_IO;		//RP25 = U2TX  
-	RPOR12bits.RP24R = SCK2OUT_IO; 	//RP24 = SCK2
-	RPOR10bits.RP21R = SDO2_IO;		//RP21 = SDO2
-	RPOR7bits.RP15R = SCK1OUT_IO; 	//RP15 = SCK1
-	RPOR8bits.RP16R = SDO1_IO;		//RP16 = SDO1
-	
-	AD1PCFG = 0xFFFF;				//All digital inputs - POT and Temp are on same pin as SDO1/SDI1, which is needed for ENC28J60 commnications
-
-	__builtin_write_OSCCONL(OSCCON | 0x40); // Lock PPS
-#endif
-
-#if defined(__PIC24FJ256DA210__)
-	__builtin_write_OSCCONL(OSCCON & 0xBF);  // Unlock PPS
-
-	// Inputs
-	RPINR19bits.U2RXR = 11;	// U2RX = RP11
-	RPINR20bits.SDI1R = 0;	// SDI1 = RP0
-	RPINR0bits.INT1R = 34;	// Assign RE9/RPI34 to INT1 (input) for MRF24WB0M Wi-Fi PICtail Plus interrupt
-	
-	// Outputs
-	RPOR8bits.RP16R = 5;	// RP16 = U2TX
-	RPOR1bits.RP2R = 8; 	// RP2 = SCK1
-	RPOR0bits.RP1R = 7;		// RP1 = SDO1
-
-	__builtin_write_OSCCONL(OSCCON | 0x40); // Lock PPS
-#endif
-
-#if defined(__PIC24FJ256GB110__) || defined(__PIC24FJ256GB210__)
-	__builtin_write_OSCCONL(OSCCON & 0xBF);  // Unlock PPS
-	
-	// Configure SPI1 PPS pins (ENC28J60/ENCX24J600/MRF24WB0M or other PICtail Plus cards)
-	RPOR0bits.RP0R = 8;		// Assign RP0 to SCK1 (output)
-	RPOR7bits.RP15R = 7;	// Assign RP15 to SDO1 (output)
-	RPINR20bits.SDI1R = 23;	// Assign RP23 to SDI1 (input)
-
-	// Configure SPI2 PPS pins (25LC256 EEPROM on Explorer 16)
-	RPOR10bits.RP21R = 11;	// Assign RG6/RP21 to SCK2 (output)
-	RPOR9bits.RP19R = 10;	// Assign RG8/RP19 to SDO2 (output)
-	RPINR22bits.SDI2R = 26;	// Assign RG7/RP26 to SDI2 (input)
-	
-	// Configure UART2 PPS pins (MAX3232 on Explorer 16)
-	#if !defined(ENC100_INTERFACE_MODE) || (ENC100_INTERFACE_MODE == 0) || defined(ENC100_PSP_USE_INDIRECT_RAM_ADDRESSING)
-	RPINR19bits.U2RXR = 10;	// Assign RF4/RP10 to U2RX (input)
-	RPOR8bits.RP17R = 5;	// Assign RF5/RP17 to U2TX (output)
-	#endif
-	
-	// Configure INT1 PPS pin (MRF24WB0M Wi-Fi PICtail Plus interrupt signal when in SPI slot 1)
-	RPINR0bits.INT1R = 33;	// Assign RE8/RPI33 to INT1 (input)
-
-	// Configure INT3 PPS pin (MRF24WB0M Wi-Fi PICtail Plus interrupt signal when in SPI slot 2)
-	RPINR1bits.INT3R = 40;	// Assign RC3/RPI40 to INT3 (input)
-
-	__builtin_write_OSCCONL(OSCCON | 0x40); // Lock PPS
-#endif
-
-#if defined(__PIC24FJ256GA110__)
-	__builtin_write_OSCCONL(OSCCON & 0xBF);  // Unlock PPS
-	
-	// Configure SPI2 PPS pins (25LC256 EEPROM on Explorer 16 and ENC28J60/ENCX24J600/MRF24WB0M or other PICtail Plus cards)
-	// Note that the ENC28J60/ENCX24J600/MRF24WB0M PICtails SPI PICtails must be inserted into the middle SPI2 socket, not the topmost SPI1 slot as normal.  This is because PIC24FJ256GA110 A3 silicon has an input-only RPI PPS pin in the ordinary SCK1 location.  Silicon rev A5 has this fixed, but for simplicity all demos will assume we are using SPI2.
-	RPOR10bits.RP21R = 11;	// Assign RG6/RP21 to SCK2 (output)
-	RPOR9bits.RP19R = 10;	// Assign RG8/RP19 to SDO2 (output)
-	RPINR22bits.SDI2R = 26;	// Assign RG7/RP26 to SDI2 (input)
-	
-	// Configure UART2 PPS pins (MAX3232 on Explorer 16)
-	RPINR19bits.U2RXR = 10;	// Assign RF4/RP10 to U2RX (input)
-	RPOR8bits.RP17R = 5;	// Assign RF5/RP17 to U2TX (output)
-	
-	// Configure INT3 PPS pin (MRF24WB0M PICtail Plus interrupt signal)
-	RPINR1bits.INT3R = 36;	// Assign RA14/RPI36 to INT3 (input)
-
-	__builtin_write_OSCCONL(OSCCON | 0x40); // Lock PPS
-#endif
-
-
-#if defined(DSPICDEM11)
-	// Deselect the LCD controller (PIC18F252 onboard) to ensure there is no SPI2 contention
-	LCDCTRL_CS_TRIS = 0;
-	LCDCTRL_CS_IO = 1;
-
-	// Hold the codec in reset to ensure there is no SPI2 contention
-	CODEC_RST_TRIS = 0;
-	CODEC_RST_IO = 0;
 #endif
 
 #if defined(SPIRAM_CS_TRIS)
@@ -666,45 +342,6 @@ static void InitAppConfig(void)
 		// Load the default NetBIOS Host Name
 		memcpypgm2ram(AppConfig.NetBIOSName, (ROM void*)MY_DEFAULT_HOST_NAME, 16);
 		FormatNetBIOSName(AppConfig.NetBIOSName);
-	
-		#if defined(WF_CS_TRIS)
-			// Load the default SSID Name
-			WF_ASSERT(sizeof(MY_DEFAULT_SSID_NAME) <= sizeof(AppConfig.MySSID));
-			memcpypgm2ram(AppConfig.MySSID, (ROM void*)MY_DEFAULT_SSID_NAME, sizeof(MY_DEFAULT_SSID_NAME));
-			AppConfig.SsidLength = sizeof(MY_DEFAULT_SSID_NAME) - 1;
-	
-	        AppConfig.SecurityMode = MY_DEFAULT_WIFI_SECURITY_MODE;
-	        AppConfig.WepKeyIndex  = MY_DEFAULT_WEP_KEY_INDEX;
-	        
-	        #if (MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_OPEN)
-	            memset(AppConfig.SecurityKey, 0x00, sizeof(AppConfig.SecurityKey));
-	            AppConfig.SecurityKeyLength = 0;
-	
-	        #elif MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_WEP_40
-	            memcpypgm2ram(AppConfig.SecurityKey, (ROM void*)MY_DEFAULT_WEP_KEYS_40, sizeof(MY_DEFAULT_WEP_KEYS_40) - 1);
-	            AppConfig.SecurityKeyLength = sizeof(MY_DEFAULT_WEP_KEYS_40) - 1;
-	
-	        #elif MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_WEP_104
-			    memcpypgm2ram(AppConfig.SecurityKey, (ROM void*)MY_DEFAULT_WEP_KEYS_104, sizeof(MY_DEFAULT_WEP_KEYS_104) - 1);
-			    AppConfig.SecurityKeyLength = sizeof(MY_DEFAULT_WEP_KEYS_104) - 1;
-	
-	        #elif (MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_WPA_WITH_KEY)       || \
-	              (MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_WPA2_WITH_KEY)      || \
-	              (MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_WPA_AUTO_WITH_KEY)
-			    memcpypgm2ram(AppConfig.SecurityKey, (ROM void*)MY_DEFAULT_PSK, sizeof(MY_DEFAULT_PSK) - 1);
-			    AppConfig.SecurityKeyLength = sizeof(MY_DEFAULT_PSK) - 1;
-	
-	        #elif (MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_WPA_WITH_PASS_PHRASE)     || \
-	              (MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_WPA2_WITH_PASS_PHRASE)    || \
-	              (MY_DEFAULT_WIFI_SECURITY_MODE == WF_SECURITY_WPA_AUTO_WITH_PASS_PHRASE)
-	            memcpypgm2ram(AppConfig.SecurityKey, (ROM void*)MY_DEFAULT_PSK_PHRASE, sizeof(MY_DEFAULT_PSK_PHRASE) - 1);
-	            AppConfig.SecurityKeyLength = sizeof(MY_DEFAULT_PSK_PHRASE) - 1;
-	
-	        #else 
-	            #error "No security defined"
-	        #endif /* MY_DEFAULT_WIFI_SECURITY_MODE */
-	
-		#endif
 
 		// Compute the checksum of the AppConfig defaults as loaded from ROM
 		wOriginalAppConfigChecksum = CalcIPChecksum((BYTE*)&AppConfig, sizeof(AppConfig));

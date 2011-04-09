@@ -824,7 +824,7 @@ LOAD Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\U
 LOAD Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg2.o
 LOAD Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg.o
 LOAD Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BigInt_helper_C32.o
-LOAD D:\Andy Work\Documents\SO\Slave-PIC32\Microchip\Crypto\AES_PIC32MX.a
+LOAD C:\Microchip Solutions v2010-10-19\Microchip\Crypto\AES_PIC32MX.a
                 0x00000001                __MPLAB_BUILD = 0x1
                 0x00000001                __MPLAB_DEBUG = 0x1
                 0x00000001                __MPLAB_DEBUGGER_PIC32MXSK = 0x1
@@ -2393,113 +2393,113 @@ LOAD C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4
  .debug_pubnames
                 0x00001cf2       0x2a C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
 
-.debug_info     0x00000000    0x34258
+.debug_info     0x00000000    0x34189
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000      0xf8b Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Announce.o
- .debug_info    0x00000f8b      0x6f6 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ARCFOUR.o
- .debug_info    0x00001681     0x1098 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ARP.o
- .debug_info    0x00002719      0x6f5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\AutoIP.o
- .debug_info    0x00002e0e     0x18c6 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyAPI.o
- .debug_info    0x000046d4      0x6f5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BigInt.o
- .debug_info    0x00004dc9      0x789 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Delay.o
- .debug_info    0x00005552      0x6f3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DHCP.o
- .debug_info    0x00005c45      0x6f4 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DHCPs.o
- .debug_info    0x00006339     0x131c Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DNS.o
- .debug_info    0x00007655      0x6f3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DNSs.o
- .debug_info    0x00007d48     0x14b9 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DynDNS.o
- .debug_info    0x00009201      0x6f7 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ENC28J60.o
- .debug_info    0x000098f8      0x6f9 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ENCX24J600.o
- .debug_info    0x00009ff1     0x15b1 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32ExtPhy.o
- .debug_info    0x0000b5a2      0xb34 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32ExtPhyDP83848.o
- .debug_info    0x0000c0d6     0x1e44 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32IntMac.o
- .debug_info    0x0000df1a      0x6f9 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\FileSystem.o
- .debug_info    0x0000e613      0x6f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\FTP.o
- .debug_info    0x0000ed05      0xad8 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Hashes.o
- .debug_info    0x0000f7dd     0x14ec Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Helpers.o
- .debug_info    0x00010cc9     0x12ec Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\HTTP2.o
- .debug_info    0x00011fb5      0x6f3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\HTTP.o
- .debug_info    0x000126a8     0x1076 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ICMP.o
- .debug_info    0x0001371e     0x10be Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\IP.o
- .debug_info    0x000147dc      0x6fa Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\LCDBlocking.o
- .debug_info    0x00014ed6      0xea6 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFS2.o
- .debug_info    0x00015d7c      0x6f3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFS.o
- .debug_info    0x0001646f     0x10c2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\NBNS.o
- .debug_info    0x00017531      0x6f5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Random.o
- .debug_info    0x00017c26      0xee4 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Reboot.o
- .debug_info    0x00018b0a      0x6f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\RSA.o
- .debug_info    0x000191fc     0x19d5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SMTP.o
- .debug_info    0x0001abd1      0x6f3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMP.o
- .debug_info    0x0001b2c4      0x6f5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMPv3.o
- .debug_info    0x0001b9b9      0x6f8 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMPv3USM.o
- .debug_info    0x0001c0b1     0x1068 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNTP.o
- .debug_info    0x0001d119      0x6f8 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIEEPROM.o
- .debug_info    0x0001d811      0x6f7 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIFlash.o
- .debug_info    0x0001df08      0x6f5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIRAM.o
- .debug_info    0x0001e5fd      0x6f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SSL.o
- .debug_info    0x0001ecef      0xf3e Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\StackTsk.o
- .debug_info    0x0001fc2d     0x276e Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TCP.o
- .debug_info    0x0002239b      0xe17 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TCPPerformanceTest.o
- .debug_info    0x000231b2      0xaf7 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Telnet.o
- .debug_info    0x00023ca9      0x6f4 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TFTPc.o
- .debug_info    0x0002439d      0x997 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Tick.o
- .debug_info    0x00024d34      0x6fd Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UART2TCPBridge.o
- .debug_info    0x00025431      0x6f3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UART.o
- .debug_info    0x00025b24     0x15ad Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UDP.o
- .debug_info    0x000270d1      0x701 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UDPPerformanceTest.o
- .debug_info    0x000277d2      0x6fd Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfHelper.o
- .debug_info    0x00027ecf      0x700 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfLinkLocal.o
- .debug_info    0x000285cf      0x703 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfMulticastDNS.o
- .debug_info    0x00028cd2     0x23f5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomHTTPApp.o
- .debug_info    0x0002b0c7      0x6e3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomSNMPApp.o
- .debug_info    0x0002b7aa      0x6e3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomSSLCert.o
- .debug_info    0x0002be8d     0x1484 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MainDemo.o
- .debug_info    0x0002d311      0xa1e Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyTCPClientDemo.o
- .debug_info    0x0002dd2f      0x9a0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyTCPServerDemo.o
- .debug_info    0x0002e6cf      0xbd9 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyUDPClientDemo.o
- .debug_info    0x0002f2a8      0x8e8 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\GenericTCPClient.o
- .debug_info    0x0002fb90      0x82d Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\GenericTCPServer.o
- .debug_info    0x000303bd      0x6e3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\LegacyHTTPApp.o
- .debug_info    0x00030aa0      0x7b3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\PingDemo.o
- .debug_info    0x00031253      0xb56 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SMTPDemo.o
- .debug_info    0x00031da9      0x6e0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UARTConfig.o
- .debug_info    0x00032489      0x720 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg2.o
- .debug_info    0x00032ba9      0x6dd Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg.o
- .debug_info    0x00033286       0xaf C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(atoi.o)
- .debug_info    0x00033335       0xba C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(atol.o)
- .debug_info    0x000333ef       0xa8 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(calloc.o)
- .debug_info    0x00033497       0x61 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(ctype.o)
- .debug_info    0x000334f8      0x1f3 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(malloc.o)
- .debug_info    0x000336eb       0x88 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(strchr.o)
- .debug_info    0x00033773       0x86 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(strstr.o)
- .debug_info    0x000337f9      0x282 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(sbrk.o)
- .debug_info    0x00033a7b       0x31 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(default-bootstrap-exception-handler.o)
- .debug_info    0x00033aac       0x31 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(default-on-reset.o)
- .debug_info    0x00033add       0x31 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(default-on-bootstrap.o)
- .debug_info    0x00033b0e       0x3f C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(errno.o)
- .debug_info    0x00033b4d       0x98 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(strncmp.o)
- .debug_info    0x00033be5       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral.a(read_core_timer_lib.o)
- .debug_info    0x00033c15       0x8b C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_ack_packet_lib.o)
- .debug_info    0x00033ca0       0x42 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_descriptors_add_lib.o)
- .debug_info    0x00033ce2       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_init_lib.o)
- .debug_info    0x00033d12       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_mac_open_lib.o)
- .debug_info    0x00033d42       0x54 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_mac_set_address_max_lib.o)
- .debug_info    0x00033d96       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_rx_buffers_append_lib.o)
- .debug_info    0x00033dc6       0x8a C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_rx_filters_lib.o)
- .debug_info    0x00033e50       0x42 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_rx_get_packet_lib.o)
- .debug_info    0x00033e92       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_rx_set_buffer_size_lib.o)
- .debug_info    0x00033ec2       0x89 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_tx_packet_lib.o)
- .debug_info    0x00033f4b       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(_eth_append_busy_list_lib.o)
- .debug_info    0x00033f7b       0x8b C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_miim_access.o)
- .debug_info    0x00034006       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(soft_reset_lib.o)
- .debug_info    0x00034036       0x42 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(pcache.o)
- .debug_info    0x00034078       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
- .debug_info    0x000340a8       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
- .debug_info    0x000340d8       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
- .debug_info    0x00034108       0xc0 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_tbl_lib.o)
- .debug_info    0x000341c8       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(port_set_pins_digital_in_lib.o)
- .debug_info    0x000341f8       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(port_set_pins_digital_out_lib.o)
- .debug_info    0x00034228        0x0 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(_ports_tbl_libp.o)
- .debug_info    0x00034228       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
+ .debug_info    0x00000000      0xf88 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Announce.o
+ .debug_info    0x00000f88      0x6f3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ARCFOUR.o
+ .debug_info    0x0000167b     0x1095 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ARP.o
+ .debug_info    0x00002710      0x6f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\AutoIP.o
+ .debug_info    0x00002e02     0x18c3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyAPI.o
+ .debug_info    0x000046c5      0x6f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BigInt.o
+ .debug_info    0x00004db7      0x786 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Delay.o
+ .debug_info    0x0000553d      0x6f0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DHCP.o
+ .debug_info    0x00005c2d      0x6f1 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DHCPs.o
+ .debug_info    0x0000631e     0x1319 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DNS.o
+ .debug_info    0x00007637      0x6f0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DNSs.o
+ .debug_info    0x00007d27     0x14b6 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DynDNS.o
+ .debug_info    0x000091dd      0x6f4 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ENC28J60.o
+ .debug_info    0x000098d1      0x6f6 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ENCX24J600.o
+ .debug_info    0x00009fc7     0x15ae Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32ExtPhy.o
+ .debug_info    0x0000b575      0xb31 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32ExtPhyDP83848.o
+ .debug_info    0x0000c0a6     0x1e41 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32IntMac.o
+ .debug_info    0x0000dee7      0x6f6 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\FileSystem.o
+ .debug_info    0x0000e5dd      0x6ef Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\FTP.o
+ .debug_info    0x0000eccc      0xad5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Hashes.o
+ .debug_info    0x0000f7a1     0x14e9 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Helpers.o
+ .debug_info    0x00010c8a     0x12e9 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\HTTP2.o
+ .debug_info    0x00011f73      0x6f0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\HTTP.o
+ .debug_info    0x00012663     0x1073 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ICMP.o
+ .debug_info    0x000136d6     0x10bb Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\IP.o
+ .debug_info    0x00014791      0x6f7 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\LCDBlocking.o
+ .debug_info    0x00014e88      0xea3 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFS2.o
+ .debug_info    0x00015d2b      0x6f0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFS.o
+ .debug_info    0x0001641b     0x10bf Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\NBNS.o
+ .debug_info    0x000174da      0x6f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Random.o
+ .debug_info    0x00017bcc      0xee1 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Reboot.o
+ .debug_info    0x00018aad      0x6ef Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\RSA.o
+ .debug_info    0x0001919c     0x19d2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SMTP.o
+ .debug_info    0x0001ab6e      0x6f0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMP.o
+ .debug_info    0x0001b25e      0x6f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMPv3.o
+ .debug_info    0x0001b950      0x6f5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMPv3USM.o
+ .debug_info    0x0001c045     0x1065 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNTP.o
+ .debug_info    0x0001d0aa      0x6f5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIEEPROM.o
+ .debug_info    0x0001d79f      0x6f4 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIFlash.o
+ .debug_info    0x0001de93      0x6f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIRAM.o
+ .debug_info    0x0001e585      0x6ef Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SSL.o
+ .debug_info    0x0001ec74      0xf3b Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\StackTsk.o
+ .debug_info    0x0001fbaf     0x276b Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TCP.o
+ .debug_info    0x0002231a      0xe14 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TCPPerformanceTest.o
+ .debug_info    0x0002312e      0xaf4 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Telnet.o
+ .debug_info    0x00023c22      0x6f1 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TFTPc.o
+ .debug_info    0x00024313      0x994 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Tick.o
+ .debug_info    0x00024ca7      0x6fa Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UART2TCPBridge.o
+ .debug_info    0x000253a1      0x6f0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UART.o
+ .debug_info    0x00025a91     0x15aa Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UDP.o
+ .debug_info    0x0002703b      0x6fe Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UDPPerformanceTest.o
+ .debug_info    0x00027739      0x6fa Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfHelper.o
+ .debug_info    0x00027e33      0x6fd Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfLinkLocal.o
+ .debug_info    0x00028530      0x700 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfMulticastDNS.o
+ .debug_info    0x00028c30     0x23f2 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomHTTPApp.o
+ .debug_info    0x0002b022      0x6e0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomSNMPApp.o
+ .debug_info    0x0002b702      0x6e0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomSSLCert.o
+ .debug_info    0x0002bde2     0x1481 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MainDemo.o
+ .debug_info    0x0002d263      0xa1b Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyTCPClientDemo.o
+ .debug_info    0x0002dc7e      0x99d Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyTCPServerDemo.o
+ .debug_info    0x0002e61b      0xbd6 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyUDPClientDemo.o
+ .debug_info    0x0002f1f1      0x8e5 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\GenericTCPClient.o
+ .debug_info    0x0002fad6      0x82a Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\GenericTCPServer.o
+ .debug_info    0x00030300      0x6e0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\LegacyHTTPApp.o
+ .debug_info    0x000309e0      0x7b0 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\PingDemo.o
+ .debug_info    0x00031190      0xb53 Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SMTPDemo.o
+ .debug_info    0x00031ce3      0x6dd Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UARTConfig.o
+ .debug_info    0x000323c0      0x71d Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg2.o
+ .debug_info    0x00032add      0x6da Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg.o
+ .debug_info    0x000331b7       0xaf C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(atoi.o)
+ .debug_info    0x00033266       0xba C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(atol.o)
+ .debug_info    0x00033320       0xa8 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(calloc.o)
+ .debug_info    0x000333c8       0x61 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(ctype.o)
+ .debug_info    0x00033429      0x1f3 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(malloc.o)
+ .debug_info    0x0003361c       0x88 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(strchr.o)
+ .debug_info    0x000336a4       0x86 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(strstr.o)
+ .debug_info    0x0003372a      0x282 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(sbrk.o)
+ .debug_info    0x000339ac       0x31 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(default-bootstrap-exception-handler.o)
+ .debug_info    0x000339dd       0x31 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(default-on-reset.o)
+ .debug_info    0x00033a0e       0x31 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(default-on-bootstrap.o)
+ .debug_info    0x00033a3f       0x3f C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(errno.o)
+ .debug_info    0x00033a7e       0x98 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libc.a(strncmp.o)
+ .debug_info    0x00033b16       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral.a(read_core_timer_lib.o)
+ .debug_info    0x00033b46       0x8b C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_ack_packet_lib.o)
+ .debug_info    0x00033bd1       0x42 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_descriptors_add_lib.o)
+ .debug_info    0x00033c13       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_init_lib.o)
+ .debug_info    0x00033c43       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_mac_open_lib.o)
+ .debug_info    0x00033c73       0x54 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_mac_set_address_max_lib.o)
+ .debug_info    0x00033cc7       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_rx_buffers_append_lib.o)
+ .debug_info    0x00033cf7       0x8a C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_rx_filters_lib.o)
+ .debug_info    0x00033d81       0x42 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_rx_get_packet_lib.o)
+ .debug_info    0x00033dc3       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_rx_set_buffer_size_lib.o)
+ .debug_info    0x00033df3       0x89 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_tx_packet_lib.o)
+ .debug_info    0x00033e7c       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(_eth_append_busy_list_lib.o)
+ .debug_info    0x00033eac       0x8b C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(eth_miim_access.o)
+ .debug_info    0x00033f37       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(soft_reset_lib.o)
+ .debug_info    0x00033f67       0x42 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(pcache.o)
+ .debug_info    0x00033fa9       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_disable_interrupts_lib.o)
+ .debug_info    0x00033fd9       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_restore_interrupts_lib.o)
+ .debug_info    0x00034009       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_enable_mv_int_lib.o)
+ .debug_info    0x00034039       0xc0 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_tbl_lib.o)
+ .debug_info    0x000340f9       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(port_set_pins_digital_in_lib.o)
+ .debug_info    0x00034129       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(port_set_pins_digital_out_lib.o)
+ .debug_info    0x00034159        0x0 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(_ports_tbl_libp.o)
+ .debug_info    0x00034159       0x30 C:/Program Files (x86)/Microchip/MPLAB C32 Suite/bin/../lib/gcc/pic32mx/3.4.4/../../../../pic32mx/lib/size\libmchp_peripheral_32MX795F512L.a(int_enable_interrupts_lib.o)
 
 .debug_abbrev   0x00000000     0x70d2
  *(.debug_abbrev)

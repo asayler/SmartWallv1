@@ -2,7 +2,7 @@
 MagicCookie={0b13fe8c-dfe0-40eb-8900-6712719559a7}
 Version=1.0
 [File000]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Announce.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Announce.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -15,7 +15,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File001]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ARCFOUR.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ARCFOUR.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -28,7 +28,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File002]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ARP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ARP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -41,7 +41,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File003]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\AutoIP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\AutoIP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -54,7 +54,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File004]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyAPI.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyAPI.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -67,7 +67,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File005]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BigInt.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BigInt.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -80,7 +80,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File006]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Delay.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Delay.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -93,7 +93,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File007]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DHCP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DHCP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -106,7 +106,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File008]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DHCPs.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DHCPs.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -119,7 +119,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File009]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DNS.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DNS.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -132,7 +132,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File010]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DNSs.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DNSs.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -145,7 +145,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File011]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DynDNS.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\DynDNS.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -158,7 +158,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File012]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ENC28J60.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ENC28J60.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -171,7 +171,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File013]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ENCX24J600.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ENCX24J600.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -184,7 +184,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File014]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32ExtPhy.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32ExtPhy.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -197,7 +197,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File015]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32ExtPhyDP83848.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32ExtPhyDP83848.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -210,7 +210,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File016]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32IntMac.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ETHPIC32IntMac.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -223,7 +223,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File017]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\FileSystem.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\FileSystem.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -236,7 +236,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File018]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\FTP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\FTP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -249,7 +249,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File019]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Hashes.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Hashes.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -262,7 +262,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File020]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Helpers.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Helpers.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -275,7 +275,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File021]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\HTTP2.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\HTTP2.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -288,7 +288,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File022]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\HTTP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\HTTP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -301,7 +301,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File023]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ICMP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ICMP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -314,7 +314,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File024]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\IP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\IP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -327,7 +327,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File025]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\LCDBlocking.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\LCDBlocking.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -340,7 +340,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File026]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFS2.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFS2.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -353,7 +353,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File027]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFS.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFS.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -366,7 +366,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File028]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\NBNS.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\NBNS.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -379,7 +379,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File029]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Random.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Random.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -392,7 +392,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File030]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Reboot.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Reboot.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -405,7 +405,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File031]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\RSA.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\RSA.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -418,7 +418,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File032]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SMTP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SMTP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -431,7 +431,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File033]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -444,7 +444,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File034]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMPv3.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMPv3.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -457,7 +457,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File035]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMPv3USM.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNMPv3USM.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -470,7 +470,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File036]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNTP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SNTP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -483,7 +483,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File037]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIEEPROM.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIEEPROM.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -496,7 +496,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File038]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIFlash.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIFlash.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -509,7 +509,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File039]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIRAM.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SPIRAM.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -522,7 +522,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File040]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SSL.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SSL.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -535,7 +535,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File041]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\StackTsk.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\StackTsk.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -548,7 +548,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File042]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TCP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TCP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -561,7 +561,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File043]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TCPPerformanceTest.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TCPPerformanceTest.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -574,7 +574,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File044]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Telnet.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Telnet.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -587,7 +587,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File045]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TFTPc.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\TFTPc.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -600,7 +600,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File046]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Tick.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\Tick.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -613,7 +613,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File047]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UART2TCPBridge.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UART2TCPBridge.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -626,7 +626,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File048]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UART.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UART.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -639,7 +639,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File049]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UDP.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UDP.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -652,7 +652,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File050]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UDPPerformanceTest.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UDPPerformanceTest.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -665,7 +665,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File051]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfHelper.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfHelper.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -678,7 +678,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File052]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfLinkLocal.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfLinkLocal.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -691,7 +691,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File053]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfMulticastDNS.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\ZeroconfMulticastDNS.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -704,7 +704,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File054]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomHTTPApp.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomHTTPApp.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -717,7 +717,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File055]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomSNMPApp.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomSNMPApp.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -730,7 +730,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File056]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomSSLCert.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\CustomSSLCert.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -743,7 +743,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File057]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MainDemo.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MainDemo.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -756,7 +756,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File058]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyTCPClientDemo.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyTCPClientDemo.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -769,7 +769,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File059]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyTCPServerDemo.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyTCPServerDemo.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -782,7 +782,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File060]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyUDPClientDemo.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BerkeleyUDPClientDemo.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -795,7 +795,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File061]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\GenericTCPClient.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\GenericTCPClient.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -808,7 +808,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File062]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\GenericTCPServer.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\GenericTCPServer.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -821,7 +821,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File063]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\LegacyHTTPApp.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\LegacyHTTPApp.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -834,7 +834,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File064]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\PingDemo.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\PingDemo.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -847,7 +847,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File065]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SMTPDemo.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\SMTPDemo.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -860,7 +860,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File066]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UARTConfig.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\UARTConfig.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -873,7 +873,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File067]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg2.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg2.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -886,7 +886,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File068]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\MPFSImg.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -899,7 +899,7 @@ ToolArgsString=-g -DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1
 [File069]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BigInt_helper_C32.o
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\Objects - TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET\BigInt_helper_C32.o
 Folder=Intermediary
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -912,7 +912,7 @@ ToolArgsString=-DPIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
 TraceCmdString=
 DebugOptions=--defsym=__DEBUG=1 --defsym=__MPLAB_DEBUGGER_PIC32MXSK=1
 [File070]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET.elf
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET.elf
 Folder=Output
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
@@ -925,7 +925,7 @@ ToolArgsString=--defsym=_min_heap_size=16000 --defsym=_min_stack_size=2048 -Map=
 TraceCmdString=
 DebugOptions=--defsym=__MPLAB_DEBUG=1 --defsym=__MPLAB_DEBUGGER_PIC32MXSK=1
 [File071]
-Location=D:\Andy Work\Documents\SO\Slave-PIC32\TCPIP Demo App\TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET.hex
+Location=C:\Microchip Solutions v2010-10-19\TCPIP Demo App\TCPIP Demo App - C32 - PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET.hex
 Folder=Output
 DeviceName=PIC32MX795F512L
 LanguageToolSuiteID={14495C23-81F8-43F3-8A44-859C583D7760}
