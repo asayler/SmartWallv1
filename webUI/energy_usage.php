@@ -1,10 +1,10 @@
 <?php
-  //   error_reporting(0); //suppress error reports. uncomment when problems
+  // error_reporting(0); //suppress error reports
 ?>
 
 <html>
 <head>
-<title>Set Timers</title>
+<title>Energy Usage</title>
 <link rel="stylesheet" type="text/css" href="style.css"
 </head>
 
@@ -15,9 +15,17 @@
 <div id="content">
 
 <?php
-//<SW opcode> (i.e. what you're querying for or setting)
+//sw opcodes (i.e. what you're querying for or setting)
 $state = "0x0010";
+$voltage = "0x0020";
+$current = "0x0021";
 $power = "0x0022";
+$freq = "0x0023";
+$phase = "0x0024";
+//sw types
+$outlet = "0x8000000000000004";
+$master = "0x8000000000000001";
+$universal = "0x8000000000000000";
 ?>
 
 <h4> All active outlets: </h4>  
@@ -72,17 +80,25 @@ chdir('/var/www/');
 
 <!-- Print all UIDs in a selection form-->
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-  <select name="outlets" size="<?php echo count($UIDs); ?>">
-    <?php
-    foreach($aliased_UIDs as $value) {
-       echo "<option value=$value>$value</option>";
-    }
-
-    ?>
-  </select>
-  <input type="submit" value="View Energy Usage" name="usage">
-</form>
-
+  <select name="outlets" size="<?php echo count($UIDs)-1; ?>">
+  <?php
+  foreach($aliased_UIDs as $value) {
+  if(array_key_exists($value, $alias_UID)){
+    $proper_UID = $alias_UID[$value];
+  }else{
+    $proper_UID = $value;
+  }
+  $ttype = $lookup[$proper_UID]['type'];
+  $temp = strcmp($ttype,$master);
+  if($temp != 0){ #if not master outlet
+    echo "<option value=$value>$value</option>";
+  }
+}
+?>
+</select>
+<input type="submit" value="View Energy Usage" name="usage">
+  </form>
+  
 
   <?php
   //Notice button press of usage, display relevant graph
