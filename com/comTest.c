@@ -323,22 +323,22 @@ int main(int argc, char* argv[]){
 
     }
     else if(mode == ENDIAN){
-        fprintf(stdout, "hton16(0x1122) = %" PRIx16 "\n", hton16(0x1122));
-        fprintf(stdout, "ntoh16(0x1122) = %" PRIx16 "\n", ntoh16(0x1122));
+        fprintf(stdout, "hton16(0x1122) = %" PRIx16 "\n", hton16(0x1122u));
+        fprintf(stdout, "ntoh16(0x1122) = %" PRIx16 "\n", ntoh16(0x1122u));
         fprintf(stdout, "hton16(ntoh16(0x1122)) = %" PRIx16 "\n",
-                hton16(ntoh16(0x1122)));
+                hton16(ntoh16(0x1122u)));
         fprintf(stdout, "hton32(0x11223344) = %" PRIx32 "\n",
-                hton32(0x11223344));
+                hton32(0x11223344u));
         fprintf(stdout, "ntoh32(0x11223344) = %" PRIx32 "\n",
-                ntoh32(0x11223344));
+                ntoh32(0x11223344u));
         fprintf(stdout, "hton32(ntoh32(0x11223344)) = %" PRIx32 "\n",
-                hton32(ntoh32(0x11223344)));
+                hton32(ntoh32(0x11223344u)));
         fprintf(stdout, "hton64(0x1122334455667788) = %" PRIx64 "\n",
-                hton64(0x1122334455667788));
+                hton64(0x1122334455667788ull));
         fprintf(stdout, "ntoh64(0x1122334455667788) = %" PRIx64 "\n",
-                ntoh64(0x1122334455667788));
+                ntoh64(0x1122334455667788ull));
         fprintf(stdout, "hton64(ntoh64(0x1122334455667788)) = %" PRIx64 "\n",
-                hton64(ntoh64(0x1122334455667788)));
+                hton64(ntoh64(0x1122334455667788ull)));
     }
     else{
         fprintf(stderr, "Unhandeled mode\n");

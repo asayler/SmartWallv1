@@ -39,13 +39,13 @@ int main(int argc, char *argv[]){
     }
 
     /* Write Test record */
-    newEntry.devInfo.swAddr = 0x0003;
-    newEntry.ipAddr = 0x33333333;
+    newEntry.devInfo.swAddr = 0x0003u;
+    newEntry.ipAddr = 0x33333333u;
     newEntry.devInfo.devTypes = SW_TYPE_UNIVERSAL | SW_TYPE_OUTLET;
-    newEntry.devInfo.numChan = 0x03;
-    newEntry.devInfo.groupID = 0x01;
+    newEntry.devInfo.numChan = 0x03u;
+    newEntry.devInfo.groupID = 0x01u;
     newEntry.devInfo.version = SW_VERSION;
-    newEntry.devInfo.uid = 0x3333333333333333;
+    newEntry.devInfo.uid = 0x3333333333333333ull;
     newEntry.lineNum = -1;
     if(fseek(devFile, 0, SEEK_END) != 0){
         fprintf(stderr, "masterTest: Could not seek to end of devFile.\n");
