@@ -25,6 +25,18 @@
 // Include functions specific to this stack application
 #include "MainDemo.h"
 #include "com/SmartWall.h"
+#include "slave/swOutlet.h"
+
+// SmartWall Defines
+#define SENDPORT SWINPORT
+#define LISTENPORT SWOUTPORT
+#define MYSWUID 0x0001000000000012ull
+#define MYSWGROUP 0x01u
+#define MYSWADDRESS 0x0012u
+#define MYSWTYPE SW_TYPE_OUTLET | SW_TYPE_UNIVERSAL
+#define MYSWCHAN 0x02u
+#define CHAN0_INITSTATE OUTLET_CHAN_ON;
+#define CHAN1_INITSTATE OUTLET_CHAN_ON;
 
 // Declare AppConfig structure and some other supporting stack variables
 APP_CONFIG AppConfig;
@@ -96,7 +108,89 @@ int main(void)
     StackInit();
 
 	// Initialize any application-specific modules or functions/
+	// SmartWall Init
+    /* Temp Vars */
+    int i;
+    numChan_t j;
 
+    /* Setup State Vars */
+    unsigned long chState[MYSWCHAN];
+    unsigned long* temp = NULL;
+    memset(&chState, 0, sizeof(chState));
+    
+    /* Setup SW Message Vars */
+    struct SmartWallDev sourceDeviceInfo;
+    memset(&sourceDeviceInfo, 0, sizeof(sourceDeviceInfo));
+    struct SmartWallDev destDeviceInfo;
+    memset(&destDeviceInfo, 0, sizeof(destDeviceInfo));
+    devType_t targetType = 0;
+    msgScope_t msgScope = 0;
+    msgType_t msgType = 0;
+    swOpcode_t opcode = 0;
+    long int args[MYSWCHAN];
+    memset(&args, 0, sizeof(args));
+    struct SWChannelEntry tgtChnEntries[MYSWCHAN];
+    memset(&tgtChnEntries, 0, sizeof(tgtChnEntries));
+    struct SWChannelData tgtChnData;
+    memset(&tgtChnData, 0, sizeof(tgtChnData));
+    tgtChnData.data = tgtChnEntries;
+    uint8_t msg[SW_MAX_MSG_LENGTH];
+    memset(&msg, 0, sizeof(msg));
+    swLength_t msgLen = 0;
+    uint8_t body[SW_MAX_BODY_LENGTH];
+    memset(&body, 0, sizeof(body));
+    swLength_t bodyLen = 0;
+
+    /* Init chanData Buffer */
+    for(i = 0; i < MYSWCHAN; i++){
+        tgtChnData.data[i].chanValue = &(args[i]);
+    }
+
+    /* Setup SW Vars */
+    struct SmartWallDev myDeviceInfo;    
+    memset(&myDeviceInfo, 0, sizeof(myDeviceInfo));
+    myDeviceInfo.swAddr = MYSWADDRESS;
+    myDeviceInfo.devTypes = MYSWTYPE;
+    myDeviceInfo.numChan = MYSWCHAN;
+    myDeviceInfo.version = SW_VERSION;
+    myDeviceInfo.uid = MYSWUID;
+    myDeviceInfo.groupID = MYSWGROUP;
+
+    /* Setup Socket Vars */
+    struct sockaddr_in si_me, si_tgt;
+    memset(&si_me, 0, sizeof(si_me));
+    memset(&si_tgt, 0, sizeof(si_tgt));
+    int slen = sizeof(struct sockaddr_in);
+    int in, out;
+    int b, r;
+
+    /* My IP */
+    si_me.sin_family = AF_INET;
+    si_me.sin_port = hton16(LISTENPORT);
+    si_me.sin_addr.s_addr = hton32(INADDR_ANY);
+    
+    /* TGT IP */
+    si_tgt.sin_family = AF_INET;
+    si_tgt.sin_port = hton16(SENDPORT);
+    
+    /* Setup Sockets */
+    in = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if(in == INVALID_SOCKET){
+        perror("in socket");
+        exit(EXIT_FAILURE);
+    }
+    out = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if(out == INVALID_SOCKET){
+        perror("out socket");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Bind In Socket */
+    b = bind(in, (struct sockaddr*) &si_me, sizeof(si_me));
+    if (b == SOCKET_ERROR){
+        perror("in bind");
+        exit(EXIT_FAILURE);
+    }
 
 	// Now that all items are initialized, begin the co-operative
 	// multitasking loop.  This infinite loop will continuously 
@@ -127,13 +221,14 @@ int main(void)
         StackApplications();
 
 		// Process application specific tasks here.
-		// Following that, we will process any IO from
-		// the inputs on the board itself.
 		// Any custom modules or processing you need to do should
 		// go here.
 
-		//ProcessIO();
 	}
+
+	//Clean Up
+	close(in);
+    close(out);
 }
 
 /****************************************************************************
