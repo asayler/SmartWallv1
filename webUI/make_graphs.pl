@@ -70,12 +70,12 @@ foreach my $key(sort keys %lookup){
 	#make the graph from @data
 	my $my_graph = GD::Graph::lines->new(400,300);
 	$my_graph->set(
-	    x_label => 'Time',
+	    x_label => 'Date',
 	    y_label => 'Power Usage (Watts)',
 	    title => 'Monthly Power Usage',
 	    y_max_value => 5,
-	    y_tick_number => 6,
-	    x_tick_number => 6,
+	    y_tick_number => 5,
+	    x_tick_number => 10,
 	    y_label_skip => 2,
 	    markers => [ 1, 5 ],
 	    transparent => 0,
@@ -92,6 +92,48 @@ foreach my $key(sort keys %lookup){
     }
 }
 
+#create total graph
+chomp(my $month = `date "+%m"`); #01-12
+chomp(my $year = `date "+%Y"`);
+my $file_name = "total"."_".$month."_".$year; 
+open(FILE_HANDLE, "$file_name") or die "-E- Unable to open $file_name : $!\n";
+my @date_time; #array day.hour.minute
+my @power; #array of powers for channel 0
+my @data; #to be graphed
+while (<FILE_HANDLE>) {
+    next if $_ =~ m/^#/;  #skip any line starting with a hash
+    chomp; #remove trailing newline
+    my $split_string = ' ';  #split on spaces
+    my @line_array = split(/$split_string/, $_);  
+    push @date_time, $line_array[0];
+    push @power, $line_array[1];
+}
+@data = ([@date_time],[@power]);
+
+#make the graph from @data
+my $my_graph = GD::Graph::lines->new(400,300);
+$my_graph->set(
+	    x_label => 'Date',
+	    y_label => 'Power Usage (Watts)',
+	    title => 'Power Usage (all SmartWall devices)',
+	    y_max_value => 10,
+	    y_tick_number => 5,
+	    #x_tick_number => 6,
+	    y_label_skip => 2,
+	    markers => [ 1, 5 ],
+	    transparent => 0,
+	    );
+$my_graph->set_legend( 'Channel 0', 'Channel 1' );
+my $gd = $my_graph->plot(\@data) or die $my_graph->error;
+my $string = "total.png";
+
+#save graph in webUI/historic as .png
+open(IMG, ">$string") or die $!;
+binmode IMG;
+print IMG $gd->png;
+close IMG;
+
 #copy .png files to /var/www
 my $success = `cp *.png /var/www`;
 #check $success for successful copy
+

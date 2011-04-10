@@ -93,7 +93,7 @@ echo "</tr></table>";
 <input type="submit" value="Apply Changes" name="apply">
   </form>
   
-  <IMG SRC="0x0000000000000010.gif" ALT="Some Text">  
+  <IMG SRC="0x0000000000000010.png" ALT="Some Text">  
 
 
 

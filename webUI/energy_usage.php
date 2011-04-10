@@ -28,7 +28,8 @@ $master = "0x8000000000000001";
 $universal = "0x8000000000000000";
 ?>
 
-<h4> All active outlets: </h4>  
+<br />
+<h3> &nbsp Select a device: </h3>  
 
 <?php //get outlet list from Andy's compiled swls.c program
 

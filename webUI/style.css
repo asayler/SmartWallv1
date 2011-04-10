@@ -5,7 +5,7 @@ body{
       }
 
 #header{
-         padding: 5px;
+         padding: 2em;
          background: #bbb;
          }
 
@@ -51,13 +51,24 @@ ul li a{
  
 img { 
       display: inline;
-      margin: 0em 1em 1em 1em;
+      margin: 0em 1em 1em 2em;
       vertical-align: top;
 }
 
 form { 
        display: inline;
        vertical-align: top;
+ }
+select { 
+         margin: 1em 1em 0em 1em;
+ }
+
+h1,h2,h3,h4,h5,h6 { 
+                    margin: 0px 0px 0px 0px;
+                    padding: 0px 0px 0px 0px;
+ }
+input { 
+        margin-bottom: 1em;
  }
 
 /* table.pretty adapted from Ivan Lutrov 
