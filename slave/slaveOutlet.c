@@ -228,8 +228,8 @@ int main(int argc, char *argv[]){
                                     }
                                 }
                                 /* TODO: Remove 8 byte limit */
-                                tgtChnData.header.dataLength = 
-                                    sizeof(unsigned long);
+                                /*tgtChnData.header.dataLength = 
+                                  sizeof(unsigned long);*/
                                 /* Assemble Message Body */
                                 bodyLen=writeSWChannelBody(body,
                                                            SW_MAX_BODY_LENGTH,
