@@ -32,11 +32,11 @@
 #define SENDPORT SWINPORT
 #define LISTENPORT SWOUTPORT
 
-#define MYSWUID 0x0001000000000011
-#define MYSWGROUP 0x01
-#define MYSWADDRESS 0x0011
+#define MYSWUID 0x0001000000000011ull
+#define MYSWGROUP 0x01u
+#define MYSWADDRESS 0x0011u
 #define MYSWTYPE SW_TYPE_OUTLET | SW_TYPE_UNIVERSAL
-#define MYSWCHAN 0x02
+#define MYSWCHAN 0x02u
 
 #define CHAN0_INITSTATE OUTLET_CHAN_ON;
 #define CHAN1_INITSTATE OUTLET_CHAN_ON;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]){
     (void) argv;
     
     /* Temp Vars */
-    int i;
+    unsigned int i;
     numChan_t j;
 
     /* Setup State Vars */
