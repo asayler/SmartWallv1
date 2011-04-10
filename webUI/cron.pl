@@ -81,25 +81,29 @@ foreach my $key (sort keys %lookup) {
 		print "Matched regex\n";
 		#proper response - parse it
 		my $power0, my $power1;
+		#backtick system call to get date/time
+		chomp(my $month = `date "+%m"`); #01-12
+		chomp(my $year = `date "+%Y"`); #4 digits (ie 1998)
+		chomp(my $day = `date "+%d"`); #01-31
+		chomp(my $hour = `date "+%H"`); #00-23
+		chomp(my $minute = `date "+%M"`); #00-59
 		if($channels eq "0x02"){ 
 		    $power0 = $1;
 		    $power1 = $3;
 		    print "Powers are: $power0, $power1\n"; #debug
 		    #write to file
-		    my $month = `date "+%m"`; #backtick system call to get month
-		    my $year = `date "+%Y"`;
-		    chomp($month);
-		    chomp($year);
 		    my $file_name = '../webUI/historic/'.$key.'_'.$month.'_'.$year;  
+		    my $date_string = $day.".".$hour.".".$minute;
 		    open(FILE_HANDLE,'>>',"$file_name") or die "-E- Unable to open $file_name : $!\n";
-		    print FILE_HANDLE "$power0 $power1\n";
+		    print FILE_HANDLE "$date_string $power0 $power1\n";
 		    close(FILE_HANDLE);
 		}else{
 		    $power0 = $1;
 		    #write to file
-		    my $file_name = './historic/'.$key;  
+		    my $file_name = '../webUI/historic/'.$key.'_'.$month.'_'.$year;  
+		    my $date_string = $day.".".$hour.".".$minute;
 		    open(FILE_HANDLE,'>>',"$file_name") or die "-E- Unable to open $file_name : $!\n";
-		    print FILE_HANDLE "$power0\n";
+		    print FILE_HANDLE "$date_string $power0\n";
 		    close(FILE_HANDLE);
 		}
 	    } else {
