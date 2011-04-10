@@ -1,14 +1,7 @@
-PROGRAMS NEEDED:
-libapache2-mod-php #adapt php to work with apache
-perl #scripting
-apache2 #server
-libgd-graph-perl #for making graphs using perl
+      //IMPORTANT: when swChnMsg fails, it does so silently and hangs
+      // check for hung programs with:
+      // >> ps aux | grep swChnMsg
 
-IMPORTANT: when swChnMsg fails, it does so silently and hangs
- check for hung programs with:
- >> ps aux | grep swChnMsg
- for now, kill it with:
- >> sudo killall swChnMsg
+      //for now, kill it with:
+      // >> sudo killall swChnMsg
 
-/etc/crontab contains command to run /home/etc/cron.d/cron.pl every minute. It polls all the outlets for power usage and writes to month-by-month files in /home/laura/senior/code/SmartWallv1/webUI/historic
-*NOTE: modify cron.pl when more outlets are available. It currently performs queries on outlet 0x0000000000000011 only and pretends it's doing each outlet
