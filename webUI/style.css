@@ -3,19 +3,23 @@ body{
       padding: 0;
       background: #ccc;
       }
+
 #header{
          padding: 5px;
          background: #bbb;
          }
+
 #navigation{
              float: left;
              width: 150px;
              background: #eee;
              }
+
 #content{
           margin-left: 200px;
           background: #fff;
           }
+
 #navigation a:link,a:visited{
                               font-size: 14pt;
                               color: #4E387E;
@@ -23,14 +27,17 @@ body{
                               padding: 4px;
                               text-decoration: none;
                               }
+
 #navigation a:hover,a:active{
                               background-color: #bbf
                               }
+
 #footer{
          clear: both;
          background: #bbb;
          padding: 10px;
          }
+
 ul{
     margin: 0;
     padding: 0;
@@ -44,10 +51,13 @@ ul li a{
  
 img { 
       display: inline;
+      margin: 0em 1em 1em 1em;
+      vertical-align: top;
 }
 
 form { 
        display: inline;
+       vertical-align: top;
  }
 
 /* table.pretty adapted from Ivan Lutrov 

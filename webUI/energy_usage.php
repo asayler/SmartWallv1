@@ -95,7 +95,7 @@ chdir('/var/www/');
 	$outlet = $alias_UID[$outlet]; //replace $outlet with UID
       }
       
-      $string = $outlet.'.gif';
+      $string = $outlet.'.png';
       echo"<IMG SRC=\"$string\">"; //display graph
    } else {
       echo "First, select an outlet.\n";
