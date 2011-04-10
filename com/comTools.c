@@ -131,6 +131,12 @@ extern uint16_t hton16(uint16_t v){
 
     if(firstRun){
         bigEndian = isBigEndian();
+		if(bigEndian){
+			fprintf(stderr, "Big Endian\n");
+		}
+		else{
+			fprintf(stderr, "Little Endian\n");
+		}
         firstRun = 0;
     }
 

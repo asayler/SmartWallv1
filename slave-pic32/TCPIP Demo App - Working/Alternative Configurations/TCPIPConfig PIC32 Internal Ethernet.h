@@ -240,7 +240,7 @@
 	// Allocate how much total RAM (in bytes) you want to allocate
 	// for use by your TCP TCBs, RX FIFOs, and TX FIFOs.
 	#define TCP_ETH_RAM_SIZE					(0ul)
-	#define TCP_PIC_RAM_SIZE					(12480ul)
+	#define TCP_PIC_RAM_SIZE					(18720ul)
 	#define TCP_SPI_RAM_SIZE					(0ul)
 	#define TCP_SPI_RAM_BASE_ADDRESS			(0x00)
 
@@ -297,7 +297,8 @@
 			//{TCP_PURPOSE_DEFAULT, TCP_PIC_RAM, 1000, 1000},
 			{TCP_PURPOSE_BERKELEY_SERVER, TCP_PIC_RAM, 1536, 1536},
 			{TCP_PURPOSE_BERKELEY_SERVER, TCP_PIC_RAM, 1536, 1536},
-			//{TCP_PURPOSE_BERKELEY_SERVER, TCP_PIC_RAM, 1536, 1536},
+			{TCP_PURPOSE_BERKELEY_SERVER, TCP_PIC_RAM, 1536, 1536},
+			{TCP_PURPOSE_BERKELEY_CLIENT, TCP_PIC_RAM, 1536, 1536},
 			{TCP_PURPOSE_BERKELEY_CLIENT, TCP_PIC_RAM, 1536, 1536},
 			{TCP_PURPOSE_BERKELEY_CLIENT, TCP_PIC_RAM, 1536, 1536},
 		};
@@ -322,7 +323,7 @@
  *   Berkeley Sockets are disabled.  Set this value as low as your application
  *   requires to avoid waisting RAM.
  */
-#define BSD_SOCKET_COUNT (5u)
+#define BSD_SOCKET_COUNT (9u)
 
 
 // =======================================================================
