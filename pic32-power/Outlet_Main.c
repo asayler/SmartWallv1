@@ -155,8 +155,8 @@ int main(void)
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// STEP 8. configure SPI port and MCP3909
-	SpiChnOpen(1, SPI_OPEN_MSTEN | SPI_OPEN_MSSEN | SPI_OPEN_SMP_END | SPI_OPEN_FRMEN | SPI_OPEN_FSP_IN | SPI_OPEN_FSP_HIGH | SPI_OPEN_MODE32 | SPI_OPEN_SIDL, 4);
-	SpiChnEnable(1,1);
+	SpiChnOpen(2, SPI_OPEN_MSTEN | SPI_OPEN_MSSEN | SPI_OPEN_SMP_END | SPI_OPEN_FRMEN | SPI_OPEN_FSP_IN | SPI_OPEN_FSP_HIGH | SPI_OPEN_MODE32 | SPI_OPEN_SIDL, 4);
+	SpiChnEnable(2,1);
 	DBPRINTF("openspi1... \n");
 	//mSpiChnClrRxIntFlag(1);
 	//mSpiChnClrTxIntFlag(1);
@@ -179,7 +179,7 @@ int main(void)
 
 		POWER = 0;
 
-		POWER = MEASURE_POWER(1);
+		POWER = MEASURE_POWER(2);
 		
 		if (POWER > 0)
 		{
@@ -287,37 +287,43 @@ void DelayMs(unsigned int msec)
 *
 *	This function sets the state of a specified channel
 *
-*	returns 1 if state-change is successful
-*	returns 0 if state-change is unsuccessful
+*	returns 0
 *
 ******************************************************************************/
-int SET_CHANNEL_STATE(int channel, int state)
+int SET_CHANNEL_STATE(int state_1, int state_2)
 {
-	if (state == 1 || state == 0)
+	// set state of channel 1
+	// **********************
+	if (state_1 == 1)
 	{
-		if (channel == 1)
-			{
-				CHANNEL1 = state;
-				CoreSetSoftwareInterrupt0();
-				return 1;
-			}
-		if (channel == 2)
-			{
-				CHANNEL2 = state;
-				CoreSetSoftwareInterrupt0();
-				return 1;
-			}
-		if ((channel != 1) && (channel != 2))
-			{
-				DBPRINTF("IMPROPER CHANNEL SELECTION ERROR.  PLEASE TRY AGAIN. \n");
-				return 0;
-			}
+		mPORTDSetBits(BIT_0);
+		mPORTESetBits(BIT_1);
+		DBPRINTF("CHANNEL 1 ON \n");
 	}
-	else
+	if (state_1 == 0)
 	{
-		DBPRINTF("IMPROPER STATE SELECTION ERROR.  PLEASE TRY AGAIN. \n");
-		return 0;
+		mPORTDClearBits(BIT_0);
+		mPORTEClearBits(BIT_1);
+		DBPRINTF("CHANNEL 1 OFF \n");
 	}
+
+	// set state of channel 2
+	// **********************
+	if (state_2 == 1)
+	{
+		mPORTDSetBits(BIT_1);
+		mPORTESetBits(BIT_2);
+		DBPRINTF("CHANNEL 2 ON \n");
+	}
+	if (state_2 == 0)
+	{
+		mPORTDClearBits(BIT_1);
+		mPORTEClearBits(BIT_2);
+		DBPRINTF("CHANNEL 2 OFF \n");
+	}
+
+	return 0;
+
 }
 
 
@@ -374,7 +380,7 @@ int MEASURE_POWER(int channel)
 		}
 
 		CHANNEL_MEASURE = 1;		// set channel 1 to be measured
-		CoreSetSoftwareInterrupt1();
+		//CoreSetSoftwareInterrupt1();
 
 	}
 
@@ -387,7 +393,7 @@ int MEASURE_POWER(int channel)
 		}
 
 		CHANNEL_MEASURE = 2;		// set channel 2 to be measured
-		CoreSetSoftwareInterrupt1();
+		//CoreSetSoftwareInterrupt1();
 
 	}
 	
