@@ -25,6 +25,7 @@
 #include <netdb.h>
 
 #include "../com/SmartWall.h"
+#include "../com/SmartWallSockets.h"
 #include "../com/comTools.h"
 #include "../com/comPrint.h"
 #include "swOutlet.h"
@@ -40,6 +41,11 @@
 
 #define CHAN0_INITSTATE OUTLET_CHAN_ON;
 #define CHAN1_INITSTATE OUTLET_CHAN_ON;
+
+#define SWDEBUG
+
+int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
+             struct SWDeviceInfo* fromDevInfo);
 
 int main(int argc, char *argv[]){
 
@@ -93,23 +99,30 @@ int main(int argc, char *argv[]){
     myDeviceInfo.version = SW_VERSION;
     myDeviceInfo.uid = MYSWUID;
     myDeviceInfo.groupID = MYSWGROUP;
+    struct SWDeviceInfo myDevice;
+    memset(&myDevice, 0, sizeof(myDevice));
+    myDevice.devInfo.swAddr = MYSWADDRESS;
+    myDevice.devInfo.devTypes = MYSWTYPE;
+    myDevice.devInfo.numChan = MYSWCHAN;
+    myDevice.devInfo.version = SW_VERSION;
+    myDevice.devInfo.uid = MYSWUID;
+    myDevice.devInfo.groupID = MYSWGROUP;
+    
+    struct SWDeviceInfo tgtDevice;
+    memset(&tgtDevice, 0, sizeof(tgtDevice));
 
     /* Setup Socket Vars */
-    struct sockaddr_in si_me, si_tgt;
-    memset(&si_me, 0, sizeof(si_me));
-    memset(&si_tgt, 0, sizeof(si_tgt));
-    socklen_t slen = sizeof(struct sockaddr_in);
     int in, out;
     int b, r;
 
     /* My IP */
-    si_me.sin_family = AF_INET;
-    si_me.sin_port = htons(LISTENPORT);
-    si_me.sin_addr.s_addr = htonl(INADDR_ANY);
+    myDevice.devIP.sin_family = AF_INET;
+    myDevice.devIP.sin_port = htons(LISTENPORT);
+    myDevice.devIP.sin_addr.s_addr = htonl(INADDR_ANY);
     
     /* TGT IP */
-    si_tgt.sin_family = AF_INET;
-    si_tgt.sin_port = htons(SENDPORT);
+    tgtDevice.devIP.sin_family = AF_INET;
+    tgtDevice.devIP.sin_port = htons(SENDPORT);
     
     /* Setup Sockets */
     in = socket(AF_INET, SOCK_DGRAM, 0);
@@ -124,29 +137,17 @@ int main(int argc, char *argv[]){
     }
 
     /* Bind In Socket */
-    b = bind(in, (struct sockaddr*) &si_me, sizeof(si_me));
+    b = bind(in, (struct sockaddr*) &(myDevice.devIP),
+             sizeof(myDevice.devIP));
     if (b < 0){
         perror("in bind");
         exit(EXIT_FAILURE);
     }
 
     while(1){
-        r = recvfrom(in, msg, SW_MAX_MSG_LENGTH, 0,
-                     (struct sockaddr*) &si_tgt, &slen);
-        if(r < 0){
-            perror("recvfrom");
-            exit(EXIT_FAILURE);
-        }
-        else{
-            msgLen = r;
-        }
-                
-        /* Print Info (TEST) */
-        fprintf(stdout, "Received packet from %s:%d\n",
-                inet_ntoa(si_tgt.sin_addr), ntohs(si_tgt.sin_port));
-        fprintf(stdout, "Message Size: %d\n", msgLen);
-        print_payload(msg, msgLen);
 
+        msgLen = swListen(in, msg, SW_MAX_BODY_LENGTH, &tgtDevice);
+        
         if((msgLen > sizeof(struct SmartWallHeader)) &&
            (msgLen < SW_MAX_MSG_LENGTH)){
             msgLen = readSWMsg(msg, msgLen,
@@ -256,21 +257,17 @@ int main(int argc, char *argv[]){
                                 fprintf(stdout, "Response: \n");
                                 print_payload(msg, msgLen);
                                 /* Set Port */
-                                si_tgt.sin_port = htons(SENDPORT);
+                                tgtDevice.devIP.sin_port = htons(SENDPORT);
                                 /* Send Message */
                                 r = sendto(out, msg, msgLen, 0,
-                                           (struct sockaddr*) &si_tgt,
-                                           sizeof(si_tgt));
+                                           (struct sockaddr*)
+                                           &(tgtDevice.devIP),
+                                           sizeof(tgtDevice.devIP));
                                 if(r < 0){
                                     perror("sendto");
                                     exit(EXIT_FAILURE);
                                 }
-                                /* Print Info (TEST) */
-                                fprintf(stdout, "Sent packet to %s:%d\n",
-                                        inet_ntoa(si_tgt.sin_addr),
-                                        ntohs(si_tgt.sin_port));
-                                fprintf(stdout, "Message Size: %d\n", r);
-
+                                
                                 break;
                             default:
                                 fprintf(stderr, "%s: Unhandeled msgType\n",
@@ -300,7 +297,8 @@ int main(int argc, char *argv[]){
         }
         else{
             fprintf(stderr, "%s: Malformatted message"
-                    " - msgLen outside of normal limits.\n", argv[0]);
+                    " - msgLen outside of normal limits: %d.\n", argv[0],
+                    msgLen);
             continue;
         }
 
@@ -310,4 +308,39 @@ int main(int argc, char *argv[]){
     close(out);
     
     return 0;
+}
+
+int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
+             struct SWDeviceInfo* fromDevInfo){
+
+    /* Temp vars */
+    int r;
+    unsigned addressSize;
+        
+    r = recvfrom(inSocket, buffer, bufferSize, 0,
+                 (struct sockaddr*) &(fromDevInfo->devIP),
+                 &addressSize);
+
+    if(r < 0){
+        perror("recvFunc");
+        return -1;
+    }
+    else{
+        if(addressSize != sizeof(fromDevInfo->devIP))
+            {
+                fprintf(stderr, "revfrom address size mismatch\n");
+                return -1;
+            }
+        else {
+#ifdef SWDEBUG
+            /* Print Info (TEST) */
+            fprintf(stderr, "Received packet from 0x%" PRIx32 ":%" PRId16 "\n",
+                    ntoh32(fromDevInfo->devIP.sin_addr.s_addr),
+                    ntoh16(fromDevInfo->devIP.sin_port));
+            fprintf(stderr, "Message Size: %d\n", r);
+            print_payload(buffer, r);
+            return r;
+        }
+#endif
+    }
 }
