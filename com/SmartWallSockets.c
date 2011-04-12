@@ -16,7 +16,7 @@ int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
     
     /* Temp vars */
     int r;
-    unsigned addressSize;
+    unsigned addressSize = 0;
     
     r = recvfrom(inSocket, buffer, bufferSize, 0,
                  (struct sockaddr*) &(sourceDev->devIP),
@@ -174,19 +174,19 @@ enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
 
 }
 
-enum handelerState swProcess(const msgScope_t msgScope,
-                             const msgType_t msgType,
-                             const swOpcode_t opcode,
-                             struct SWProcessor* processors,
-                             const int numProcessors,
-                             const void* inputBody,
-                             const swLength_t inBodyLength,
-                             void* outputBody,
-                             swLength_t* outBodyLength,
-                             const swLength_t maxBodyLength,
-                             void* deviceState,
-                             msgScope_t* errorScope,
-                             swOpcode_t* errorOpcode){
+enum processorState swProcess(const msgScope_t msgScope,
+                              const msgType_t msgType,
+                              const swOpcode_t opcode,
+                              struct SWProcessor* processors,
+                              const int numProcessors,
+                              const void* inputBody,
+                              const swLength_t inBodyLength,
+                              void* outputBody,
+                              swLength_t* outBodyLength,
+                              const swLength_t maxBodyLength,
+                              void* deviceState,
+                              msgScope_t* errorScope,
+                              swOpcode_t* errorOpcode){
 
     /* Local Vars */
     int i = 0;
@@ -202,7 +202,7 @@ enum handelerState swProcess(const msgScope_t msgScope,
                 fprintf(stderr, "%s: 0x%" PRIxMsgScope
                         " scope decoder failed - length mismatch\n",
                         "handelerState", processors[i].processorScope);
-                return HANDELER_ERROR;
+                return PROCESSOR_ERROR;
             }
             if(processors[i].handeler(opcode, msgType, processors[i].data,
                                       processors[i].data, deviceState,
@@ -210,10 +210,10 @@ enum handelerState swProcess(const msgScope_t msgScope,
                 fprintf(stderr, "%s: 0x%" PRIxMsgScope
                         " scope handeler failed\n",
                         "handelerState", processors[i].processorScope);
-                return HANDELER_ERROR;
+                return PROCESSOR_ERROR;
             }
             if(*errorScope != 0){
-                return HANDELER_SUCCESS;
+                return PROCESSOR_SUCCESS;
             }
             *outBodyLength = processors[i].encoder(outputBody, maxBodyLength,
                                                    processors[i].data);
@@ -221,12 +221,10 @@ enum handelerState swProcess(const msgScope_t msgScope,
                 fprintf(stderr, "%s: 0x%" PRIxMsgScope
                         " scope encoder failed\n",
                         "handelerState", processors[i].processorScope);
-                return HANDELER_ERROR;
+                return PROCESSOR_ERROR;
             }
-            return HANDELER_SUCCESS;
+            return PROCESSOR_SUCCESS;
         }
     }
-
-    return HANDELER_ERROR;
-    
+    return PROCESSOR_ERROR;
 }

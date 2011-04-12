@@ -45,13 +45,13 @@
 
 #define SWDEBUG
 
-enum handelerState outletChnHandeler(const swOpcode_t chnOpcode,
-                                     const msgType_t msgType,
-                                     const struct SWChannelData* input,
-                                     struct SWChannelData* output,
-                                     struct outletDeviceState* deviceState,
-                                     msgScope_t* errorScope,
-                                     swOpcode_t* errorOpcode);
+enum processorState outletChnHandeler(const swOpcode_t chnOpcode,
+                                      const msgType_t msgType,
+                                      const struct SWChannelData* input,
+                                      struct SWChannelData* output,
+                                      struct outletDeviceState* deviceState,
+                                      msgScope_t* errorScope,
+                                      swOpcode_t* errorOpcode);
 
 
 int main(int argc, char *argv[]){
@@ -183,75 +183,44 @@ int main(int argc, char *argv[]){
             continue;
         }
         
-        /* Switch on Message Scope */
-        switch(msgScope){
-        case SW_SCP_CHANNEL:
-            {
-                fprintf(stdout, "Received Channel Message\n");
-                /* TODO: Remove 8 byte limit*/
-                bodyLen = readSWChannelBody(body, bodyLen, &tmpChnData,
-                                            &limits);
-                if(bodyLen == SWLENGTH_MAX){
-                    fprintf(stderr, "%s: Could not read SW body\n",
-                            argv[0]);
-                    exit(EXIT_FAILURE);
-                }
-                
-                if(outletChnHandeler(opcode, msgType, &tmpChnData, 
-                                     &tmpChnData, &myState,
-                                     &errorScope, &errorOpcode)){
-                    continue;
-                }
-                
-                /* Assemble Message Body */
-                bodyLen=writeSWChannelBody(body,
-                                           SW_MAX_BODY_LENGTH,
-                                           &tmpChnData);
-                if(bodyLen == SWLENGTH_MAX){
-                    fprintf(stderr, "%s: Error generating "
-                            "message body.\n", argv[0]);
-                    exit(EXIT_FAILURE);
-                }
-
-                /* Compose Message */
-                if(errorScope != 0){
-                    opcode = errorOpcode;
-                    msgType = SW_MSG_ERROR;
-                }
-                else{
-                    msgType = SW_MSG_REPORT;
-                }
-                msgLen = swCompose(msg, SW_MAX_MSG_LENGTH,
-                                   &myDevice, &sourceDevice,
-                                   SW_TYPE_OUTLET,
-                                   SW_SCP_CHANNEL,
-                                   msgType, opcode,
-                                   body, bodyLen);
-
-                if(!(msgLen > 0)){
-                    continue;
-                }
-
-                /* Set Port */
-                sourceDevice.devIP.sin_port = htons(SENDPORT);
-
-                /* Send Message */
-                r = swSend(out, msg, msgLen, &sourceDevice);
-                if(!(r > 0)){
-                    continue;
-                }
-
-                break;
-                
-            }
-        default:
-            {
-                fprintf(stderr, "%s: Unhandeled Message Scope\n", argv[0]);
-                continue;
-                break;
-            }
+        /* Process Message */
+        if(swProcess(msgScope, msgType, opcode, processors, 1,
+                     body, bodyLen,
+                     body, &bodyLen, SW_MAX_BODY_LENGTH,
+                     &myState, &errorScope, &errorOpcode)){
+            continue;
         }
+
+        /* Compose Message */
+        if(errorScope != 0){
+            opcode = errorOpcode;
+            msgType = SW_MSG_ERROR;
+        }
+        else{
+            msgType = SW_MSG_REPORT;
+        }
+        msgLen = swCompose(msg, SW_MAX_MSG_LENGTH,
+                           &myDevice, &sourceDevice,
+                           SW_TYPE_OUTLET,
+                           SW_SCP_CHANNEL,
+                           msgType, opcode,
+                           body, bodyLen);
+
+        if(!(msgLen > 0)){
+            continue;
+        }
+
+        /* Set Port */
+        sourceDevice.devIP.sin_port = htons(SENDPORT);
+
+        /* Send Message */
+        r = swSend(out, msg, msgLen, &sourceDevice);
+        if(!(r > 0)){
+            continue;
+        }
+                
     }
+    
         
     close(in);
     close(out);
@@ -259,13 +228,13 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
-enum handelerState outletChnHandeler(const swOpcode_t chnOpcode,
-                                     const msgType_t msgType,
-                                     const struct SWChannelData* input,
-                                     struct SWChannelData* output,
-                                     struct outletDeviceState* deviceState,
-                                     msgScope_t* errorScope,
-                                     swOpcode_t* errorOpcode){
+enum processorState outletChnHandeler(const swOpcode_t chnOpcode,
+                                      const msgType_t msgType,
+                                      const struct SWChannelData* input,
+                                      struct SWChannelData* output,
+                                      struct outletDeviceState* deviceState,
+                                      msgScope_t* errorScope,
+                                      swOpcode_t* errorOpcode){
     
     /* Local vars */
     unsigned int i;
@@ -297,7 +266,7 @@ enum handelerState outletChnHandeler(const swOpcode_t chnOpcode,
                                 "%s: Invalid chanNum\n", "outletChnHandeler");
                         *errorScope = SW_SCP_CHANNEL;
                         *errorOpcode = UNIVERSAL_CHN_OP_ERROR_BADCHN;
-                        return HANDELER_SUCCESS; 
+                        return PROCESSOR_SUCCESS; 
                     }
                 }
             case SW_MSG_QUERY:
@@ -315,17 +284,17 @@ enum handelerState outletChnHandeler(const swOpcode_t chnOpcode,
                                 "%s: Invalid chanNum\n", "outletChnHandeler");
                         *errorScope = SW_SCP_CHANNEL;
                         *errorOpcode = UNIVERSAL_CHN_OP_ERROR_BADCHN;
-                        return HANDELER_SUCCESS; 
+                        return PROCESSOR_SUCCESS; 
                     }
                 }
-                return HANDELER_SUCCESS;
+                return PROCESSOR_SUCCESS;
                 break;
             default:
                 fprintf(stderr, "%s: Unhandeled msgType\n",
                         "outletChnHandeler");
                 *errorScope = SW_SCP_CHANNEL;
                 *errorOpcode = UNIVERSAL_CHN_OP_ERROR_BADMSGTYPE;
-                return HANDELER_SUCCESS;
+                return PROCESSOR_SUCCESS;
             }
         }
     default:
@@ -334,10 +303,10 @@ enum handelerState outletChnHandeler(const swOpcode_t chnOpcode,
                     "outletChnHandeler");
             *errorScope = SW_SCP_CHANNEL;
             *errorOpcode = UNIVERSAL_CHN_OP_ERROR_BADOPCODE;
-            return HANDELER_SUCCESS;
+            return PROCESSOR_SUCCESS;
         }
     }
     
-    return HANDELER_ERROR;
+    return PROCESSOR_ERROR;
 
 }
