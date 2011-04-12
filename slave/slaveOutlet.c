@@ -29,6 +29,7 @@
 #include "../com/comTools.h"
 #include "../com/comPrint.h"
 #include "swOutlet.h"
+#include "swUniversal.h"
 
 #define SENDPORT SWINPORT
 #define LISTENPORT SWOUTPORT
@@ -44,23 +45,33 @@
 
 #define SWDEBUG
 
+/* Return Value: msgSize in bytes */
 int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
              struct SWDeviceInfo* sourceDev);
 
+/* Return Value: bytes sent */
+int swSend(const int outSocket,
+           const uint8_t* msg, const swLength_t msgSize,
+           const struct SWDeviceInfo* destDev);
 
-int swReceive(const uint8_t* msg, const swLength_t msgLen,
-              struct SWDeviceInfo* fromDev,
-              struct SWDeviceInfo* msgDev,
-              devType_t* targetType,
-              msgScope_t* msgScope,
-              msgType_t* msgType,
-              swOpcode_t* opcode,
-              void* body,
-              swLength_t* bodyLength,
-              const swLength_t maxBodyLength);
+enum swReceiveState{SWRECEIVE_ERROR = -1, SWRECEIVE_SUCCESS = 0};
+enum swReceiveState swReceive(const uint8_t* msg, const swLength_t msgLen,
+                              struct SWDeviceInfo* fromDev,
+                              struct SWDeviceInfo* msgDev,
+                              devType_t* targetType,
+                              msgScope_t* msgScope,
+                              msgType_t* msgType,
+                              swOpcode_t* opcode,
+                              void* body,
+                              swLength_t* bodyLength,
+                              const swLength_t maxBodyLength);
 
-int swCheck(const struct SWDeviceInfo* myDev,
-            const struct SWDeviceInfo* msgDev);
+enum swCheckState{SWCHECK_DEVICE_ERROR = -1, SWCHECK_FOR_ME = 0,
+                  SWCHECK_NOT_FOR_ME = 1};
+enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
+                          const struct SWDeviceInfo* msgDev,
+                          const devType_t targetType,
+                          swOpcode_t* errorOpcode);
 
 int main(int argc, char *argv[]){
 
@@ -86,6 +97,7 @@ int main(int argc, char *argv[]){
     msgScope_t msgScope = 0;
     msgType_t msgType = 0;
     swOpcode_t opcode = 0;
+    swOpcode_t errorOpcode = 0;
     long int args[MYSWCHAN];
     memset(&args, 0, sizeof(args));
     struct SWChannelEntry tgtChnEntries[MYSWCHAN];
@@ -162,17 +174,9 @@ int main(int argc, char *argv[]){
             continue;
         }
 
-        if(swCheck(&myDevice, &msgDevice)){
+        if(swCheck(&myDevice, &msgDevice, targetType, &errorOpcode)){
             continue;
         }
-
-        if(!(myDevice.devInfo.devTypes & targetType)){
-#ifdef SWDEBUG
-            fprintf(stderr, "%s: Type mismatch\n", "swCheck");
-#endif
-            exit(EXIT_FAILURE);
-        }
-    /* TODO: Confirm it's from a master */
         
         /* Switch on Message Scope */
         switch(msgScope){
@@ -182,176 +186,189 @@ int main(int argc, char *argv[]){
                 /* TODO: Remove 8 byte limit*/
                 bodyLen = readSWChannelBody(body, bodyLen, &tgtChnData,
                                             myDevice.devInfo.numChan,
-                                             sizeof(unsigned long));
-                 if(bodyLen == SWLENGTH_MAX){
-                     fprintf(stderr, "%s: Could not read SW body\n",
-                             argv[0]);
-                     exit(EXIT_FAILURE);
-                 }
-                 /* Switch on Opcode */
-                 switch(opcode){
-                 case OUTLET_CH_OP_STATE:
-                     {
-                         /* Switch on Message Type: SET OR QUERY */
-                         switch(msgType){
-                         case SW_MSG_SET:
-                             /* Set State */
-                             for(i = 0; i < tgtChnData.header.numChan; i++){
-                                 j = tgtChnData.data[i].chanTop.chanNum;
-                                 if(j < myDevice.devInfo.numChan){
-                                     /* TODO: Check valid state */
-                                     temp = tgtChnData.data[i].chanValue;
-                                     chState[j] = *temp;
-                                     fprintf(stdout, "Ch %u Set to %lu\n",
-                                             j, chState[j]);
-                                 }
-                                 else{
-                                     fprintf(stderr,
-                                             "%s: Invalid chanNum\n",
-                                             argv[0]);
-                                 }
-                             }
-                         case SW_MSG_QUERY:
-                             /* Report State */
-                             for(i = 0; i < tgtChnData.header.numChan; i++){
-                                 j = tgtChnData.data[i].chanTop.chanNum;
-                                 if(j < myDevice.devInfo.numChan){
-                                     temp = tgtChnData.data[i].chanValue;
-                                     *temp = chState[j];
-                                 }
-                                 else{
-                                     fprintf(stderr,
-                                             "%s: Invalid chanNum\n",
-                                             argv[0]);
-                                 }
-                             }
-                             /* TODO: Remove 8 byte limit */
-                             /*tgtChnData.header.dataLength = 
-                               sizeof(unsigned long);*/
-                             /* Assemble Message Body */
-                             bodyLen=writeSWChannelBody(body,
-                                                        SW_MAX_BODY_LENGTH,
-                                                        &tgtChnData);
-                             if(bodyLen == SWLENGTH_MAX){
-                                 fprintf(stderr, "%s: Error generating "
-                                         "message body.\n", argv[0]);
-                                 exit(EXIT_FAILURE);
-                             }
-                             /* Assemble Message */
-                             msgLen = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
-                                                 &(myDevice.devInfo),
-                                                 &(sourceDevice.devInfo),
-                                                 SW_TYPE_OUTLET,
-                                                 SW_SCP_CHANNEL,
-                                                 SW_MSG_REPORT, opcode,
-                                                 body, bodyLen);
-                             if(msgLen == SWLENGTH_MAX){
-                                 fprintf(stderr, "%s: Error generating "
-                                         "message.\n", argv[0]);
-                                 exit(EXIT_FAILURE);
-                             }
-                             /* Print Test payload */
-                             fprintf(stdout, "Response: \n");
-                             print_payload(msg, msgLen);
-                             /* Set Port */
-                             sourceDevice.devIP.sin_port = htons(SENDPORT);
-                             /* Send Message */
-                             r = sendto(out, msg, msgLen, 0,
-                                        (struct sockaddr*)
-                                        &(sourceDevice.devIP),
-                                        sizeof(sourceDevice.devIP));
-                             if(r < 0){
-                                 perror("sendto");
-                                 exit(EXIT_FAILURE);
-                             }
+                                            sizeof(unsigned long));
+                if(bodyLen == SWLENGTH_MAX){
+                    fprintf(stderr, "%s: Could not read SW body\n",
+                            argv[0]);
+                    exit(EXIT_FAILURE);
+                }
+                /* Switch on Opcode */
+                switch(opcode){
+                case OUTLET_CH_OP_STATE:
+                    {
+                        /* Switch on Message Type: SET OR QUERY */
+                        switch(msgType){
+                        case SW_MSG_SET:
+                            /* Set State */
+                            for(i = 0; i < tgtChnData.header.numChan; i++){
+                                j = tgtChnData.data[i].chanTop.chanNum;
+                                if(j < myDevice.devInfo.numChan){
+                                    /* TODO: Check valid state */
+                                    temp = tgtChnData.data[i].chanValue;
+                                    chState[j] = *temp;
+                                    fprintf(stdout, "Ch %u Set to %lu\n",
+                                            j, chState[j]);
+                                }
+                                else{
+                                    fprintf(stderr,
+                                            "%s: Invalid chanNum\n",
+                                            argv[0]);
+                                }
+                            }
+                        case SW_MSG_QUERY:
+                            /* Report State */
+                            for(i = 0; i < tgtChnData.header.numChan; i++){
+                                j = tgtChnData.data[i].chanTop.chanNum;
+                                if(j < myDevice.devInfo.numChan){
+                                    temp = tgtChnData.data[i].chanValue;
+                                    *temp = chState[j];
+                                }
+                                else{
+                                    fprintf(stderr,
+                                            "%s: Invalid chanNum\n",
+                                            argv[0]);
+                                }
+                            }
+                            /* TODO: Remove 8 byte limit */
+                            /*tgtChnData.header.dataLength = 
+                              sizeof(unsigned long);*/
+                            /* Assemble Message Body */
+                            bodyLen=writeSWChannelBody(body,
+                                                       SW_MAX_BODY_LENGTH,
+                                                       &tgtChnData);
+                            if(bodyLen == SWLENGTH_MAX){
+                                fprintf(stderr, "%s: Error generating "
+                                        "message body.\n", argv[0]);
+                                exit(EXIT_FAILURE);
+                            }
+                            /* Assemble Message */
+                            msgLen = writeSWMsg(msg, SW_MAX_MSG_LENGTH,
+                                                &(myDevice.devInfo),
+                                                &(sourceDevice.devInfo),
+                                                SW_TYPE_OUTLET,
+                                                SW_SCP_CHANNEL,
+                                                SW_MSG_REPORT, opcode,
+                                                body, bodyLen);
+                            if(msgLen == SWLENGTH_MAX){
+                                fprintf(stderr, "%s: Error generating "
+                                        "message.\n", argv[0]);
+                                exit(EXIT_FAILURE);
+                            }
+                            /* Print Test payload */
+                            fprintf(stdout, "Response: \n");
+                            print_payload(msg, msgLen);
+                            /* Set Port */
+                            sourceDevice.devIP.sin_port = htons(SENDPORT);
+                            /* Send Message */
+                            r = swSend(out, msg, msgLen, &sourceDevice);
+                            if(!(r > 0)){
+                                continue;
+                            }
 
-                             break;
-                         default:
-                             fprintf(stderr, "%s: Unhandeled msgType\n",
-                                     argv[0]);
-                             continue;
-                             break;
-                         }
-                         break;
-                     }
-                 default:
-                     {
-                         fprintf(stderr, "%s: Unhandeled Opcode\n",
-                                 argv[0]);
-                         continue;
-                         break;
-                     }
-                 }
-                 break;
-             }
-         default:
-             {
-                 fprintf(stderr, "%s: Unhandeled Message Scope\n", argv[0]);
-                 continue;
-                 break;
-             }
-         }
-     }
+                            break;
+                        default:
+                            fprintf(stderr, "%s: Unhandeled msgType\n",
+                                    argv[0]);
+                            continue;
+                            break;
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        fprintf(stderr, "%s: Unhandeled Opcode\n",
+                                argv[0]);
+                        continue;
+                        break;
+                    }
+                }
+                break;
+            }
+        default:
+            {
+                fprintf(stderr, "%s: Unhandeled Message Scope\n", argv[0]);
+                continue;
+                break;
+            }
+        }
+    }
 
-     close(in);
-     close(out);
+    close(in);
+    close(out);
 
-     return 0;
- }
+    return 0;
+}
 
- int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
-              struct SWDeviceInfo* sourceDev){
+int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
+             struct SWDeviceInfo* sourceDev){
+    
+    /* Temp vars */
+    int r;
+    unsigned addressSize;
+    
+    r = recvfrom(inSocket, buffer, bufferSize, 0,
+                 (struct sockaddr*) &(sourceDev->devIP),
+                 &addressSize);
+    if(r < 0){
+        perror("recvFunc");
+        return -1;
+    }
+    else{
+        if(addressSize != sizeof(sourceDev->devIP))
+            {
+                fprintf(stderr, "%s: recvfrom address size mismatch\n", 
+                        "swListen");
+                return -1;
+            }
+        else if(((size_t)r > sizeof(struct SmartWallHeader)) &&
+                ((size_t)r < bufferSize)){
+#ifdef SWDEBUG
+            /* Print Info (DEBUG) */
+            fprintf(stderr, "Received packet from 0x%" PRIx32 ":%" PRId16 "\n",
+                    ntoh32(sourceDev->devIP.sin_addr.s_addr),
+                    ntoh16(sourceDev->devIP.sin_port));
+            fprintf(stderr, "Message Size: %d\n", r);
+            print_payload(buffer, r);
+#endif
+            return r;
+        }
+        else {
+            fprintf(stderr, "%s: Malformatted message"
+                    " - msgLen outside of normal limits: %d.\n", "swListen",
+                    r);
+            return -1;
+        }
+    }
+}
 
-     /* Temp vars */
-     int r;
-     unsigned addressSize;
+int swSend(const int outSocket,
+           const uint8_t* msg, const swLength_t msgSize,
+           const struct SWDeviceInfo* destDev){
+ 
+    int s;
+   
+    s = sendto(outSocket, msg, msgSize, 0,
+               (struct sockaddr*)
+               &(destDev->devIP),
+               sizeof(destDev->devIP));
+    if(s < 0){
+        perror("sendto");
+        return -1;
+    }
 
-     r = recvfrom(inSocket, buffer, bufferSize, 0,
-                  (struct sockaddr*) &(sourceDev->devIP),
-                  &addressSize);
-     if(r < 0){
-         perror("recvFunc");
-         return -1;
-     }
-     else{
-         if(addressSize != sizeof(sourceDev->devIP))
-             {
-                 fprintf(stderr, "%s: recvfrom address size mismatch\n", 
-                         "swListen");
-                 return -1;
-             }
-         else if(((size_t)r > sizeof(struct SmartWallHeader)) &&
-                 ((size_t)r < bufferSize)){
- #ifdef SWDEBUG
-             /* Print Info (DEBUG) */
-             fprintf(stderr, "Received packet from 0x%" PRIx32 ":%" PRId16 "\n",
-                     ntoh32(sourceDev->devIP.sin_addr.s_addr),
-                     ntoh16(sourceDev->devIP.sin_port));
-             fprintf(stderr, "Message Size: %d\n", r);
-             print_payload(buffer, r);
- #endif
-             return r;
-         }
-         else {
-             fprintf(stderr, "%s: Malformatted message"
-                     " - msgLen outside of normal limits: %d.\n", "swListen",
-                     r);
-             return -1;
-         }
-     }
- }
+    return s;
+}
 
-
- int swReceive(const uint8_t* msg, const swLength_t msgLen,
-               struct SWDeviceInfo* fromDev,
-               struct SWDeviceInfo* msgDev,
-               devType_t* targetType,
-               msgScope_t* msgScope,
-               msgType_t* msgType,
-               swOpcode_t* opcode,
-               void* body,
-               swLength_t* bodyLength,
-               const swLength_t maxBodyLength){
+enum swReceiveState swReceive(const uint8_t* msg, const swLength_t msgLen,
+                              struct SWDeviceInfo* fromDev,
+                              struct SWDeviceInfo* msgDev,
+                              devType_t* targetType,
+                              msgScope_t* msgScope,
+                              msgType_t* msgType,
+                              swOpcode_t* opcode,
+                              void* body,
+                              swLength_t* bodyLength,
+                              const swLength_t maxBodyLength){
     
     int readLen = 0;
 
@@ -361,22 +378,24 @@ int main(int argc, char *argv[]){
                         body, bodyLength, maxBodyLength);
     if(msgLen == SWLENGTH_MAX){
         fprintf(stderr, "%s: Could not read SW message\n", "swReceive");
-        return -1;
+        return SWRECEIVE_ERROR;
     }
     if(readLen != msgLen){
         fprintf(stderr, "%s: Message length does not match read length\n",
                 "swReceive");
-        return -1;
+        return SWRECEIVE_ERROR;
     }
 
-    return 0;
+    return SWRECEIVE_SUCCESS;
 
 }
 
-int swCheck(const struct SWDeviceInfo* myDev,
-            const struct SWDeviceInfo* msgDev){
+enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
+                          const struct SWDeviceInfo* msgDev,
+                          const devType_t targetType,
+                          swOpcode_t* errorOpcode){
     
-    const int forMe = 0;
+    *errorOpcode = 0;
     
     /* Check if Message is For Me */
     if(myDev->devInfo.groupID != msgDev->devInfo.groupID){
@@ -385,7 +404,7 @@ int swCheck(const struct SWDeviceInfo* myDev,
         fprintf(stderr, "My  groupID: %u\n", myDev->devInfo.groupID);
         fprintf(stderr, "Msg groupID: %u\n", msgDev->devInfo.groupID);
 #endif
-        return !(forMe);
+        return SWCHECK_NOT_FOR_ME;
     }
     if((myDev->devInfo.swAddr != msgDev->devInfo.swAddr) && 
        (msgDev->devInfo.swAddr != SW_ADDR_BROADCAST)){
@@ -394,8 +413,17 @@ int swCheck(const struct SWDeviceInfo* myDev,
         fprintf(stderr, "My  swAddr: 0x%x\n", myDev->devInfo.swAddr);
         fprintf(stderr, "Msg swAddr: 0x%x\n", msgDev->devInfo.swAddr);
 #endif
-        return !(forMe);
+        return SWCHECK_NOT_FOR_ME;
+    }
+    if(!(myDev->devInfo.devTypes & targetType)){
+#ifdef SWDEBUG
+        fprintf(stderr, "%s: Type mismatch\n", "swCheck");
+#endif
+        *errorOpcode = UNIVERSAL_DEV_OP_ERROR_TYPEMISMATCH;
+        return SWCHECK_DEVICE_ERROR;
     }
 
-    return (forMe);
+    /* TODO: Confirm it's from a master */
+
+    return SWCHECK_FOR_ME;
 }
