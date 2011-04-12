@@ -187,7 +187,7 @@ enum processorState swProcess(const msgScope_t msgScope,
                               void* deviceState,
                               msgScope_t* errorScope,
                               swOpcode_t* errorOpcode){
-
+    
     /* Local Vars */
     int i = 0;
     swLength_t bodyLength = 0;
