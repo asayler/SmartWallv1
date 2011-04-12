@@ -9,10 +9,6 @@
  * ---
  */
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -45,23 +41,17 @@
 
 #define SWDEBUG
 
-enum processorState outletChnHandeler(const swOpcode_t chnOpcode,
-                                      const msgType_t msgType,
-                                      const struct SWChannelData* input,
-                                      struct SWChannelData* output,
-                                      struct outletDeviceState* deviceState,
-                                      msgScope_t* errorScope,
-                                      swOpcode_t* errorOpcode);
+enum SWOutletState{OST_SETUP, OST_LISTEN, OST_RECEIVE, OST_CHECK, OST_PROCESS,
+                   OST_COMPOSE, OST_SEND, OST_CLEANUP};
 
+enum SWOutletState swOutletStateMachine(enum SWOutletState machineState,
+                                        struct outletDeviceState* myState);
 
 int main(int argc, char *argv[]){
 
     /* Handel Input */
     (void) argc;
     (void) argv;
-    
-    /* Temp Vars */
-    unsigned int i;
     
     /* Setup State Vars */
     struct outletDeviceState myState;
@@ -75,25 +65,56 @@ int main(int argc, char *argv[]){
     myState.myDev = &myDevice;
     myState.chState = chState;
     myState.chPower = chPower;
+    enum SWOutletState machineState = OST_SETUP;
     
-    /* Setup Temporary Vars */
+    /* Setup SW Vars */
+    myState.myDev->devInfo.swAddr = MYSWADDRESS;
+    myState.myDev->devInfo.devTypes = MYSWTYPE;
+    myState.myDev->devInfo.numChan = MYSWCHAN;
+    myState.myDev->devInfo.version = SW_VERSION;
+    myState.myDev->devInfo.uid = MYSWUID;
+    myState.myDev->devInfo.groupID = MYSWGROUP;
+    
+    /* My IP */
+    myState.myDev->devIP.sin_family = AF_INET;
+    myState.myDev->devIP.sin_port = htons(LISTENPORT);
+    myState.myDev->devIP.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    while(1){
+
+        machineState = swOutletStateMachine(machineState, &myState);
+                
+    }
+
+    return 0;
+}
+
+
+enum SWOutletState swOutletStateMachine(enum SWOutletState machineState,
+                                        struct outletDeviceState* myState){
+
+    /* Local Temp Vars */
+    unsigned int i = 0;
+    int b, r;
+
+    /* Setup Temporary Storage Vars */
     struct SWChannelEntry tmpChnEntries[MYSWCHAN];
     memset(&tmpChnEntries, 0, sizeof(tmpChnEntries));
     struct SWChannelData tmpChnData;
     memset(&tmpChnData, 0, sizeof(tmpChnData));
-    outletChanState_t tmpState[MYSWCHAN];
-    memset(&tmpState, 0, sizeof(tmpState));
+    union outletChanArg tmpChanArgs[MYSWCHAN];
+    memset(&tmpChanArgs, 0, sizeof(tmpChanArgs));
     tmpChnData.data = tmpChnEntries;
     /* Init chanData Buffer */
     for(i = 0; i < MYSWCHAN; i++){
-        tmpChnData.data[i].chanValue = &(tmpState[i]);
+        tmpChnData.data[i].chanValue = &(tmpChanArgs[i]);
     }
     struct SWChannelLimits limits;
     limits.maxNumChan = MYSWCHAN;
-    limits.maxDataLength = sizeof(*chState);
+    limits.maxDataLength = sizeof(*tmpChanArgs);
     
-    /* Setup Temp State Machine Vars */
-    struct SWProcessor processors[1];
+    /* Declare Temp State Machine Vars */
+    struct SWProcessor processors[NUMOUTLETPROCESSORS];
     memset(processors, 0, sizeof(processors));
     processors[0].processorScope = SW_SCP_CHANNEL;
     processors[0].data = &tmpChnData;
@@ -102,211 +123,166 @@ int main(int argc, char *argv[]){
     processors[0].handeler = (swHandeler)outletChnHandeler;
     processors[0].encoder = (writeSWBody)writeSWChannelBody;
 
-    /* Setup SW Message Vars */
-    struct SmartWallDev sourceDeviceInfo;
-    memset(&sourceDeviceInfo, 0, sizeof(sourceDeviceInfo));
-    struct SmartWallDev destDeviceInfo;
-    memset(&destDeviceInfo, 0, sizeof(destDeviceInfo));
+    /* Declare Static SW Vars */
+    static struct SWDeviceInfo sourceDevice;
+    static struct SWDeviceInfo msgDevice;    
+    static devType_t targetType;
+    static msgScope_t msgScope;
+    static msgType_t msgType;
+    static swOpcode_t opcode;
+    static swOpcode_t errorOpcode = 0;
+    static msgScope_t errorScope = 0;
     
-    devType_t targetType = 0;
-    msgScope_t msgScope = 0;
-    msgType_t msgType = 0;
-    swOpcode_t opcode = 0;
-    swOpcode_t errorOpcode = 0;
-    msgScope_t errorScope = 0;
-        
-    uint8_t msg[SW_MAX_MSG_LENGTH];
-    memset(&msg, 0, sizeof(msg));
-    swLength_t msgLen = 0;
-    uint8_t body[SW_MAX_BODY_LENGTH];
-    memset(&body, 0, sizeof(body));
-    swLength_t bodyLen = 0;
-    
-    /* Setup SW Vars */
-    
-    myDevice.devInfo.swAddr = MYSWADDRESS;
-    myDevice.devInfo.devTypes = MYSWTYPE;
-    myDevice.devInfo.numChan = MYSWCHAN;
-    myDevice.devInfo.version = SW_VERSION;
-    myDevice.devInfo.uid = MYSWUID;
-    myDevice.devInfo.groupID = MYSWGROUP;
-    
-    struct SWDeviceInfo sourceDevice;
-    memset(&sourceDevice, 0, sizeof(sourceDevice));
-    struct SWDeviceInfo msgDevice;
-    memset(&msgDevice, 0, sizeof(msgDevice));
+    /* Declare Static SW Buffers */
+    static uint8_t msg[SW_MAX_MSG_LENGTH];
+    static swLength_t msgLen;
+    static uint8_t body[SW_MAX_BODY_LENGTH];
+    static swLength_t bodyLen;
 
-    /* Setup Socket Vars */
-    int in, out;
-    int b, r;
+    /* Declare Static Socket vars */
+    static int in, out;
 
-    /* My IP */
-    myDevice.devIP.sin_family = AF_INET;
-    myDevice.devIP.sin_port = htons(LISTENPORT);
-    myDevice.devIP.sin_addr.s_addr = htonl(INADDR_ANY);
-        
-    /* Setup Sockets */
-    in = socket(AF_INET, SOCK_DGRAM, 0);
-    if(in < 0){
-        perror("in socket");
-        exit(EXIT_FAILURE);
-    }
-    out = socket(AF_INET, SOCK_DGRAM, 0);
-    if(out < 0){
-        perror("out socket");
-        exit(EXIT_FAILURE);
-    }
+    switch(machineState){
+    case OST_SETUP:
 
-    /* Bind In Socket */
-    b = bind(in, (struct sockaddr*) &(myDevice.devIP),
-             sizeof(myDevice.devIP));
-    if (b < 0){
-        perror("in bind");
-        exit(EXIT_FAILURE);
-    }
+        /* Setup Static SW Vars */
+        memset(&sourceDevice, 0, sizeof(sourceDevice));
+        memset(&msgDevice, 0, sizeof(msgDevice));
+        targetType = 0;
+        msgScope = 0;
+        msgType = 0;;
+        opcode = 0;
 
-    while(1){
+        /* Setup Static SW Buffers */
+        msgLen = 0;
+        memset(&msg, 0, sizeof(msg));
+        bodyLen = 0;
+        memset(&body, 0, sizeof(body));
 
-        msgLen = swListen(in, msg, SW_MAX_BODY_LENGTH, &sourceDevice);
-        if(!(msgLen > 0)){
-            continue;
+        /* Setup Sockets */
+        in = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+        if(in < 0){
+            perror("in socket");
+            return OST_SETUP;
+        }
+        out = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+        if(out < 0){
+            perror("out socket");
+            return OST_SETUP;
         }
 
+        /* Bind In Socket */
+        b = bind(in, (struct sockaddr*) &(myState->myDev->devIP),
+                 sizeof(myState->myDev->devIP));
+        if (b < 0){
+            perror("in bind");
+            return OST_SETUP;
+        }
+        
+        return OST_LISTEN;
+        break;
+
+    case OST_LISTEN:
+
+        /* Listen for New Message */
+        msgLen = swListen(in, msg, SW_MAX_BODY_LENGTH, &sourceDevice);
+        if(msgLen > 0){
+            return OST_RECEIVE;
+        }
+        else{
+            return OST_LISTEN;
+        }
+        break;
+
+    case OST_RECEIVE:
+
+        /* Receive Message */
         if(swReceive(msg, msgLen, &sourceDevice, &msgDevice, &targetType,
                      &msgScope, &msgType, &opcode, body, &bodyLen,
                      SW_MAX_BODY_LENGTH)){
-            continue;
+            return OST_LISTEN;
         }
+        else{
+            return OST_CHECK;
+        }
+        break;
 
-        if(swCheck(&myDevice, &msgDevice, targetType, &errorScope,
+    case OST_CHECK:
+        
+        /* Check Received Message */
+        if(swCheck(myState->myDev, &msgDevice, targetType, &errorScope,
                    &errorOpcode)){
-            continue;
+            return OST_LISTEN;
         }
+        else{
+            return OST_PROCESS;
+        }
+        break;
+
+    case OST_PROCESS:
         
         /* Process Message */
-        if(swProcess(msgScope, msgType, opcode, processors, 1,
+        if(swProcess(msgScope, msgType, opcode,
+                     processors, NUMOUTLETPROCESSORS,
                      body, bodyLen,
                      body, &bodyLen, SW_MAX_BODY_LENGTH,
-                     &myState, &errorScope, &errorOpcode)){
-            continue;
+                     myState, &errorScope, &errorOpcode)){
+            return OST_LISTEN;
         }
+        else{
+            return OST_COMPOSE;
+        }
+        break;
 
-        /* Compose Message */
+    case OST_COMPOSE:
+
+        /* Check for Error Message */
         if(errorScope != 0){
             opcode = errorOpcode;
             msgType = SW_MSG_ERROR;
+            msgScope = errorScope;
         }
         else{
             msgType = SW_MSG_REPORT;
         }
+        /* Compose Message */
         msgLen = swCompose(msg, SW_MAX_MSG_LENGTH,
-                           &myDevice, &sourceDevice,
-                           SW_TYPE_OUTLET,
-                           SW_SCP_CHANNEL,
+                           myState->myDev, &sourceDevice,
+                           targetType,
+                           msgScope,
                            msgType, opcode,
                            body, bodyLen);
-
-        if(!(msgLen > 0)){
-            continue;
+        if(msgLen > 0){
+            return OST_SEND;
         }
-
+        else {
+            return OST_LISTEN;
+        }
+        break;
+        
+    case OST_SEND:
+        
         /* Set Port */
         sourceDevice.devIP.sin_port = htons(SENDPORT);
-
         /* Send Message */
         r = swSend(out, msg, msgLen, &sourceDevice);
-        if(!(r > 0)){
-            continue;
+        if(r > 0){
+            return OST_LISTEN;
         }
-                
-    }
-    
+        else {
+            return OST_SEND;
+        }
+        break;
+
+    case OST_CLEANUP:
         
-    close(in);
-    close(out);
+        /* Close Sockets */
+        close(in);
+        close(out);
+        return OST_SETUP;
+        break;
 
-    return 0;
-}
-
-enum processorState outletChnHandeler(const swOpcode_t chnOpcode,
-                                      const msgType_t msgType,
-                                      const struct SWChannelData* input,
-                                      struct SWChannelData* output,
-                                      struct outletDeviceState* deviceState,
-                                      msgScope_t* errorScope,
-                                      swOpcode_t* errorOpcode){
-    
-    /* Local vars */
-    unsigned int i;
-    numChan_t chn;
-    *errorScope = 0;
-    *errorOpcode = 0;
-
-    /* Switch on Opcode */
-    switch(chnOpcode){
-    case OUTLET_CH_OP_STATE:
-        {
-            /* Switch on Message Type: SET OR QUERY */
-            switch(msgType){
-            case SW_MSG_SET:
-                /* Set State */
-                for(i = 0; i < input->header.numChan; i++){
-                    chn = input->data[i].chanTop.chanNum;
-                    if(chn < deviceState->myDev->devInfo.numChan){
-                        /* TODO: Check valid state */
-                        deviceState->chState[chn] =
-                            *((outletChanState_t*)input->data[i].chanValue);
-#ifdef SWDEBUG
-                        fprintf(stdout, "Ch %u Set to %lu\n",
-                                chn, deviceState->chState[chn]);
-#endif
-                    }
-                    else{
-                        fprintf(stderr,
-                                "%s: Invalid chanNum\n", "outletChnHandeler");
-                        *errorScope = SW_SCP_CHANNEL;
-                        *errorOpcode = UNIVERSAL_CHN_OP_ERROR_BADCHN;
-                        return PROCESSOR_SUCCESS; 
-                    }
-                }
-            case SW_MSG_QUERY:
-                /* Report State */
-                output->header = input->header;
-                for(i = 0; i < input->header.numChan; i++){
-                    chn = input->data[i].chanTop.chanNum;
-                    if(chn < deviceState->myDev->devInfo.numChan){
-                        output->data[i].chanTop.chanNum = chn;
-                        *((outletChanState_t*)output->data[i].chanValue) =
-                          deviceState->chState[chn];
-                    }
-                    else{
-                        fprintf(stderr,
-                                "%s: Invalid chanNum\n", "outletChnHandeler");
-                        *errorScope = SW_SCP_CHANNEL;
-                        *errorOpcode = UNIVERSAL_CHN_OP_ERROR_BADCHN;
-                        return PROCESSOR_SUCCESS; 
-                    }
-                }
-                return PROCESSOR_SUCCESS;
-                break;
-            default:
-                fprintf(stderr, "%s: Unhandeled msgType\n",
-                        "outletChnHandeler");
-                *errorScope = SW_SCP_CHANNEL;
-                *errorOpcode = UNIVERSAL_CHN_OP_ERROR_BADMSGTYPE;
-                return PROCESSOR_SUCCESS;
-            }
-        }
     default:
-        {
-            fprintf(stderr, "%s: Unhandeled Opcode\n",
-                    "outletChnHandeler");
-            *errorScope = SW_SCP_CHANNEL;
-            *errorOpcode = UNIVERSAL_CHN_OP_ERROR_BADOPCODE;
-            return PROCESSOR_SUCCESS;
-        }
+        return OST_SETUP;
     }
-    
-    return PROCESSOR_ERROR;
-
 }

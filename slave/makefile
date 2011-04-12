@@ -12,18 +12,22 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = slaveOutlet.o
+OBJS = slaveOutlet.o swOutlet.o
 EXEC = slaveOutlet
 
 .PHONY : all
-all : slaveOutlet
+all : $(OBJS) $(EXEC)
 
-slaveOutlet : slaveOutlet.o ../com/SmartWall.o ../com/SmartWallSockets.o ../com/comTools.o ../com/comTools.o
-	$(CC) $(CFLAGS) slaveOutlet.o ../com/SmartWall.o ../com/SmartWallSockets.o ../com/comTools.o ../com/comPrint.o -o slaveOutlet
+slaveOutlet : slaveOutlet.o swOutlet.o ../com/SmartWall.o ../com/SmartWallSockets.o ../com/comTools.o ../com/comTools.o
+	$(CC) $(CFLAGS) slaveOutlet.o swOutlet.o ../com/SmartWall.o ../com/SmartWallSockets.o ../com/comTools.o ../com/comPrint.o -o slaveOutlet
 
 slaveOutlet.o : slaveOutlet.c
 	$(CC) $(CFLAGS) -c slaveOutlet.c 
 -include slaveOutlet.d
+
+swOutlet.o : swOutlet.c
+	$(CC) $(CFLAGS) -c swOutlet.c
+-include swOutlet.d
 
 # Automatically generate dependencies for .c files
 %.d : %.c
