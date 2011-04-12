@@ -72,8 +72,8 @@
 
 
 // define channel states
-int CHANNEL1 = 0;
-int CHANNEL2 = 0;
+int CHANNEL_1_STATE = 0;
+int CHANNEL_2_STATE = 0;
 
 int SET_CHANNEL_STATE(int, int);
 int GET_CHANNEL_STATE(int);
@@ -81,18 +81,14 @@ int GET_CHANNEL_STATE(int);
 
 
 
-
-
 // define power measuring
-int CHANNEL_MEASURE;
-int CHANNEL_POWER;
-int MEASURE_POWER(int);
-unsigned int cycle_sample_data[5];
-int num_samples = 5;
+int CHANNEL_1_POWER;
+int CHANNEL_2_POWER;
+void MEASURE_POWER();
+int MEASURE(int);
 
-// prototype
+
 void DelayMs(unsigned int);
-int SAMPLE(int);
 void CONFIG_3909();
 
 
@@ -158,8 +154,6 @@ int main(void)
 	SpiChnOpen(2, SPI_OPEN_MSTEN | SPI_OPEN_MSSEN | SPI_OPEN_SMP_END | SPI_OPEN_FRMEN | SPI_OPEN_FSP_IN | SPI_OPEN_FSP_HIGH | SPI_OPEN_MODE32 | SPI_OPEN_SIDL, 4);
 	SpiChnEnable(2,1);
 	DBPRINTF("openspi1... \n");
-	//mSpiChnClrRxIntFlag(1);
-	//mSpiChnClrTxIntFlag(1);
 	//ConfigIntSPI1(SPI_TX_INT_DIS | SPI_RX_INT_DIS | SPI_INT_PRI_2);
 	DBPRINTF("configintspi1... \n");
 	CONFIG_3909();
@@ -173,10 +167,33 @@ int main(void)
 		mPORTDToggleBits(BIT_2);     // toggle LED2 (same as LATDINV = 0x0004)
 		DBPRINTF("GREEN BLINK... \n");
 
-		SET_CHANNEL_STATE(1,1);
+		CHANNEL_1_STATE = 1;
+		CHANNEL_2_STATE = 0;
+
+		SET_CHANNEL_STATE(CHANNEL_1_STATE, CHANNEL_2_STATE);
+		DelayMs(500000);
+
+		CHANNEL_1_STATE = 1;
+		CHANNEL_2_STATE = 1;
+
+		SET_CHANNEL_STATE(CHANNEL_1_STATE, CHANNEL_2_STATE);
+		DelayMs(500000);
+
+		CHANNEL_1_STATE = 0;
+		CHANNEL_2_STATE = 1;
+
+		SET_CHANNEL_STATE(CHANNEL_1_STATE, CHANNEL_2_STATE);
+		DelayMs(500000);
+
+		CHANNEL_1_STATE = 0;
+		CHANNEL_2_STATE = 0;
+
+		SET_CHANNEL_STATE(CHANNEL_1_STATE, CHANNEL_2_STATE);
 		DelayMs(500000);
 
 
+
+/*
 		POWER = 0;
 
 		POWER = MEASURE_POWER(2);
@@ -194,18 +211,7 @@ int main(void)
 			DBPRINTF("power reading failed \n");
 		}
 
-		state = GET_CHANNEL_STATE(1);
-
-		SET_CHANNEL_STATE(2,state);
-		DelayMs(500000);
-
-		SET_CHANNEL_STATE(2,0);
-		DelayMs(500000);
-
-		state = GET_CHANNEL_STATE(2);
-
-		SET_CHANNEL_STATE(1,state);
-		DelayMs(500000);
+*/
 
    };
 
@@ -231,14 +237,14 @@ void __ISR(_CHANGE_NOTICE_VECTOR, ipl2) ChangeNotice_Handler(void)
 	
 	if (temp1 == 0)
 	{
-		CHANNEL1 = 1;
+		CHANNEL_1_STATE = 1;
 		mPORTDSetBits(BIT_0);
 		mPORTESetBits(BIT_1);
 		DBPRINTF("CHANNEL 1 ON \n");
 	}
 	else
 	{
-		CHANNEL1 = 0;
+		CHANNEL_1_STATE = 0;
 		mPORTDClearBits(BIT_0);
 		mPORTEClearBits(BIT_1);
 		DBPRINTF("CHANNEL 1 OFF \n");
@@ -246,14 +252,14 @@ void __ISR(_CHANGE_NOTICE_VECTOR, ipl2) ChangeNotice_Handler(void)
 
 	if (temp2 == 0)
 	{
-		CHANNEL2 = 1;
+		CHANNEL_2_STATE = 1;
 		mPORTDSetBits(BIT_1);
 		mPORTESetBits(BIT_2);
 		DBPRINTF("CHANNEL 2 ON \n");
 	}
 	else
 	{
-		CHANNEL2 = 0;
+		CHANNEL_2_STATE = 0;
 		mPORTDClearBits(BIT_1);
 		mPORTEClearBits(BIT_2);
 		DBPRINTF("CHANNEL 2 OFF \n");
@@ -343,11 +349,11 @@ int GET_CHANNEL_STATE(int channel)
 {
 	if (channel == 1)
 		{
-			return CHANNEL1;
+			return CHANNEL_1_STATE;
 		}
 	if (channel == 2)
 		{
-			return CHANNEL2;
+			return CHANNEL_2_STATE;
 		}
 	if ((channel != 1) && (channel != 2))
 		{
@@ -369,73 +375,84 @@ int GET_CHANNEL_STATE(int channel)
 *	returns the power being used in Watts as an integer
 *
 *****************************************************************************/
-int MEASURE_POWER(int channel)
+void MEASURE_POWER()
 {
-	if (channel == 1)
+	// CHANNEL 1
+	// *********
+	if (CHANNEL_1_STATE == 0)
 	{
-		if (CHANNEL1 == 0)
-		{
-			DBPRINTF("CHANNEL 1 IS OFF \n");
-			return 0;		// no need to measure power if channel is off
-		}
-
-		CHANNEL_MEASURE = 1;		// set channel 1 to be measured
-		//CoreSetSoftwareInterrupt1();
-
+		CHANNEL_1_POWER = 0;
+		DBPRINTF("CHANNEL 1 IS OFF \n");
+	}
+	else
+	{
+		//CHANNEL_1_POWER = MEASURE(1);
+		CHANNEL_1_POWER = 5;
 	}
 
-	if (channel == 2)
+	// CHANNEL 2
+	// *********
+	if (CHANNEL_2_STATE == 0)
 	{
-		if (CHANNEL2 == 0)
-		{
-			DBPRINTF("CHANNEL 2 IS OFF \n");
-			return 0;		// no need to measure power if channel is off
-		}
-
-		CHANNEL_MEASURE = 2;		// set channel 2 to be measured
-		//CoreSetSoftwareInterrupt1();
-
+		CHANNEL_2_POWER == 0;
+		DBPRINTF("CHANNEL 2 IS OFF \n");
 	}
-	
-	int Power = CHANNEL_POWER;
-	CHANNEL_POWER = 0;
-
-	return Power;
+	else
+	{
+		//CHANNEL_2_POWER = MEASURE(2);
+		CHANNEL_2_POWER = 21;
+	}
 }
-
 
 
 
 
 /*****************************************************************************
-*	SAMPLE(int channel)
+*	MEASURE(int channel)
 *
 *	This function reads the digitally sampled voltage and current readings
 *	from the MCP3909 via the SPI port
 *****************************************************************************/
-int SAMPLE(int channel)
+int MEASURE(int channel)
 {
+	// local variable declarations
+	int MASK = 0x0000FFFF;
+	int num_samples = 128;
+	int Csamples[num_samples];
+	int Vsamples[num_samples];
+	int Power = 0;
+	int i = 0;
+
 	DBPRINTF("sample....\n");
-	// get data
 	int data;
-	data = SpiChnGetC(channel);
-	char * c;
-	char a = (char)data;
-	c = &a;
-	DBPUTC(c);
-	DBPRINTF("\n");
-	data = data & 0x7FFFFFFF;
+	int samples[num_samples];
 
-	DBPRINTF("sample....\n");
-	data = SpiChnGetC(channel);
-	a = (char)data;
-	c = &a;
-	DBPUTC(c);
-	DBPRINTF("\n");
+	// get data
+	for (i=0 ; i<num_samples ; i++)
+	{
+		data = SpiChnGetC(channel);
+		samples[i] = data;
+	}
+	
 
-	return data;
+	// sample the current and voltage enough to calculate avg active power
+	for (i=0 ; i<num_samples ; i++)
+	{
+		Vsamples[i] = samples[i] & MASK;
+		Csamples[i] = (samples[i] >> 16) & MASK;
+	}
+
+	// process sample data received from MCP3909
+	// Pinst = Vinst * Iinst
+	for (i=0 ; i<num_samples ; i++)
+	{
+		Power += Csamples[i] * Vsamples[i];
+	}
+	
+	Power = Power/num_samples;
+
+	return Power;
 }
-
 
 
 
@@ -483,108 +500,45 @@ void CONFIG_3909()
 
 
 
-
-
-/*********************************************************************
- * Function:       void _CoreSoftwareInt0Handler(void)
- *
- * PreCondition:    none
- *
- * Input:           none
- *
- * Output:          none
- *
- * Side Effects:    none
- *
- * Overview:        The interrupt handler function for the core software
- *                  interrupt
- *
- * Note:           The handler is placed directly into the vector location
- ********************************************************************/
-void __ISR(_CORE_SOFTWARE_0_VECTOR, ipl3) _CoreSoftwareInt0Handler(void)
+/*****************************************************************************
+*	SAMPLE(int channel)
+*
+*	This function reads the digitally sampled voltage and current readings
+*	from the MCP3909 via the SPI port
+*****************************************************************************
+int SAMPLE(int channel)
 {
-    INTClearFlag(INT_CS0);                      // clear the interrupt flag
-    CoreClearSoftwareInterrupt0();              // clear the core int flag
-    
-	if (CHANNEL1 == 1)
+	DBPRINTF("sample....\n");
+	int data;
+	int samples[num_samples];
+
+	// get data
+	for (int i = 0 ; i < num_samples ; i++)
 	{
-		mPORTDSetBits(BIT_0);
-		mPORTESetBits(BIT_1);
-		DBPRINTF("CHANNEL 1 ON \n");
-	}
-	if (CHANNEL1 == 0)
-	{
-		mPORTDClearBits(BIT_0);
-		mPORTEClearBits(BIT_1);
-		DBPRINTF("CHANNEL 1 OFF \n");
-	}
-	if (CHANNEL2 == 1)
-	{
-		mPORTDSetBits(BIT_1);
-		mPORTESetBits(BIT_2);
-		DBPRINTF("CHANNEL 2 ON \n");
-	}
-	if (CHANNEL2 == 0)
-	{
-		mPORTDClearBits(BIT_1);
-		mPORTEClearBits(BIT_2);
-		DBPRINTF("CHANNEL 2 OFF \n");
+		data = SpiChnGetC(channel);
+		samples[i] = data;
 	}
 
+	/*
+	char * c;
+	char a = (char)data;
+	c = &a;
+	DBPUTC(c);
+	DBPRINTF("\n");
+	data = data & 0x7FFFFFFF;
+
+
+	DBPRINTF("sample....\n");
+	data = SpiChnGetC(channel);
+	a = (char)data;
+	c = &a;
+	DBPUTC(c);
+	DBPRINTF("\n");
+	*
+
+	return samples;
 }
-
-
-
-
-/*********************************************************************
- * Function:       void _CoreSoftwareInt1Handler(void)
- *
- * PreCondition:    none
- *
- * Input:           none
- *
- * Output:          none
- *
- * Side Effects:    none
- *
- * Overview:        The interrupt handler fucntion for the core software
- *                  interrupt
- *
- * Note:            The jump to this handler will be placed in the vactor
- *                  location
- ********************************************************************/
-void __ISR(_CORE_SOFTWARE_1_VECTOR, ipl4) _CoreSoftwareInt1Handler(void)
-{
-    INTClearFlag(INT_CS1);                      // clear the interrupt flag
-    CoreClearSoftwareInterrupt1();                // clear the core int flag
-    
-	
-	// local variable declarations
-	int MASK = 0x0000FFFF;
-	int Csamples[num_samples];
-	int Vsamples[num_samples];
-	int Power = 0;
-	int i = 0;
-
-	// get array of samples from the MCP3909
-	int data = SAMPLE(CHANNEL_MEASURE);
-	
-/*
-	// sample the current and voltage enough to calculate avg active power
-	for (i=0 ; i<num_samples ; i++)
-	{
-		Vsamples[i] = cycle_sample_data[i] & MASK;
-		Csamples[i] = (cycle_sample_data[i] >> 16) & MASK;
-	}
-
-	// process sample data received from MCP3909
-	// Pinst = Vinst * Iinst
-	for (i=0 ; i<num_samples ; i++)
-	{
-		Power += Csamples[i] * Vsamples[i];
-	}
 */
 
-	CHANNEL_POWER = data;
-}
+
 
