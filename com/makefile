@@ -11,7 +11,7 @@
 CC ?= gcc
 CFLAGS ?= -g -Wall -Wextra
 
-OBJS = swDevice.o SmartWall.o comTest.o comTools.o comPrint.o
+OBJS = swDevice.o SmartWall.o SmartWallSockets.o comTest.o comTools.o comPrint.o
 EXEC = comTest
 
 .PHONY : all
@@ -23,6 +23,10 @@ swDevice.o : swDevice.c
 
 SmartWall.o : SmartWall.c
 	$(CC) $(CFLAGS) -c SmartWall.c 
+-include swDevice.d
+
+SmartWallSockets.o : SmartWallSockets.c
+	$(CC) $(CFLAGS) -c SmartWallSockets.c 
 -include swDevice.d
 
 comTest : comTest.o SmartWall.o comTools.o comPrint.o

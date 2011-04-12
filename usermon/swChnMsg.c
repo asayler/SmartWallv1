@@ -79,9 +79,12 @@ int main(int argc, char *argv[]){
     struct SmartWallDev destDeviceInfo;
     memset(&destDeviceInfo, 0, sizeof(destDeviceInfo));
     struct SmartWallDev myDeviceInfo;
-    memset(&destDeviceInfo, 0, sizeof(destDeviceInfo));
+    memset(&myDeviceInfo, 0, sizeof(myDeviceInfo));
     struct SmartWallDev tgtDeviceInfo;
-    memset(&destDeviceInfo, 0, sizeof(destDeviceInfo));
+    memset(&tgtDeviceInfo, 0, sizeof(tgtDeviceInfo));
+    struct SWChannelLimits limits;
+    limits.maxNumChan = SW_MAX_CHN;
+    limits.maxDataLength = sizeof(*args);
 
     /* Setup My SW Vars */
     const swAddress_t mySWAddress = MYSWADDRESS;
@@ -463,8 +466,7 @@ int main(int argc, char *argv[]){
             case SW_SCP_CHANNEL:
                 {
                     bodyLen = readSWChannelBody(body, bodyLen, &tgtChnData,
-                                                SW_MAX_CHN,
-                                                sizeof(unsigned long));
+                                                &limits);
                     if(bodyLen == SWLENGTH_MAX){
                         fprintf(stderr, "%s: Could not read SW body\n",
                                 argv[0]);
@@ -474,6 +476,7 @@ int main(int argc, char *argv[]){
                     /* Switch on Message Type: SET OR QUERY */
                     switch(msgType){
                     case SW_MSG_REPORT:
+                    case SW_MSG_ERROR:
                         /* Report State */
                         MTtoStr(mtStrTemp, sizeof(mtStrTemp),
                                 &msgType); 
@@ -530,4 +533,3 @@ int main(int argc, char *argv[]){
     return 0;
     
 }
-

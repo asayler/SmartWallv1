@@ -18,8 +18,8 @@ EXEC = slaveOutlet
 .PHONY : all
 all : slaveOutlet
 
-slaveOutlet : slaveOutlet.o ../com/SmartWall.o ../com/comTools.o ../com/comTools.o
-	$(CC) $(CFLAGS) slaveOutlet.o ../com/SmartWall.o ../com/comTools.o ../com/comPrint.o -o slaveOutlet
+slaveOutlet : slaveOutlet.o ../com/SmartWall.o ../com/SmartWallSockets.o ../com/comTools.o ../com/comTools.o
+	$(CC) $(CFLAGS) slaveOutlet.o ../com/SmartWall.o ../com/SmartWallSockets.o ../com/comTools.o ../com/comPrint.o -o slaveOutlet
 
 slaveOutlet.o : slaveOutlet.c
 	$(CC) $(CFLAGS) -c slaveOutlet.c 

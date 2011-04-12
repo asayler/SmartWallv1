@@ -15,6 +15,17 @@
 /* Outside Includes */
 #include "swSlave.h"
 
+/* Types */
+typedef long outletChanState_t;
+typedef double outletChanPower_t;
+
+/* Structs */
+struct outletDeviceState{
+    struct SWDeviceInfo* myDev;
+    outletChanState_t* chState;
+    outletChanPower_t* chPower;
+};
+
 /* Defines */
 #define OUTLET_CHAN_OFF 0
 #define OUTLET_CHAN_ON 1

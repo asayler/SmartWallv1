@@ -633,8 +633,7 @@ extern swLength_t readSWMsg(const uint8_t* msg,
 extern swLength_t readSWChannelBody(const uint8_t* msgBody,
                                     const swLength_t bodyLength,
                                     struct SWChannelData* data,
-                                    const swLength_t maxNumChan,
-                                    const swLength_t maxDataLength){
+                                    const struct SWChannelLimits* limits){
 
     /* Local Vars */
     swLength_t offset = 0;
@@ -675,11 +674,11 @@ extern swLength_t readSWChannelBody(const uint8_t* msgBody,
     }
     
     /* Check Limits */
-    if((data->header).numChan > maxNumChan){
+    if((data->header).numChan > limits->maxNumChan){
         fprintf(stderr, "readSWChannelBody: 'numChan' exceeds max!\n");
         return SWLENGTH_MAX;
     }
-    if((data->header).dataLength > maxDataLength){
+    if((data->header).dataLength > limits->maxDataLength){
         fprintf(stderr, "readSWChannelBody: 'dataLength' exceeds max!\n");
         return SWLENGTH_MAX;
     }

@@ -208,6 +208,12 @@ struct SWChannelData {
     struct SWChannelEntry* data;
 };
 
+/* SmartWall Channel Data Limits Struct */
+struct SWChannelLimits{
+    swLength_t maxNumChan;
+    swLength_t maxDataLength;
+};
+
 /* SmartWall Device Struct */
 struct SmartWallDev {
     swAddress_t swAddr;  /* SW Address */
@@ -246,6 +252,15 @@ extern swLength_t readSWMsg(const uint8_t* msg,
                             swLength_t* bodyLength,
                             const swLength_t maxBodyLength);
 
+typedef swLength_t (*writeSWBody) (void* msgBody,
+                                   const swLength_t maxLength,
+                                   const void* data);
+
+typedef swLength_t (*readSWBody) (const void* msgBody,
+                                  const swLength_t bodyLength,
+                                  void* data,
+                                  const void* dataLimits);
+
 /* Function to compose SW Channel Body */
 /* Returns: Body length on success (bytes), SWLENGTH_MAX on failure */
 extern swLength_t writeSWChannelBody(uint8_t* msgBody,
@@ -257,7 +272,6 @@ extern swLength_t writeSWChannelBody(uint8_t* msgBody,
 extern swLength_t readSWChannelBody(const uint8_t* msgBody,
                                     const swLength_t bodyLength,
                                     struct SWChannelData* data,
-                                    const swLength_t maxNumChan,
-                                    const swLength_t maxDataLength);
+                                    const struct SWChannelLimits* limits);
 
 #endif

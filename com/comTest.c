@@ -61,6 +61,9 @@ int main(int argc, char* argv[]){
     msgType_t msgType = COM_TEST_MSGTYPE;
     swOpcode_t opcode = COM_TEST_OPCODE;
     msgScope_t msgScope = COM_TEST_SCOPE;
+    struct SWChannelLimits chnLimits;
+    chnLimits.maxNumChan = COM_TEST_NUMCHN;
+    chnLimits.maxDataLength = COM_TEST_DATASIZE;
 
     /* input options */
     if(argc < 2){
@@ -175,8 +178,7 @@ int main(int argc, char* argv[]){
         
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
-                                     COM_TEST_NUMCHN,
-                                     COM_TEST_DATASIZE);
+                                     &chnLimits);
         if(bodySize == SWLENGTH_MAX){
             fprintf(stderr, "%s: readSWChannelBody returned error.\n",
                     argv[0]);
@@ -231,8 +233,7 @@ int main(int argc, char* argv[]){
         }        
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
-                                     COM_TEST_NUMCHN,
-                                     COM_TEST_DATASIZE);
+                                     &chnLimits);
         if(bodySize == SWLENGTH_MAX){
             fprintf(stderr, "%s: readSWChannelBody returned error.\n",
                     argv[0]);
@@ -271,8 +272,7 @@ int main(int argc, char* argv[]){
         }
         bodySize = readSWChannelBody(msgBody, bodySize,
                                      &data,
-                                     COM_TEST_NUMCHN,
-                                     COM_TEST_DATASIZE);
+                                     &chnLimits);
         if(bodySize == SWLENGTH_MAX){
             fprintf(stderr, "%s: readSWChannelBody returned error.\n",
                     argv[0]);

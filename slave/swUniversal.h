@@ -17,8 +17,14 @@
 
 /* Defines */
 
-/* Opcodes */
+/* Device Opcodes */
 #define UNIVERSAL_DEV_OP_ERROR_TYPEMISMATCH   0x8000
 #define UNIVERSAL_DEV_OP_ERROR_BADOPCODE      0x8001
+#define UNIVERSAL_DEV_OP_ERROR_BADMSGTYPE     0x8002
+
+/* Channel Opcodes */
+#define UNIVERSAL_CHN_OP_ERROR_BADCHN         0x8000
+#define UNIVERSAL_CHN_OP_ERROR_BADOPCODE      0x8001
+#define UNIVERSAL_CHN_OP_ERROR_BADMSGTYPE     0x8002
 
 #endif
