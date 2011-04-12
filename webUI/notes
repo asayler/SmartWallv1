@@ -1,0 +1,7 @@
+      //IMPORTANT: when swChnMsg fails, it does so silently and hangs
+      // check for hung programs with:
+      // >> ps aux | grep swChnMsg
+
+      //for now, kill it with:
+      // >> sudo killall swChnMsg
+

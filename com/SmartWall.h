@@ -123,30 +123,30 @@ typedef uint64_t devUID_t;
 #define htondevUID(x) ntoh64(x)
 
 /* SmartWall Reserved Addresses */
-#define SW_ADDR_BROADCAST 0xffff
-#define SW_ADDR_NETWORK   0x0000
+#define SW_ADDR_BROADCAST 0xffffu
+#define SW_ADDR_NETWORK   0x0000u
 
 /* SmartWall Message Types */
-#define SW_MSG_SET     0x01
-#define SW_MSG_REQUEST 0x02
-#define SW_MSG_QUERY   0x03
-#define SW_MSG_REPORT  0x04
-#define SW_MSG_ERROR   0xff
+#define SW_MSG_SET     0x01u
+#define SW_MSG_REQUEST 0x02u
+#define SW_MSG_QUERY   0x03u
+#define SW_MSG_REPORT  0x04u
+#define SW_MSG_ERROR   0xffu
 extern int strToMT(const char* typeStr, const size_t maxLength,
                    msgType_t* type);
 extern int MTtoStr(char* typeStr, const size_t maxLength,
                    const msgType_t* type);
 
 /* SmartWall Message Scope */
-#define SW_SCP_NETWORK 0x01
-#define SW_SCP_DEVICE  0x02
-#define SW_SCP_CHANNEL 0x03
-#define SW_SCP_ERROR   0xff
+#define SW_SCP_NETWORK 0x01u
+#define SW_SCP_DEVICE  0x02u
+#define SW_SCP_CHANNEL 0x03u
+#define SW_SCP_ERROR   0xffu
 
 /* SmartWall Device Type Bits */
-#define SW_TYPE_MASTER    0x0000000000000001
-#define SW_TYPE_OUTLET    0x0000000000000004
-#define SW_TYPE_UNIVERSAL 0x8000000000000000
+#define SW_TYPE_MASTER    0x0000000000000001ull
+#define SW_TYPE_OUTLET    0x0000000000000004ull
+#define SW_TYPE_UNIVERSAL 0x8000000000000000ull
 extern int strToDT(const char* typeStr, const size_t maxLength,
                    devType_t* type);
 extern int DTtoStr(char* typeStr, const size_t maxLength,

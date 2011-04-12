@@ -30,12 +30,12 @@
 #define BUFLEN 1024 /* 1 kB datagram buffer */
 #define SLAVEIP "127.0.0.1"
 
-#define MYSWUID 0x0001000000000001
-#define MYSWGROUP 0x01
-#define MYSWADDRESS 0x0001
-#define MYSWVER 0x1
+#define MYSWUID 0x0001000000000001ull
+#define MYSWGROUP 0x01u
+#define MYSWADDRESS 0x0001u
+#define MYSWVER 0x1u
 #define MYSWTYPE SW_TYPE_MASTER | SW_TYPE_UNIVERSAL
-#define MYSWCHAN 0x00
+#define MYSWCHAN 0x00u
 
 /* Private Functions */
 int initialize(void);

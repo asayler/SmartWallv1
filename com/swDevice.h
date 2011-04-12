@@ -25,8 +25,4 @@
 
 /* Structs */
 
-/* Function */
-/* Common Functions */
-int printSWHeader(FILE* stream, const struct SmartWallHeader* input);
-
 #endif

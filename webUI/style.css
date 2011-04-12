@@ -1,50 +1,75 @@
 body{
-    margin: 0;
-    padding: 0;
-    background: #ccc;
-}
-#container{
-    width: 960px;
-    margin: 0 auto;
-}		
+      margin: 0;
+      padding: 0;
+      background: #ccc;
+      }
+
 #header{
-    padding: 5px;
-    background: #bbb;
-}
+         padding: 2em;
+         background: #bbb;
+         }
+
 #navigation{
-    float: left;
-    width: 150px;
-    background: #eee;
-}
+             float: left;
+             width: 150px;
+             background: #eee;
+             }
+
 #content{
-    float: right;
-    width: 810px;
-    background: #fff;
-}
+          margin-left: 200px;
+          background: #fff;
+          }
+
 #navigation a:link,a:visited{
-    font-size: 14pt;
-    color: #4E387E;
-    display: block;
-    padding: 4px;
-    text-decoration: none;
-}
+                              font-size: 14pt;
+                              color: #4E387E;
+                              display: block;
+                              padding: 4px;
+                              text-decoration: none;
+                              }
+
 #navigation a:hover,a:active{
-    background-color: #bbf
-}
+                              background-color: #bbf
+                              }
+
 #footer{
-    clear: both;
-    background: #bbb;
-    padding: 10px;
-}
+         clear: both;
+         background: #bbb;
+         padding: 10px;
+         }
+
 ul{
     margin: 0;
     padding: 0;
     list-style-type: none;
     width: 150px;
-}
+    }
+
 ul li a{
-    border-top: 1px solid #fff;    
+    border: 1px solid #fff;    
 }
+ 
+img { 
+      display: inline;
+      margin: 0em 1em 1em 2em;
+      vertical-align: top;
+}
+
+form { 
+       display: inline;
+       vertical-align: top;
+ }
+select { 
+         margin: 1em 1em 0em 1em;
+ }
+
+h1,h2,h3,h4,h5,h6 { 
+                    margin: 0px 0px 0px 0px;
+                    padding: 0px 0px 0px 0px;
+ }
+input { 
+        margin-bottom: 1em;
+ }
 
 /* table.pretty adapted from Ivan Lutrov 
 http://lutrov.com/blog/pretty-html-tables-with-css*/

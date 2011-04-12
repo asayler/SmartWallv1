@@ -10,7 +10,6 @@
 </head>
     
 <body>
-<div id="containter">
 
 <?php include("header.inc"); ?>
 
@@ -54,19 +53,19 @@ while(!feof($handle)) {
 fclose($handle);
 
 foreach($UIDs as $value) {
-   //check if this UID has an alias
-   if(array_key_exists($value, $UID_alias)){
-      $aliased_UIDs[] = $UID_alias[$value];
-   } else {
-      $aliased_UIDs[] = $value;
-   }
+  //check if this UID has an alias
+  if(array_key_exists($value, $UID_alias)){
+    $aliased_UIDs[] = $UID_alias[$value];
+  } else {
+    $aliased_UIDs[] = $value;
+  }
 }
 //chdir('/var/www/');
 ?>
 
 <!-- Print all UIDs (aliased as appropriate) and their on/off status-->
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-<?php
+  <?php
   chdir('/home/laura/senior/code/SmartWallv1/usermon');
 echo "<table class=\"pretty\" border=\"1\">";
 echo "<th>Outlet</th><th>Status</th>";
@@ -86,7 +85,7 @@ foreach($aliased_UIDs as $value) {
   echo "<tr><td>&nbsp $value &nbsp</td>";
   echo "<td> <input type=\"radio\" name=$value value=\"On\" $on>On";
   echo "<input type=\"radio\" name=$value value=\"Off\" $off>Off &nbsp</td></tr>";
-
+  
 }
 echo "</tr></table>";
 ?>
@@ -94,7 +93,10 @@ echo "</tr></table>";
 <input type="submit" value="Apply Changes" name="apply">
   </form>
   
-  
+  <IMG SRC="total.png" ALT="Some Text">  
+
+
+
   <?php
   //Notice button press of apply, update outlets
   chdir('/home/laura/senior/code/SmartWallv1/usermon');
@@ -115,12 +117,6 @@ if (isset($_GET['apply'])){
 	$swAdr = "0x0011"; //temp while other outlets aren't simulated
 	$temp = shell_exec("./swChnMsg $swAdr SET OUTLET 0x0010 1 0 0 2>&1");
     }
-    //NOTE: only outlet 0x0011 working right now! Others cause hang.
-    //IMPORTANT: when swChnMsg fails, it does so silently and hangs
-    //for now, kill it with:
-    // >> sudo killall swChnMsg
-    // check for hung programs with:
-    // >> ps aux | grep swChnMsg
   }
   header('location:http://localhost/home.php'); //refresh to display changed data
  }
@@ -131,8 +127,6 @@ if (isset($_GET['apply'])){
 
 <?php include("navigation.inc"); ?>
 <?php include("footer.inc"); ?>
-
-</div> <!-- end container -->
 
 </body>
 </html>

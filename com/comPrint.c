@@ -73,9 +73,31 @@ extern int print_payload(const uint8_t* payload, int len){
 
 /* print SW Header data */
 extern int print_swHeader(const struct SmartWallHeader* header){
-    (void) header;
-    fprintf(stderr, "print_swHeader not yet implmented!\n");
-    return 0;
+    int num = 0;
+    FILE* stream = stdout;
+
+    num += fprintf(stream, "Version:   0x%" PRIxSWVer "\n",
+                   header->version);
+    num += fprintf(stream, "Msg Scope: 0x%" PRIxMsgScope "\n",
+                   header->msgScope);
+    num += fprintf(stream, "Msg Type:  0x%" PRIxMsgType "\n",
+                   header->msgType);
+    num += fprintf(stream, "Group ID:  0x%" PRIxGrpID  "\n",
+                   header->groupID);
+    num += fprintf(stream, "Src Addr:  0x%" PRIxSWAddr  "\n",
+                   header->sourceAddress);
+    num += fprintf(stream, "Dest Addr: 0x%" PRIxSWAddr  "\n",
+                   header->destAddress);
+    num += fprintf(stream, "Src Types: 0x%" PRIxDevType "\n",
+                   header->sourceTypes);
+    num += fprintf(stream, "Trgt Type: 0x%" PRIxDevType "\n",
+                   header->targetType);
+    num += fprintf(stream, "Opcode:    0x%" PRIxSWOpcode "\n",
+                   header->opcode);
+    num += fprintf(stream, "Tot Lng:   0x%" PRIxSWLength "\n",
+                   header->totalLength);
+    
+    return num;
 }
 
 /* print SW Device data */

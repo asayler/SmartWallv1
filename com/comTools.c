@@ -131,7 +131,7 @@ extern uint16_t hton16(uint16_t v){
 
     if(firstRun){
         bigEndian = isBigEndian();
-        firstRun = 0;
+	firstRun = 0;
     }
 
     if(bigEndian){
