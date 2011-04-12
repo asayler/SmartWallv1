@@ -42,7 +42,7 @@
 #pragma config FNOSC    = PRIPLL        // Oscillator Selection
 #pragma config FPLLIDIV = DIV_2         // PLL Input Divider (PIC32 Starter Kit: use divide by 2 only)
 #pragma config FPLLMUL  = MUL_20        // PLL Multiplier
-#pragma config FPLLODIV = DIV_1         // PLL Output Divider
+#pragma config FPLLODIV = DIV_4         // PLL Output Divider
 #pragma config FPBDIV   = DIV_1         // Peripheral Clock divisor
 #pragma config FWDTEN   = OFF           // Watchdog Timer
 #pragma config WDTPS    = PS1           // Watchdog Timer Postscale
@@ -66,7 +66,7 @@
 
 
 // application defines
-#define SYS_FREQ		(80000000)
+#define SYS_FREQ		(20000000)
 
 
 
@@ -100,9 +100,6 @@ int main(void)
 	DBPRINTF("MAIN... \n");
    	unsigned int temp;
 
-	int state;
-
-	int POWER;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //STEP 1. Configure cache, wait states and peripheral bus clock
@@ -111,7 +108,7 @@ int main(void)
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // STEP 2. configure the port registers
     mPORTDSetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2 | BIT_9);
-	mPORTESetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2);
+	mPORTESetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2 | BIT_3);
 
     //PORTSetPinsDigitalIn(IOPORT_D, BIT_6);
 	
@@ -137,22 +134,11 @@ int main(void)
     // STEP 7. enable multi-vector interrupts
     INTEnableSystemMultiVectoredInt();
 
-	// set up the core software interrupt with a prioirty of 3 and zero sub-priority
-    INTSetVectorPriority(INT_CORE_SOFTWARE_0_VECTOR, INT_PRIORITY_LEVEL_3);
-    INTSetVectorSubPriority(INT_CORE_SOFTWARE_0_VECTOR, INT_SUB_PRIORITY_LEVEL_0);
-    INTClearFlag(INT_CS0);
-    INTEnable(INT_CS0, INT_ENABLED);
-
-    // set up the core software interrupt with a prioirty of 4 and zero sub-priority
-    INTSetVectorPriority(INT_CORE_SOFTWARE_1_VECTOR, INT_PRIORITY_LEVEL_4);
-    INTSetVectorSubPriority(INT_CORE_SOFTWARE_1_VECTOR, INT_SUB_PRIORITY_LEVEL_0);
-    INTClearFlag(INT_CS1);
-    INTEnable(INT_CS1, INT_ENABLED);
-
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// STEP 8. configure SPI port and MCP3909
-	SpiChnOpen(2, SPI_OPEN_MSTEN | SPI_OPEN_MSSEN | SPI_OPEN_SMP_END | SPI_OPEN_FRMEN | SPI_OPEN_FSP_IN | SPI_OPEN_FSP_HIGH | SPI_OPEN_MODE32 | SPI_OPEN_SIDL, 4);
-	SpiChnEnable(2,1);
+	SpiChnEnable(1,0);
+	SpiChnOpen(1, SPI_OPEN_MSTEN | SPI_OPEN_SSEN | SPI_OPEN_SMP_END | SPI_OPEN_FRMEN | SPI_OPEN_FSP_IN | SPI_OPEN_FSP_HIGH | SPI_OPEN_MODE32 | SPI_OPEN_FRM_CNT32 | SPI_OPEN_SIDL, 1);
+	SpiChnEnable(1,1);
 	DBPRINTF("openspi1... \n");
 	//ConfigIntSPI1(SPI_TX_INT_DIS | SPI_RX_INT_DIS | SPI_INT_PRI_2);
 	DBPRINTF("configintspi1... \n");
@@ -179,6 +165,27 @@ int main(void)
 		SET_CHANNEL_STATE(CHANNEL_1_STATE, CHANNEL_2_STATE);
 		DelayMs(500000);
 
+
+
+		CHANNEL_1_POWER = 0;
+
+		MEASURE_POWER();
+		
+		if (CHANNEL_1_POWER > 0)
+		{
+			DBPRINTF("positive power reading \n");
+		}
+		if (CHANNEL_1_POWER < 0)
+		{
+			DBPRINTF("negative power reading \n");
+		}
+		if (CHANNEL_1_POWER == 0)
+		{
+			DBPRINTF("power reading failed \n");
+		}
+
+
+
 		CHANNEL_1_STATE = 0;
 		CHANNEL_2_STATE = 1;
 
@@ -193,25 +200,7 @@ int main(void)
 
 
 
-/*
-		POWER = 0;
 
-		POWER = MEASURE_POWER(2);
-		
-		if (POWER > 0)
-		{
-			DBPRINTF("positive power reading \n");
-		}
-		if (POWER < 0)
-		{
-			DBPRINTF("negative power reading \n");
-		}
-		if (POWER == 0)
-		{
-			DBPRINTF("power reading failed \n");
-		}
-
-*/
 
    };
 
@@ -386,8 +375,8 @@ void MEASURE_POWER()
 	}
 	else
 	{
-		//CHANNEL_1_POWER = MEASURE(1);
-		CHANNEL_1_POWER = 5;
+		CHANNEL_1_POWER = MEASURE(1);
+		//CHANNEL_1_POWER = 5;
 	}
 
 	// CHANNEL 2
@@ -415,22 +404,26 @@ void MEASURE_POWER()
 *****************************************************************************/
 int MEASURE(int channel)
 {
+	DBPRINTF("MEASURING CHANNEL 1..... \n");
 	// local variable declarations
 	int MASK = 0x0000FFFF;
-	int num_samples = 128;
+	int num_samples = 10;
 	int Csamples[num_samples];
 	int Vsamples[num_samples];
 	int Power = 0;
 	int i = 0;
+	int txdata = 0;
 
-	DBPRINTF("sample....\n");
 	int data;
 	int samples[num_samples];
 
 	// get data
 	for (i=0 ; i<num_samples ; i++)
 	{
+		DBPRINTF("sample....\n");
+		mPORTEClearBits(BIT_3);
 		data = SpiChnGetC(channel);
+		mPORTESetBits(BIT_3);
 		samples[i] = data;
 	}
 	
@@ -467,12 +460,14 @@ void CONFIG_3909()
 {
 	
 	DBPRINTF("CONFIG_3909...\n");
-
+	SpiChnEnable(1,0);
+	SpiChnConfigure(1, SPI_CONFIG_MSTEN | SPI_CONFIG_MSSEN | SPI_CONFIG_SMP_END | SPI_CONFIG_MODE8 | SPI_CONFIG_ON);
+	SpiChnEnable(1,1);
 	// SPI mode code
 	int code = 0b10100100;
 	
 	// set CS high
-	mPORTDSetBits(BIT_9);
+	mPORTESetBits(BIT_3);
 	// set MCLR low 
 	mPORTEClearBits(BIT_0);
 	// delay
@@ -480,19 +475,34 @@ void CONFIG_3909()
 	// set MCLR high
 	mPORTESetBits(BIT_0);
 	// set CS low
-	mPORTDClearBits(BIT_9);
+	mPORTEClearBits(BIT_3);
 
-	DelayMs(3);
+	//DelayMs(1);
 
 	// feed SPI mode code to MCP3909
 	SpiChnPutC(1, 0b10100100);
 	
-	mPORTDSetBits(BIT_9);
+	mPORTESetBits(BIT_3);
 
 	DelayMs(5000);
 
+
+
+
+	mPORTEClearBits(BIT_3);
+
 	int txdata = 0;
 	SpiChnPutC(1, txdata);
+
+	mPORTESetBits(BIT_3);
+
+
+
+	SpiChnEnable(1,0);
+	SpiChnConfigure(1, SPI_CONFIG_MSTEN | SPI_CONFIG_SSEN | SPI_CONFIG_SMP_END | SPI_CONFIG_FRMEN | SPI_CONFIG_FSP_IN | SPI_CONFIG_FSP_HIGH | SPI_CONFIG_MODE32 | SPI_CONFIG_FRM_CNT32 | SPI_CONFIG_SIDL | SPI_CONFIG_ON);
+	SpiChnEnable(1,1);
+
+	DBPRINTF("config successful \n");
 }
 
 
