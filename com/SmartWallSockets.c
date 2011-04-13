@@ -55,14 +55,11 @@ int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
         perror("recvFunc");
         return -1;
     }
+    else if(r == 0){
+		return r;	
+	}	 
     else{
-        if(addressSize != sizeof(sourceDev->devIP))
-            {
-                fprintf(stderr, "%s: recvfrom address size mismatch\n", 
-                        "swListen");
-                return -1;
-            }
-        else if(((size_t)r > sizeof(struct SmartWallHeader)) &&
+        if(((size_t)r > sizeof(struct SmartWallHeader)) &&
                 ((size_t)r < bufferSize)){
 #ifdef SWDEBUG
             /* Print Info (DEBUG) */
@@ -410,8 +407,14 @@ enum SWReceiverState swReceiverStateMachine(enum SWReceiverState machineState,
     case RST_CLEANUP:
         
         /* Close Sockets */
+#ifndef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
         close(in);
         close(out);
+#endif
+#ifdef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
+		closesocket(in);
+		closesocket(out);
+#endif
         return RST_SETUP;
         break;
 

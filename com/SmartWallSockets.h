@@ -13,10 +13,16 @@
 #define SMARTWALLSOCKETS_H
 
 /* Outside Includes */
-#include <arpa/inet.h>
+#ifndef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
+#include  <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#endif
+
+#ifdef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
+#include "TCPIP Stack/TCPIP.h"
+#endif
 
 /* Local Includes */
 #include "SmartWall.h"
