@@ -214,7 +214,7 @@ enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
 enum processorState swProcess(const msgScope_t msgScope,
                               const msgType_t msgType,
                               const swOpcode_t opcode,
-                              struct SWProcessor* processors,
+                              struct SWDevProcessor* processors,
                               const int numProcessors,
                               const void* inputBody,
                               const swLength_t inBodyLength,
@@ -270,7 +270,7 @@ enum SWReceiverState swReceiverStateMachine(enum SWReceiverState machineState,
                                             const struct SWDeviceInfo* myDev,
                                             const struct SWDeviceInfo* tgtDev,
                                             void* deviceState,
-                                            struct SWProcessor* processors,
+                                            struct SWDevProcessor* processors,
                                             const int numProcessors){
 
     /* Local Temp Vars */

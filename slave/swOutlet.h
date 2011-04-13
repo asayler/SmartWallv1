@@ -24,7 +24,7 @@ typedef double outletChanPower_t;
 /* Unions */
 union outletChanArg{
     outletChanState_t chanState;
-    outletChanState_t chanPower;
+    outletChanPower_t chanPower;
 };
 
 /* Structs */
@@ -36,13 +36,17 @@ struct outletDeviceState{
 
 /* Functions */
 #define NUMOUTLETPROCESSORS 1
-enum processorState outletChnHandeler(const swOpcode_t chnOpcode,
-                                      const msgType_t msgType,
-                                      const struct SWChannelData* input,
-                                      struct SWChannelData* output,
-                                      struct outletDeviceState* deviceState,
-                                      msgScope_t* errorScope,
-                                      swOpcode_t* errorOpcode);
+enum processorState outletChnDevHandeler(const swOpcode_t chnOpcode,
+                                         const msgType_t msgType,
+                                         const struct SWChannelData* input,
+                                         struct SWChannelData* output,
+                                         struct outletDeviceState* deviceState,
+                                         msgScope_t* errorScope,
+                                         swOpcode_t* errorOpcode);
+
+enum processorState outletChnMasterHandeler(const swOpcode_t chnOpcode,
+                                            const msgType_t msgType,
+                                            const struct SWChannelData* input);
 
 /* Defines */
 #define OUTLET_CHAN_OFF 0

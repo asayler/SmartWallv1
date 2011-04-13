@@ -30,13 +30,17 @@
 
 /* Type Defs */
 enum processorState{PROCESSOR_ERROR = -1, PROCESSOR_SUCCESS = 0};
-typedef enum processorState (*swHandeler) (const swOpcode_t opcode,
-                                           const msgType_t msgType,
-                                           const void* input,
-                                           void* output,
-                                           void* deviceState,
-                                           msgScope_t* errorScope,
-                                           swOpcode_t* errorOpcode);
+typedef enum processorState (*swDevHandeler) (const swOpcode_t opcode,
+                                              const msgType_t msgType,
+                                              const void* input,
+                                              void* output,
+                                              void* deviceState,
+                                              msgScope_t* errorScope,
+                                              swOpcode_t* errorOpcode);
+
+typedef enum processorState (*swMrHandeler)(const swOpcode_t chnOpcode,
+                                            const msgType_t msgType,
+                                            const struct SWChannelData* input);
 
 /* Structs */
 struct SWDeviceInfo {
@@ -44,12 +48,12 @@ struct SWDeviceInfo {
     struct sockaddr_in devIP;
 };
 
-struct SWProcessor{
+struct SWDevProcessor{
     msgScope_t processorScope;
     void* data;
     void* dataLimits;
     readSWBody decoder;
-    swHandeler handeler;
+    swDevHandeler handeler;
     writeSWBody encoder;
 };
 
@@ -99,19 +103,19 @@ enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
                           msgScope_t* errorScope,
                           swOpcode_t* errorOpcode);
 
-enum processorState swProcess(const msgScope_t msgScope,
-                              const msgType_t msgType,
-                              const swOpcode_t opcode,
-                              struct SWProcessor* processors,
-                              const int numProcessors,
-                              const void* inputBody,
-                              const swLength_t inBodyLength,
-                              void* outputBody,
-                              swLength_t* outBodyLength,
-                              const swLength_t maxBodyLength,
-                              void* deviceState,
-                              msgScope_t* errorScope,
-                              swOpcode_t* errorOpcode);
+enum processorState swDevProcess(const msgScope_t msgScope,
+                                 const msgType_t msgType,
+                                 const swOpcode_t opcode,
+                                 struct SWDevProcessor* processors,
+                                 const int numProcessors,
+                                 const void* inputBody,
+                                 const swLength_t inBodyLength,
+                                 void* outputBody,
+                                 swLength_t* outBodyLength,
+                                 const swLength_t maxBodyLength,
+                                 void* deviceState,
+                                 msgScope_t* errorScope,
+                                 swOpcode_t* errorOpcode);
 
 /* TODO: Make Thread Safe */
 enum SWReceiverState{RST_SETUP, RST_LISTEN, RST_RECEIVE, RST_CHECK,
@@ -120,7 +124,7 @@ enum SWReceiverState swReceiverStateMachine(enum SWReceiverState machineState,
                                             const struct SWDeviceInfo* myDev,
                                             const struct SWDeviceInfo* tgtDev,
                                             void* deviceState,
-                                            struct SWProcessor* processors,
+                                            struct SWDevProcessor* processors,
                                             const int numProcessors);
 
 
