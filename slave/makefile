@@ -10,7 +10,7 @@
 # ---
 
 CC ?= gcc
-CFLAGS ?= -g -Wall -Wextra
+CFLAGS ?= -g -Wall -Wextra #-DSWDEBUG
 
 OBJS = slaveOutlet.o swOutlet.o
 EXEC = slaveOutlet

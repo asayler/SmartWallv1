@@ -44,9 +44,21 @@ enum processorState outletChnDevHandeler(const swOpcode_t chnOpcode,
                                          msgScope_t* errorScope,
                                          swOpcode_t* errorOpcode);
 
-enum processorState outletChnMasterHandeler(const swOpcode_t chnOpcode,
-                                            const msgType_t msgType,
-                                            const struct SWChannelData* input);
+enum processorState outletChnIniHandeler(const swOpcode_t chnOpcode,
+                                         const msgType_t msgType,
+                                         const struct SWChannelData* input,
+                                         struct SWChannelData* output,
+                                         struct outletDeviceState* deviceState,
+                                         msgScope_t* errorScope,
+                                         swOpcode_t* errorOpcode);
+
+enum processorState outletChnEndHandeler(const swOpcode_t chnOpcode,
+                                         const msgType_t msgType,
+                                         const struct SWChannelData* input,
+                                         struct SWChannelData* output,
+                                         struct outletDeviceState* deviceState,
+                                         msgScope_t* errorScope,
+                                         swOpcode_t* errorOpcode);
 
 /* Defines */
 #define OUTLET_CHAN_OFF 0
@@ -54,9 +66,11 @@ enum processorState outletChnMasterHandeler(const swOpcode_t chnOpcode,
 
 /* Opcodes */
 #define OUTLET_CH_OP_STATE   0x0010
+#define OUTLET_CH_SIZE_STATE      4
 #define OUTLET_CH_OP_VOLTAGE 0x0020
 #define OUTLET_CH_OP_CURRENT 0x0021
 #define OUTLET_CH_OP_POWER   0x0022
+#define OUTLET_CH_SIZE_POWER      8
 #define OUTLET_CH_OP_FREQ    0x0023
 #define OUTLET_CH_OP_PHASE   0x0024
 

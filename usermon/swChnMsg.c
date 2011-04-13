@@ -8,11 +8,6 @@
  * 03/12/11 - Created
  * ---
  */
-
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -22,11 +17,10 @@
 #include <stdint.h>
 #include <limits.h>
 
-#include <fcntl.h>
-#include <netdb.h>
-
 #include "../com/SmartWall.h"
+#include "../com/SmartWallSockets.h"
 #include "../com/comTools.h"
+#include "../com/comPrint.h"
 #include "../master/swMaster.h"
 
 #define SENDPORT SWOUTPORT
@@ -34,10 +28,17 @@
 
 #define MYSWADDRESS 0x0001
 
+#define MAXARGSIZE 16ul
+
 /* Option enum */
 enum OPTIONS{
     HELP, ERROR, SEND
 };
+
+enum PROCESSORS{
+    OUTLET_CHN_PROC = 0
+};
+#include "../slave/swOutlet.h"
 
 /* Input Format */
 /* ./swChnMsg <SW Dest Address> <SW Msg Type> <SW Tgt Type> <SW Opcode> */
@@ -48,70 +49,94 @@ int main(int argc, char *argv[]){
 
     /* Local Vars */
     enum OPTIONS mode;
-    unsigned long utemp = 0;
+    long temp = 0;
+    unsigned long uTemp = 0;
     int i = 0;
-    numChan_t j;
+    numChan_t j = 0;
     unsigned int cnt = 0;
-    long* temp = NULL;
     char mtStrTemp[10];
     char dtStrTemp[10];
+    int s;
+    union outletChanArg tempArg;
 
-    /* Setup SW Message Vars */
-    devType_t targetType = 0;
-    msgScope_t msgScope = SW_SCP_CHANNEL;
-    msgType_t msgType = 0;
-    swOpcode_t opcode = 0;
-    long int args[SW_MAX_CHN];
-    memset(&args, 0, sizeof(args));
-    struct SWChannelEntry tgtChnEntries[SW_MAX_CHN];
-    memset(&tgtChnEntries, 0, sizeof(tgtChnEntries));
-    struct SWChannelData tgtChnData;
-    memset(&tgtChnData, 0, sizeof(tgtChnData));
-    tgtChnData.data = tgtChnEntries;
-    uint8_t msg[SW_MAX_MSG_LENGTH];
-    memset(&msg, 0, sizeof(msg));
-    swLength_t msgLen = 0;
-    uint8_t body[SW_MAX_BODY_LENGTH];
-    memset(&body, 0, sizeof(body));
-    swLength_t bodyLen = 0;
-    struct SmartWallDev sourceDeviceInfo;
-    memset(&sourceDeviceInfo, 0, sizeof(sourceDeviceInfo));
-    struct SmartWallDev destDeviceInfo;
-    memset(&destDeviceInfo, 0, sizeof(destDeviceInfo));
-    struct SmartWallDev myDeviceInfo;
-    memset(&myDeviceInfo, 0, sizeof(myDeviceInfo));
-    struct SmartWallDev tgtDeviceInfo;
-    memset(&tgtDeviceInfo, 0, sizeof(tgtDeviceInfo));
+    /* Setup Temporary Processor Storage Vars */
+    /* Outlet Chan Storage */
+    struct SWChannelEntry tmpChanEntries[SW_MAX_CHN];
+    memset(&tmpChanEntries, 0, sizeof(tmpChanEntries));
+    struct SWChannelData tmpChanData;
+    memset(&tmpChanData, 0, sizeof(tmpChanData));
+    uint8_t tmpChanArgs[SW_MAX_CHN][MAXARGSIZE];
+    memset(&tmpChanArgs, 0, sizeof(tmpChanArgs));
+    tmpChanData.data = tmpChanEntries;
+    /* Init chanData Buffer */
+    for(i = 0; i < SW_MAX_CHN; i++){
+        tmpChanData.data[i].chanValue = tmpChanArgs[i];
+    }
     struct SWChannelLimits limits;
     limits.maxNumChan = SW_MAX_CHN;
-    limits.maxDataLength = sizeof(*args);
+    limits.maxDataLength = sizeof(*tmpChanArgs);
 
-    /* Setup My SW Vars */
-    const swAddress_t mySWAddress = MYSWADDRESS;
-    struct SWDeviceEntry* myDeviceEntry = NULL;
-    
-    /* Setup Target SW vars */
-    devType_t tgtSWType = 0;
-    swAddress_t tgtSWAddress = 0;
-    struct SWDeviceEntry* tgtDeviceEntry = NULL;
- 
-    /* Setup SW File Vras */
-    char devFilename[MAX_FILENAME_LENGTH] = "";
+    /* Master Device Vars */
+    char devFilename[MAX_FILENAME_LENGTH];    
     FILE* devFile = NULL;
-    struct SWDeviceEntry devices[MASTER_MAXDEVICES];
-    memset(&devices, 0, sizeof(devices));
+    struct SWDeviceEntry* tmpDeviceEntry;
     int numDevices = 0;
+    struct SWDeviceEntry devices[MASTER_MAXDEVICES];
+    
+    /* Declare SmartWall Vars */
+    struct SWDeviceInfo sourceDevice;
+    struct SWDeviceInfo msgDevice;
+    struct SWDeviceInfo myDevice;
+    struct SWDeviceInfo tgtDevice;    
+    devType_t targetType;
+    msgScope_t msgScope;
+    msgType_t msgType;
+    swOpcode_t opcode;
+    swOpcode_t errorOpcode;
+    msgScope_t errorScope;
+
+    /* Declare SW Buffers */
+    uint8_t msg[SW_MAX_MSG_LENGTH];
+    swLength_t msgLen;
+    uint8_t body[SW_MAX_BODY_LENGTH];
+    swLength_t bodyLen;
+
+    /* Declare Socket vars */
+    int in, out;
+
+    /* Setup SW Vars */
+    memset(&sourceDevice, 0, sizeof(sourceDevice));
+    memset(&msgDevice, 0, sizeof(msgDevice));
+    memset(&myDevice, 0, sizeof(myDevice));
+    memset(&tgtDevice, 0, sizeof(tgtDevice));
+    targetType = 0;
+    msgScope = SW_SCP_CHANNEL;
+    msgType = 0;
+    opcode = 0;
+    errorOpcode = 0;
+    errorScope = 0;
+
+    /* Setup SW Buffers */
+    msgLen = 0;
+    memset(&msg, 0, sizeof(msg));
+    bodyLen = 0;
+    memset(&body, 0, sizeof(body));
 
     /* Setup Socket Vars */
-    struct sockaddr_in si_me, si_tgt;
-    memset(&si_me, 0, sizeof(si_me));
-    memset(&si_tgt, 0, sizeof(si_tgt));
-    socklen_t slen = sizeof(struct sockaddr_in);
-    int in, out;
-    int b, r;
+    in = out = 0;
 
+    /* Populate SW Device Info */
+    myDevice.devInfo.swAddr = MYSWADDRESS;
+
+    /* Populate IP Info */
+    myDevice.devIP.sin_family = AF_INET;
+    myDevice.devIP.sin_port = htons(LISTENPORT);
+    myDevice.devIP.sin_addr.s_addr = htonl(INADDR_ANY);
+    tgtDevice.devIP.sin_family = AF_INET;
+    tgtDevice.devIP.sin_port = htons(SENDPORT);
+    tgtDevice.devIP.sin_addr.s_addr = htonl(INADDR_ANY);
+    
     /* Handel Input */
-
     if(argc < 8){
         /* Must have at least 8 args (name + 6) */
         mode = ERROR;
@@ -126,24 +151,24 @@ int main(int argc, char *argv[]){
         mode = SEND;
         /* Parse and Check Input */
         /* Target Address */
-        utemp = strtoul(argv[1], NULL, 0);
-        if(utemp == 0){
-            fprintf(stderr, "%s: Could not convert 1st arg to long int.\n",
+        if(!isnumeric(argv[1])){
+            fprintf(stderr, "%s: 1st arg is not a number.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        if(utemp == ULONG_MAX){
+        uTemp = strtoul(argv[1], NULL, 0);
+        if(uTemp == ULONG_MAX){
             perror(argv[0]);
             fprintf(stderr, "%s: 1st arg out of range.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        if(utemp > SWADDRESS_MAX){
+        if((swAddress_t)uTemp >= SWADDRESS_MAX){
             fprintf(stderr, "%s: Target Address out of range.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        tgtSWAddress = utemp;
+        tgtDevice.devInfo.swAddr = (swAddress_t)uTemp;
         /* Message Type */
         if(strToMT(argv[2], strlen(argv[2]), &msgType) < 0){
             fprintf(stderr, "%s: Invalid Message Type in 2nd arg.\n",
@@ -151,64 +176,64 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
         /* Target Device Type */
-        if(strToDT(argv[3], strlen(argv[3]), &tgtSWType) < 0){
+        if(strToDT(argv[3], strlen(argv[3]), &targetType) < 0){
             fprintf(stderr, "%s: Invalid Target Device Type in 3rd arg.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
         /* Opcode */
-        utemp = strtoul(argv[4], NULL, 0);
-        if(utemp == 0){
-            fprintf(stderr, "%s: Could not convert 4th arg to long int.\n",
+        if(!isnumeric(argv[4])){
+            fprintf(stderr, "%s: 4th arg is not a number.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        if(utemp == ULONG_MAX){
+        uTemp = strtoul(argv[4], NULL, 0);
+        if(uTemp == ULONG_MAX){
             perror(argv[0]);
             fprintf(stderr, "%s: 4th arg out of range.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        if(utemp > SWOPCODE_MAX){
+        if((swOpcode_t)uTemp >= SWOPCODE_MAX){
             fprintf(stderr, "%s: Opcode out of range.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        opcode = utemp;
+        opcode = (swOpcode_t)uTemp;
 
         /* Argument Size */
-        utemp = strtoul(argv[5], NULL, 0);
-        if(utemp == 0){
-            fprintf(stderr, "%s: Could not convert 5th arg to long int.\n",
+        if(!isnumeric(argv[5])){
+            fprintf(stderr, "%s: 5th arg is not a number.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        if(utemp == ULONG_MAX){
+        uTemp = strtoul(argv[5], NULL, 0);
+        if(uTemp == ULONG_MAX){
             perror(argv[0]);
             fprintf(stderr, "%s: 5th arg out of range.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        if(utemp > (SW_MAX_MSG_LENGTH - sizeof(struct SmartWallHeader) -
-                    sizeof(struct SmartWallChannelHeader) -
-                    (sizeof(struct SmartWallChannelTop) * ((argc - 6) / 2 )))){
+        if((swLength_t)uTemp > (SW_MAX_MSG_LENGTH -
+                                sizeof(struct SmartWallHeader) -
+                                sizeof(struct SmartWallChannelHeader) -
+                                (sizeof(struct SmartWallChannelTop) * 
+                                 ((argc - 6) / 2 )))){
             fprintf(stderr, "%s: Arg Size exceeds max possible arg bytes.\n",
                     argv[0]);
             exit(EXIT_FAILURE);
         }
-        /* Limit to long ints */
-        /* TODO: Remove this limit and allow arbitrary sizes*/
-        if(utemp > sizeof(long int)){
-            fprintf(stderr, "%s: Arg Size currently limited to "
-                    "sizeof(long int) which is %lu bytes.\n",
-                    argv[0], sizeof(long int));
+        /* Limit to Max Size */
+        if(uTemp > MAXARGSIZE){
+            fprintf(stderr, "%s: Arg Size currently limited to %lu.\n",
+                    argv[0], MAXARGSIZE);
             exit(EXIT_FAILURE);
         }
-        tgtChnData.header.dataLength = sizeof(long int);
-
+        tmpChanData.header.dataLength = uTemp;
+        
         /* Loop Through Args */
         cnt = 0;
-        tgtChnData.header.numChan = 0;
+        tmpChanData.header.numChan = 0;
         for(i = 6; i < argc; i++){
             if((i % 2) == 0){
                 /* Channel Number */
@@ -217,21 +242,21 @@ int main(int argc, char *argv[]){
                             argv[0], i);
                     exit(EXIT_FAILURE);
                 }
-                utemp = strtoul(argv[i], NULL, 0);
-                if(utemp == ULONG_MAX){
+                uTemp = strtoul(argv[i], NULL, 0);
+                if(uTemp == ULONG_MAX){
                     perror(argv[0]);
                     fprintf(stderr, "%s: Arg %d out of range.\n",
                             argv[0], i);
                     exit(EXIT_FAILURE);
                 }
-                if(utemp > (SW_MAX_CHN - 1)){
+                if((numChan_t)uTemp > (SW_MAX_CHN - 1)){
                     fprintf(stderr, "%s: Arg %d exceeds max chn number.\n",
                             argv[0], i);
                     exit(EXIT_FAILURE);
                 }
                 if(cnt < SW_MAX_CHN){
-                    tgtChnData.header.numChan++;
-                    tgtChnData.data[cnt].chanTop.chanNum = utemp;
+                    tmpChanData.header.numChan++;
+                    tmpChanData.data[cnt].chanTop.chanNum = (numChan_t)uTemp;
                 }
                 else{
                     fprintf(stderr, "%s: Max channels exceeded. " 
@@ -250,32 +275,34 @@ int main(int argc, char *argv[]){
                                 argv[0], i);
                         exit(EXIT_FAILURE);
                     }
-                    args[cnt] = strtoul(argv[i], NULL, 0);
-                    if(args[cnt] == LONG_MIN){
+                    temp = strtol(argv[i], NULL, 0);
+                    if(temp == LONG_MIN || temp == LONG_MAX){
                         perror(argv[0]);
-                        fprintf(stderr,  "%s: Arg %d under range.\n",
-                                argv[0], i);
-                        exit(EXIT_FAILURE);
-                    }
-                    if(args[cnt] == LONG_MAX){
-                        perror(argv[0]);
-                        fprintf(stderr, "%s: Arg %d over range.\n",
+                        fprintf(stderr,  "%s: Arg %d out of range.\n",
                                 argv[0], i);
                         exit(EXIT_FAILURE);
                     }
                 }
                 else {
                     /* Null Argument */
-                    args[cnt] = 0;
+                    temp = 0;
                 }
-                tgtChnData.data[cnt].chanValue = &args[cnt];
+                if(cnt < SW_MAX_CHN){
+                    if(tmpChanData.header.dataLength > sizeof(long)){
+                        memcpy(tmpChanData.data[cnt].chanValue, &temp,
+                               sizeof(long));
+                    }
+                    else{
+                        memcpy(tmpChanData.data[cnt].chanValue, &temp,
+                               tmpChanData.header.dataLength);
+                    }
+                }
                 cnt++;
             }
         }
     }
     
     /* Execute Mode */
-
     if((mode == ERROR) | (mode == HELP)){
         /* TODO: Remove argument long int size restriction */
         fprintf(stderr, "%s: Usage Format\n"
@@ -310,224 +337,150 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
         /* Lookup My Device Info */
-        myDeviceEntry = findDevice(mySWAddress, devices, numDevices);
-        if(myDeviceEntry == NULL){
+        tmpDeviceEntry = findDevice(myDevice.devInfo.swAddr, devices,
+                                    numDevices);
+        if(tmpDeviceEntry == NULL){
             fprintf(stderr, "%s: Error finding my SW device with address "
-                    "0x%4.4" PRIxSWAddr ".\n", argv[0], mySWAddress);
+                    "0x%4.4" PRIxSWAddr ".\n", argv[0],
+                    myDevice.devInfo.swAddr);
             exit(EXIT_FAILURE);
         }
-        memcpy(&myDeviceInfo, &(myDeviceEntry->devInfo), sizeof(myDeviceInfo));
+        memcpy(&(myDevice.devInfo), &(tmpDeviceEntry->devInfo),
+               sizeof(myDevice.devInfo));
         /* Lookup Target Device Info */
-        tgtDeviceEntry = findDevice(tgtSWAddress, devices, numDevices);
-        if(tgtDeviceEntry == NULL){
+        tmpDeviceEntry = findDevice(tgtDevice.devInfo.swAddr, devices,
+                                    numDevices);
+        if(tmpDeviceEntry == NULL){
             fprintf(stderr, "%s: Error finding tgt SW device with address "
-                    "0x%4.4" PRIxSWAddr ".\n", argv[0], tgtSWAddress);
+                    "0x%4.4" PRIxSWAddr ".\n", argv[0],
+                    tgtDevice.devInfo.swAddr);
             exit(EXIT_FAILURE);
         }
-        memcpy(&tgtDeviceInfo, &(tgtDeviceEntry->devInfo),
-               sizeof(tgtDeviceInfo));
+        memcpy(&(tgtDevice.devInfo), &(tmpDeviceEntry->devInfo),
+               sizeof(tgtDevice.devInfo));
         
         /* Check for Channel Mismatch */
-        if(tgtChnData.header.numChan > tgtDeviceEntry->devInfo.numChan){
+        if(tmpChanData.header.numChan > tgtDevice.devInfo.numChan){
             fprintf(stderr, "%s: Target device has %" PRInumChan
                     " channel%s.\n" "You gave arguments for %" PRInumChan
                     " channel%s.\n", argv[0],
-                    tgtDeviceEntry->devInfo.numChan,
-                    (tgtDeviceEntry->devInfo.numChan == 1) ? "":"s",
-                    tgtChnData.header.numChan,
-                    (tgtChnData.header.numChan == 1) ? "":"s");
+                    tgtDevice.devInfo.numChan,
+                    (tgtDevice.devInfo.numChan == 1) ? "":"s",
+                    tmpChanData.header.numChan,
+                    (tmpChanData.header.numChan == 1) ? "":"s");
             exit(EXIT_FAILURE);
         }
-
-        /* Assemble Message Body */
-        bodyLen = writeSWChannelBody(body, SW_MAX_BODY_LENGTH, &tgtChnData);
+        /* Setup SW Comms */
+        if(swSetup(&in, &out, &myDevice)){
+            fprintf(stderr, "swSetup Error\n");
+            exit(EXIT_FAILURE);
+        }
+        /* Build Body Message */
+        bodyLen = writeSWChannelBody(body, SW_MAX_BODY_LENGTH, &tmpChanData);
         if(bodyLen == SWLENGTH_MAX){
-            fprintf(stderr, "%s: Error generating message body.\n", argv[0]);
+            fprintf(stderr, "writeSwChannelBody Error\n");
             exit(EXIT_FAILURE);
         }
-
-        /* Assemble Message */
-        msgLen = writeSWMsg(msg, SW_MAX_MSG_LENGTH, &(myDeviceEntry->devInfo),
-                            &(tgtDeviceEntry->devInfo), tgtSWType, msgScope,
-                            msgType, opcode, body, bodyLen);
-        if(msgLen == SWLENGTH_MAX){
-            fprintf(stderr, "%s: Error generating message.\n", argv[0]);
-            exit(EXIT_FAILURE);
-        }
-
-        /* My IP */
-        si_me.sin_family = AF_INET;
-        si_me.sin_port = htons(LISTENPORT);
-        /* TODO: Scope to specific IP */
-        si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-        
-        /* TGT IP */
-        si_tgt.sin_family = AF_INET;
-        si_tgt.sin_port = htons(SENDPORT);
-        si_tgt.sin_addr.s_addr = htonl(tgtDeviceEntry->ipAddr);
-
-        /* Setup Socket */
-        in = socket(AF_INET, SOCK_DGRAM, 0);
-        if(in < 0){
-            perror("socket");
-            exit(EXIT_FAILURE);
-        }
-        out = socket(AF_INET, SOCK_DGRAM, 0);
-        if(out < 0){
-            perror("out socket");
-            exit(EXIT_FAILURE);
-        }
-        
-        /* Bind In Socket */
-        b = bind(in, (struct sockaddr*) &si_me, sizeof(si_me));
-        if (b < 0){
-            perror("in bind");
-            exit(EXIT_FAILURE);
-        }
-
+        /* Compose Message */
+        msgLen = swCompose(msg, SW_MAX_MSG_LENGTH,
+                           &myDevice, &tgtDevice,
+                           targetType, msgScope, msgType, opcode,
+                           body, bodyLen);
         /* Send Message */
-        r = sendto(out, msg, msgLen, 0,
-                   (struct sockaddr*) &si_tgt, sizeof(si_tgt));
-        if(r < 0){
-            perror("sendto");
+        s = swSend(out, msg, msgLen, &tgtDevice);
+        if(s <= 0){
+            fprintf(stderr, "swSend Error\n");
             exit(EXIT_FAILURE);
         }
-
-        /* Print Info (TEST) */
-        /*
-        fprintf(stdout, "Sent packet to %s:%d\n",
-                inet_ntoa(si_tgt.sin_addr), ntohs(si_tgt.sin_port));
-        fprintf(stdout, "Message Size: %d\n", r);
-        */
-        
-        /* Rezero and Init Vars */
-        targetType = 0;
-        msgScope = 0;
-        msgType = 0;
-        opcode = 0;
-        memset(&args, 0, sizeof(args));
-        memset(&tgtChnEntries, 0, sizeof(tgtChnEntries));
-        memset(&tgtChnData, 0, sizeof(tgtChnData));
-        tgtChnData.data = tgtChnEntries;
+        /* Listen for Response */
+        msgLen = swListen(in, msg, SW_MAX_MSG_LENGTH, &sourceDevice);
+        if(msgLen <= 0){
+            fprintf(stderr, "swListen Error\n");
+            exit(EXIT_FAILURE);
+        }
+        /* Receive Message */
+        if(swReceive(msg, msgLen, &sourceDevice, &msgDevice,
+                     &targetType, &msgScope, &msgType, &opcode,
+                     body, &bodyLen, SW_MAX_BODY_LENGTH)){
+            fprintf(stderr, "swReceive Error\n");
+            exit(EXIT_FAILURE);
+        }
+        /* Check Message */
+        if(swCheck(&myDevice, &msgDevice, targetType,
+                   &errorScope, &errorOpcode)){
+            fprintf(stderr, "swCheck Error\n");
+            exit(EXIT_FAILURE);
+        }
+        /* Zero Data */
+        if(msgScope != SW_SCP_CHANNEL){
+            fprintf(stderr, "Unhandeled msgScope\n");
+            exit(EXIT_FAILURE);
+        }
+        memset(&tmpChanEntries, 0, sizeof(tmpChanEntries));
+        memset(&tmpChanData, 0, sizeof(tmpChanData));
+        memset(&tmpChanArgs, 0, sizeof(tmpChanArgs));
+        tmpChanData.data = tmpChanEntries;
+        /* Init chanData Buffer */
         for(i = 0; i < SW_MAX_CHN; i++){
-            tgtChnData.data[i].chanValue = &(args[i]);
+            tmpChanData.data[i].chanValue = tmpChanArgs[i];
         }
-        memset(&msg, 0, sizeof(msg));
-        msgLen = 0;
-        memset(&body, 0, sizeof(body));
-        bodyLen = 0;
-
-        /* Check Response */
-        r = recvfrom(in, msg, SW_MAX_MSG_LENGTH, 0,
-                     (struct sockaddr*) &si_tgt, &slen);
-        if(r < 0){
-            perror("recvfrom");
-            exit(EXIT_FAILURE);
-        }
-        else{
-            msgLen = r;
-        }
+        /* Decode Message */
+        readSWChannelBody(body, bodyLen, &tmpChanData, &limits);
+        /* Print Message */
         
-        /* Print Info (TEST) */
-        /*
-        fprintf(stdout, "Received packet from %s:%d\n",
-                inet_ntoa(si_tgt.sin_addr), ntohs(si_tgt.sin_port));
-        fprintf(stdout, "Message Size: %d\n", msgLen);
-        print_payload(msg, msgLen);
-        */
-
-        if((msgLen > sizeof(struct SmartWallHeader)) &&
-           (msgLen < SW_MAX_MSG_LENGTH)){
-            msgLen = readSWMsg(msg, msgLen,
-                               &sourceDeviceInfo, &destDeviceInfo,
-                               &targetType, &msgScope, &msgType, &opcode,
-                               body, &bodyLen, SW_MAX_BODY_LENGTH);
-            if(msgLen == SWLENGTH_MAX){
-                fprintf(stderr, "%s: Could not read SW message\n", argv[0]);
-                exit(EXIT_FAILURE);
-            }
-            /* Check if Message is For Me */
-            if(myDeviceInfo.groupID != destDeviceInfo.groupID){
-                fprintf(stderr, "%s: Group mismatch\n", argv[0]);
-                fprintf(stderr, "My groupID: %u\n", myDeviceInfo.groupID);
-                fprintf(stderr, "Dest groupID: %u\n", destDeviceInfo.groupID);
-                exit(EXIT_FAILURE);
-            }
-            if((myDeviceInfo.swAddr != destDeviceInfo.swAddr) && 
-               (destDeviceInfo.swAddr != SW_ADDR_BROADCAST)){
-                fprintf(stderr, "%s: Address mismatch\n", argv[0]);
-                fprintf(stderr, "My swAddr: 0x%x\n", myDeviceInfo.swAddr);
-                fprintf(stderr, "Dest swAddr: 0x%x\n", destDeviceInfo.swAddr);
-                exit(EXIT_FAILURE);
-            }
-            /* TODO: Confirm it's from a correct slave */
-            /* Switch on Message Scope */
-            switch(msgScope){
-            case SW_SCP_CHANNEL:
-                {
-                    bodyLen = readSWChannelBody(body, bodyLen, &tgtChnData,
-                                                &limits);
-                    if(bodyLen == SWLENGTH_MAX){
-                        fprintf(stderr, "%s: Could not read SW body\n",
-                                argv[0]);
-                        exit(EXIT_FAILURE);
-                    }
-                    /* ToDo: Switch on target device type */
-                    /* Switch on Message Type: SET OR QUERY */
-                    switch(msgType){
-                    case SW_MSG_REPORT:
-                    case SW_MSG_ERROR:
-                        /* Report State */
-                        MTtoStr(mtStrTemp, sizeof(mtStrTemp),
-                                &msgType); 
-                        DTtoStr(dtStrTemp, sizeof(dtStrTemp),
-                                &targetType); 
-                        fprintf(stdout, "0x%4.4" PRIxSWAddr
-                                " %s %s 0x%4.4" PRIxSWOpcode,
-                                sourceDeviceInfo.swAddr,
-                                mtStrTemp, dtStrTemp, opcode);
-                        for(i = 0; i < tgtChnData.header.numChan; i++){
-                            j = tgtChnData.data[i].chanTop.chanNum;
-                            if(j < tgtDeviceInfo.numChan){
-                                temp = tgtChnData.data[i].chanValue;
-                                fprintf(stdout, " %" PRIxNumChan 
-                                        " %ld", j, *temp);
-                            }
-                            else{
-                                fprintf(stderr,
-                                        "\n%s: Invalid chanNum: %u\n",
-                                        argv[0], j);
-                            }
+        /* Switch on Message Type: REPORT OR ERROR */
+        switch(msgType){
+        case SW_MSG_REPORT:
+        case SW_MSG_ERROR:
+            /* Report State */
+            MTtoStr(mtStrTemp, sizeof(mtStrTemp),
+                    &msgType); 
+            DTtoStr(dtStrTemp, sizeof(dtStrTemp),
+                    &targetType); 
+            fprintf(stdout, "0x%4.4" PRIxSWAddr
+                    " %s %s 0x%4.4" PRIxSWOpcode,
+                    sourceDevice.devInfo.swAddr,
+                    mtStrTemp, dtStrTemp, opcode);
+            for(i = 0; i < tmpChanData.header.numChan; i++){
+                j = tmpChanData.data[i].chanTop.chanNum;
+                if(j < tgtDevice.devInfo.numChan){
+                    if(tmpChanData.header.dataLength <= sizeof(tempArg)){
+                        memcpy(&tempArg, tmpChanData.data[i].chanValue,
+                               sizeof(tempArg));
+                        if(opcode == OUTLET_CH_OP_POWER){
+                            fprintf(stdout, " %" PRIxNumChan 
+                                    " %f", j, tempArg.chanPower);
                         }
-                        fprintf(stdout, "\n");
-                        break;
-                    default:
-                        fprintf(stderr, "%s: Unhandeled msgType\n",
-                                argv[0]);
-                        exit(EXIT_FAILURE);
-                        break;
+                        else if(opcode == OUTLET_CH_OP_STATE){
+                            fprintf(stdout, " %" PRIxNumChan 
+                                    " %ld", j, tempArg.chanState);
+                        }
+                        else{
+                            fprintf(stdout, " %" PRIxNumChan 
+                                    " %ld", j, tempArg.chanState);
+                        }
                     }
-                    break;
+                    else{
+                        fprintf(stderr,
+                                "\n%s: Arg Size Too Large\n",
+                                argv[0]);
+                    }
                 }
-            default:
-                {
-                    fprintf(stderr, "%s: Unhandeled Message Scope: %x\n",
-                            argv[0], msgScope);
-                    exit(EXIT_FAILURE);
-                    break;
+                else{
+                    fprintf(stderr,
+                            "\n%s: Invalid chanNum: %u\n",
+                            argv[0], j);
                 }
             }
-        }
-        else{
-            fprintf(stderr, "%s: Malformatted message"
-                    " - msgLen outside of normal limits.\n", argv[0]);
+            fprintf(stdout, "\n");
+            break;
+        default:
+            fprintf(stderr, "%s: Unhandeled msgType\n",
+                    argv[0]);
             exit(EXIT_FAILURE);
+            break;
         }
-        
-        /* Close Socket */
-        close(in);
-        close(out);
-        
+
     }
     
     return 0;

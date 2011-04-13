@@ -64,7 +64,7 @@ int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
         return -1;
     }
     else if(r == 0){
-		return r;	
+		return r;
 	}	 
     else{
         if(((size_t)r > sizeof(struct SmartWallHeader)) &&
@@ -196,6 +196,8 @@ enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
 #endif
         return SWCHECK_NOT_FOR_ME;
     }
+    /* TODO: Move to processer for check */
+    /*
     if(!(myDev->devInfo.devTypes & targetType)){
 #ifdef SWDEBUG
         fprintf(stderr, "%s: Type mismatch\n", "swCheck");
@@ -204,7 +206,7 @@ enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
         *errorOpcode = UNIVERSAL_DEV_OP_ERROR_TYPEMISMATCH;
         return SWCHECK_ERROR;
     }
-
+    */
     /* TODO: Confirm it's from a master */
 
     return SWCHECK_FOR_ME;
@@ -263,6 +265,7 @@ enum processorState swProcess(const msgScope_t msgScope,
             return PROCESSOR_SUCCESS;
         }
     }
+    fprintf(stderr, "%s: No Appropriate Processor\n", "handelerState");
     return PROCESSOR_ERROR;
 }
 

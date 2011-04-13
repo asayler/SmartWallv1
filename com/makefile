@@ -9,7 +9,7 @@
 # ---
 
 CC ?= gcc
-CFLAGS ?= -g -Wall -Wextra
+CFLAGS ?= -g -Wall -Wextra #-DSWDEBUG
 
 OBJS = swDevice.o SmartWall.o SmartWallSockets.o comTest.o comTools.o comPrint.o
 EXEC = comTest

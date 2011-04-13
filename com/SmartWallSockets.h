@@ -28,6 +28,10 @@
 #include "SmartWall.h"
 #include "../slave/swUniversal.h"
 
+#ifdef SWDEBUG
+#include "comPrint.h"
+#endif
+
 /* Type Defs */
 enum processorState{PROCESSOR_ERROR = -1, PROCESSOR_SUCCESS = 0};
 typedef enum processorState (*swDevHandeler) (const swOpcode_t opcode,
@@ -37,10 +41,6 @@ typedef enum processorState (*swDevHandeler) (const swOpcode_t opcode,
                                               void* deviceState,
                                               msgScope_t* errorScope,
                                               swOpcode_t* errorOpcode);
-
-typedef enum processorState (*swMrHandeler)(const swOpcode_t chnOpcode,
-                                            const msgType_t msgType,
-                                            const struct SWChannelData* input);
 
 /* Structs */
 struct SWDeviceInfo {
@@ -53,7 +53,9 @@ struct SWDevProcessor{
     void* data;
     void* dataLimits;
     readSWBody decoder;
+    swDevHandeler iniHandeler;
     swDevHandeler handeler;
+    swDevHandeler endHandeler;
     writeSWBody encoder;
 };
 
@@ -103,6 +105,7 @@ enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
                           msgScope_t* errorScope,
                           swOpcode_t* errorOpcode);
 
+/* TODO: Handel Device Type Check */
 enum processorState swDevProcess(const msgScope_t msgScope,
                                  const msgType_t msgType,
                                  const swOpcode_t opcode,

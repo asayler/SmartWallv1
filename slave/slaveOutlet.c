@@ -22,6 +22,11 @@
 #include "swOutlet.h"
 #include "swUniversal.h"
 
+/* For Random Seeding */
+#include <time.h>
+#define CH0POWER 13
+#define CH1POWER 60
+
 #define SENDPORT SWINPORT
 #define LISTENPORT SWOUTPORT
 
@@ -34,11 +39,16 @@
 #define CHAN0_INITSTATE OUTLET_CHAN_ON;
 #define CHAN1_INITSTATE OUTLET_CHAN_ON;
 
+static int updateState(struct outletDeviceState* state);
+
 int main(int argc, char *argv[]){
 
     /* Handel Input */
     (void) argc;
     (void) argv;
+
+    /* Seed RNG */
+    srand(time(NULL));
 
     /* Local Temp Vars */
     unsigned int i = 0;
@@ -91,8 +101,7 @@ int main(int argc, char *argv[]){
     myState.myDev->devInfo.numChan = MYSWCHAN;
     myState.myDev->devInfo.version = SW_VERSION;
     myState.myDev->devInfo.uid = MYSWUID;
-    myState.myDev->devInfo.groupID = MYSWGROUP;
-    
+    myState.myDev->devInfo.groupID = MYSWGROUP;    
     
     /* My IP */
     myState.myDev->devIP.sin_family = AF_INET;
@@ -103,12 +112,53 @@ int main(int argc, char *argv[]){
     tgtDevice.devIP.sin_addr.s_addr = htonl(INADDR_ANY);
     
     while(1){
-
+#ifdef SWDEBUG
+        fprintf(stderr, "slaveOutlet: start machineState: %d\n",
+                machineState);
+#endif
         machineState = swReceiverStateMachine(machineState,
                                               myState.myDev, &tgtDevice,
                                               &myState,
                                               processors, NUMOUTLETPROCESSORS);
+        if(updateState(&myState)){
+            fprintf(stderr, "Error updating state\n");
+        }
+#ifdef SWDEBUG
+        fprintf(stderr, "slaveOutlet: end machineState: %d\n", machineState);
+#endif
+
     }
 
+    return 0;
+}
+
+static int updateState(struct outletDeviceState* state){
+    
+    /* Update Power */
+    rand();
+    if(state->chState[0]){
+        if(rand() % 2){
+            state->chPower[0] = CH0POWER + ((rand() % 1024) / 1024.0);
+        }
+        else{
+            state->chPower[0] = CH0POWER - ((rand() % 1024) / 1024.0);
+        }
+    }
+    else{
+        state->chPower[0] = 0;
+    }
+    
+    if(state->chState[1]){
+        if(rand() % 2){
+            state->chPower[1] = CH1POWER + ((rand() % 1024) / 1024.0);
+        }
+        else{
+            state->chPower[1] = CH1POWER - ((rand() % 1024) / 1024.0);
+        }
+    }
+    else{
+        state->chPower[1] = 0;
+    }
+        
     return 0;
 }

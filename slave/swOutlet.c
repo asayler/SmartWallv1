@@ -11,12 +11,6 @@
 
 #include "swOutlet.h"
 
-enum processorState outletChnMasterHandeler(const swOpcode_t chnOpcode,
-                                            const msgType_t msgType,
-                                            const struct SWChannelData* input){
-    return PROCESSOR_ERROR;
-}
-
 enum processorState outletChnDevHandeler(const swOpcode_t chnOpcode,
                                          const msgType_t msgType,
                                          const struct SWChannelData* input,
