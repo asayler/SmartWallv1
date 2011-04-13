@@ -20,12 +20,16 @@ enum swSetup swSetup(int* inSocket, int* outSocket,
     /* Setup Sockets */
     *inSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if(*inSocket < 0){
+#ifndef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
         perror("socket - in");
+#endif
         return SWSETUP_ERROR;
     }
     *outSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if(*outSocket < 0){
+#ifndef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
         perror("socket - out");
+#endif
         return SWSETUP_ERROR;
     }
     
@@ -33,7 +37,9 @@ enum swSetup swSetup(int* inSocket, int* outSocket,
     b = bind(*inSocket, (struct sockaddr*) &(myDev->devIP),
              sizeof(myDev->devIP));
     if (b < 0){
+#ifndef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
         perror("in bind");
+#endif
         return SWSETUP_ERROR;
     }
 
@@ -52,7 +58,9 @@ int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
                  (struct sockaddr*) &(sourceDev->devIP),
                  &addressSize);
     if(r < 0){
+#ifndef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
         perror("recvFunc");
+#endif
         return -1;
     }
     else if(r == 0){
@@ -91,7 +99,9 @@ int swSend(const int outSocket,
                &(destDev->devIP),
                sizeof(destDev->devIP));
     if(s < 0){
+#ifndef PIC32_ENET_SK_DM320004_INTERNAL_ETHERNET
         perror("sendto");
+#endif
         return -1;
     }
 
