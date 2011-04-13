@@ -1,3 +1,1 @@
-<div id="footer">
-     Footer
-</div> <!-- end footer -->
+    <h4> Footer</h4>

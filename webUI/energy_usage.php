@@ -1,19 +1,24 @@
-<?php
-  // error_reporting(0); //suppress error reports
-?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Energy Usage</title>
 <link rel="stylesheet" type="text/css" href="style.css"
 </head>
 
 <body>
+<div id="" class="container_12">    
+   <div id="header" class="grid_12">
+   <?php include("header.inc"); ?>
+</div>
+</div>
 
-<?php include("header.inc"); ?>
+<div id="content" class="container_12">
+<div id="navigation" class="grid_2">
+   <?php include("navigation.inc"); ?>
+</div>
 
-<div id="content">
-
+   <div id="table" class="grid_5">
 <?php
 //sw opcodes (i.e. what you're querying for or setting)
 $state = "0x0010";
@@ -28,8 +33,7 @@ $master = "0x8000000000000001";
 $universal = "0x8000000000000000";
 ?>
 
-<br />
-<h3> &nbsp Select a device: </h3>  
+<h3> &nbsp&nbsp Select a device: </h3>  
 
 <?php //get outlet list from Andy's compiled swls.c program
 
@@ -99,7 +103,9 @@ chdir('/var/www/');
 </select>
 <input type="submit" value="View Energy Usage" name="usage">
   </form>
-  
+  </div>
+
+<div id="picture" class="grid_5">
 
   <?php
   //Notice button press of usage, display relevant graph
@@ -119,11 +125,14 @@ chdir('/var/www/');
    }
 }
 ?>
-
+</div>
 </div> <!-- end content -->
 
-<?php include("navigation.inc"); ?>
-<?php include("footer.inc"); ?>
+<div id="" class="container_12">
+  <div id="footer" class="grid_12">
+  <?php include("footer.inc"); ?>
+</div>
+</div>
 
 </body>
 </html>

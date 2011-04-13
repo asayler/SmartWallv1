@@ -1,24 +1,30 @@
-<?php
-   error_reporting(0); //suppress error reports. uncomment when problems
-?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>SmartWall Home</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
-    
 </head>
-    
 <body>
+                
 
-<?php include("header.inc"); ?>
+<div id="" class="container_12">    
+<div id="header" class="grid_12">
+   <?php include("header.inc"); ?>
+</div>
+</div>
 
-<div id="content">
+<div id="content" class="container_12">
 
-<?php //get outlet list from Andy's compiled swls.c program
+<div id="navigation" class="grid_2">
+   <?php include("navigation.inc"); ?>
+</div>
 
-//change directory for relative path purposes
-chdir('/home/laura/senior/code/SmartWallv1/usermon');
+<div id="table" class="grid_5">
+    <?php //get outlet list from Andy's compiled swls.c program
+    
+    //change directory for relative path purposes
+    chdir('/home/laura/senior/code/SmartWallv1/usermon');
 $raw = shell_exec("./swls -raw 2>&1");
 $raw = trim($raw, "\n"); //trim trailing new line character
 
@@ -28,28 +34,28 @@ $lookup = array();
 
 $lines = explode("\n", $raw); //break up on newline characters
 foreach($lines as $line) {
-   $items = explode(" ", $line); //break up on spaces
-   $lookup[$items[7]] = array('swAdr' => $items[1], 'ipAdr' => $items[2], 'type' => $items[3], 'channels' => $items[4], 'grpId' => $items[5],'ver' => $items[6]); 
+  $items = explode(" ", $line); //break up on spaces
+  $lookup[$items[7]] = array('swAdr' => $items[1], 'ipAdr' => $items[2], 'type' => $items[3], 'channels' => $items[4], 'grpId' => $items[5],'ver' => $items[6]); 
 }   
 
 foreach($lookup as $key => $value) {
-   $UIDs[] = $key;
+  $UIDs[] = $key;
 }
 //print_r($UIDs); //debug
 
 ?>
 <?php
-//populate $aliases hash from aliases.txt 
+  //populate $aliases hash from aliases.txt 
 chdir('/home/laura/senior/code/SmartWallv1/webUI');
 $handle = fopen("./aliases.txt","r") or exit("Unable to open alias file.");
 while(!feof($handle)) {
-   $file_line = fgets($handle);
-   $file_bits = explode(' ', $file_line);
-   $the_UID = trim($file_bits[0]);
-   $the_alias = trim($file_bits[1]);
-   $UID_alias[$the_UID] = $the_alias;
-   $alias_UID[$the_alias] = $the_UID;
-}
+  $file_line = fgets($handle);
+  $file_bits = explode(' ', $file_line);
+  $the_UID = trim($file_bits[0]);
+  $the_alias = trim($file_bits[1]);
+  $UID_alias[$the_UID] = $the_alias;
+  $alias_UID[$the_alias] = $the_UID;
+ }
 fclose($handle);
 
 foreach($UIDs as $value) {
@@ -89,14 +95,9 @@ foreach($aliased_UIDs as $value) {
 }
 echo "</tr></table>";
 ?>
-&nbsp&nbsp
-<input type="submit" value="Apply Changes" name="apply">
+<input type="submit" class="button" value="Apply Changes" name="apply">
   </form>
   
-  <IMG SRC="total.png" ALT="Some Text">  
-
-
-
   <?php
   //Notice button press of apply, update outlets
   chdir('/home/laura/senior/code/SmartWallv1/usermon');
@@ -110,11 +111,11 @@ if (isset($_GET['apply'])){
     } 
     if(preg_match("/On/", $on_off)) {
 	//    $swAdr = $lookup[$uaUID]['swAdr']; //shell_exec can't handle
-	$swAdr = "0x0011"; //temp while other outlets aren't simulated
-	$temp = shell_exec("./swChnMsg $swAdr SET OUTLET 0x0010 1 0 1 2>&1");
+      $swAdr = "0x0011"; //temp while other outlets aren't simulated
+      $temp = shell_exec("./swChnMsg $swAdr SET OUTLET 0x0010 1 0 1 2>&1");
     } elseif(preg_match("/Off/",$on_off)) {
-	//    $swAdr = $lookup[$uaUID]['swAdr']; //shell_exec can't handle
-	$swAdr = "0x0011"; //temp while other outlets aren't simulated
+      //    $swAdr = $lookup[$uaUID]['swAdr']; //shell_exec can't handle
+      $swAdr = "0x0011"; //temp while other outlets aren't simulated
 	$temp = shell_exec("./swChnMsg $swAdr SET OUTLET 0x0010 1 0 0 2>&1");
     }
   }
@@ -122,11 +123,21 @@ if (isset($_GET['apply'])){
  }
 
 ?>
+</div>
 
-</div> <!-- end content -->
+<div id="graph" class="grid_5">
+  <IMG SRC="total.png" ALT="Some Text">  
+</div>
 
-<?php include("navigation.inc"); ?>
-<?php include("footer.inc"); ?>
+</div>
 
+                
+
+<div id="" class="container_12">
+<div id="footer" class="grid_12">
+  <?php include("footer.inc"); ?>
+</div>
+</div>
+            
 </body>
 </html>
