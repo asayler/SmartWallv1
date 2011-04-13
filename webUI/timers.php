@@ -9,7 +9,6 @@
 </head>
 
 <body>
-<div id="containter">
 
 <?php include("header.inc"); ?>
 
@@ -113,8 +112,6 @@ if (isset($_GET['submit'])){
 
 <?php include("navigation.inc"); ?>
 <?php include("footer.inc"); ?>
-
-</div> <!-- end container -->
 
 </body>
 </html>
