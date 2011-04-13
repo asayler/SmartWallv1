@@ -1,7 +1,10 @@
-      //IMPORTANT: when swChnMsg fails, it does so silently and hangs
-      // check for hung programs with:
-      // >> ps aux | grep swChnMsg
+IMPORTANT: when swChnMsg fails, it does so silently and hangs
+ check for hung programs with:
+ >> ps aux | grep swChnMsg
+ for now, kill it with:
+ >> sudo killall swChnMsg
 
-      //for now, kill it with:
-      // >> sudo killall swChnMsg
+/etc/crontab contains command to run /etc/cron.d/cron.pl every minute. It queries all the outlets for power usage and write to month-by-month files in /home/laura/senior/code/SmartWallv1/webUI/historic
+*NOTE modify cron.pl when more outlets are availabe It currently performs queries on only outlet 0x0011 pretends  
 
+ANDY: Device type numbers for master and outlet are wrong. they actually start with 0x8 not 0x0
