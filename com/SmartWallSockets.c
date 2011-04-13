@@ -11,6 +11,36 @@
 
 #include "SmartWallSockets.h"
 
+enum swSetup swSetup(int* inSocket, int* outSocket,
+                     const struct SWDeviceInfo* myDev){
+    
+    /* Temp Vars */
+    int b = 0;
+
+    /* Setup Sockets */
+    *inSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if(*inSocket < 0){
+        perror("socket - in");
+        return SWSETUP_ERROR;
+    }
+    *outSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if(*outSocket < 0){
+        perror("socket - out");
+        return SWSETUP_ERROR;
+    }
+    
+    /* Bind In Socket */
+    b = bind(*inSocket, (struct sockaddr*) &(myDev->devIP),
+             sizeof(myDev->devIP));
+    if (b < 0){
+        perror("in bind");
+        return SWSETUP_ERROR;
+    }
+
+    return SWSETUP_SUCCESS;
+    
+}
+
 int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
              struct SWDeviceInfo* sourceDev){
     
@@ -227,4 +257,165 @@ enum processorState swProcess(const msgScope_t msgScope,
         }
     }
     return PROCESSOR_ERROR;
+}
+
+enum SWReceiverState swReceiverStateMachine(enum SWReceiverState machineState,
+                                            const struct SWDeviceInfo* myDev,
+                                            const struct SWDeviceInfo* tgtDev,
+                                            void* deviceState,
+                                            struct SWProcessor* processors,
+                                            const int numProcessors){
+
+    /* Local Temp Vars */
+    int r = 0;
+
+    /* Declare Static SW Vars */
+    static struct SWDeviceInfo sourceDevice;
+    static struct SWDeviceInfo msgDevice;    
+    static devType_t targetType;
+    static msgScope_t msgScope;
+    static msgType_t msgType;
+    static swOpcode_t opcode;
+    static swOpcode_t errorOpcode;
+    static msgScope_t errorScope;
+    
+    /* Declare Static SW Buffers */
+    static uint8_t msg[SW_MAX_MSG_LENGTH];
+    static swLength_t msgLen;
+    static uint8_t body[SW_MAX_BODY_LENGTH];
+    static swLength_t bodyLen;
+
+    /* Declare Static Socket vars */
+    static int in, out;
+
+    switch(machineState){
+    case RST_SETUP:
+
+        /* Setup Static SW Vars */
+        memset(&sourceDevice, 0, sizeof(sourceDevice));
+        memset(&msgDevice, 0, sizeof(msgDevice));
+        targetType = 0;
+        msgScope = 0;
+        msgType = 0;
+        opcode = 0;
+        errorOpcode = 0;
+        errorScope = 0;    
+
+        /* Setup Static SW Buffers */
+        msgLen = 0;
+        memset(&msg, 0, sizeof(msg));
+        bodyLen = 0;
+        memset(&body, 0, sizeof(body));
+
+        if(swSetup(&in, &out, myDev)){
+            return RST_SETUP;
+        }
+        else{
+            return RST_LISTEN;    
+        }
+        break;
+
+    case RST_LISTEN:
+
+        /* Listen for New Message */
+        msgLen = swListen(in, msg, SW_MAX_BODY_LENGTH, &sourceDevice);
+        if(msgLen > 0){
+            return RST_RECEIVE;
+        }
+        else{
+            return RST_LISTEN;
+        }
+        break;
+
+    case RST_RECEIVE:
+
+        /* Receive Message */
+        if(swReceive(msg, msgLen, &sourceDevice, &msgDevice, &targetType,
+                     &msgScope, &msgType, &opcode, body, &bodyLen,
+                     SW_MAX_BODY_LENGTH)){
+            return RST_LISTEN;
+        }
+        else{
+            return RST_CHECK;
+        }
+        break;
+
+    case RST_CHECK:
+        
+        /* Check Received Message */
+        if(swCheck(myDev, &msgDevice, targetType, &errorScope,
+                   &errorOpcode)){
+            return RST_LISTEN;
+        }
+        else{
+            return RST_PROCESS;
+        }
+        break;
+
+    case RST_PROCESS:
+        
+        /* Process Message */
+        if(swProcess(msgScope, msgType, opcode,
+                     processors, numProcessors,
+                     body, bodyLen,
+                     body, &bodyLen, SW_MAX_BODY_LENGTH,
+                     deviceState, &errorScope, &errorOpcode)){
+            return RST_LISTEN;
+        }
+        else{
+            return RST_COMPOSE;
+        }
+        break;
+
+    case RST_COMPOSE:
+
+        /* Check for Error Message */
+        if(errorScope != 0){
+            opcode = errorOpcode;
+            msgType = SW_MSG_ERROR;
+            msgScope = errorScope;
+        }
+        else{
+            msgType = SW_MSG_REPORT;
+        }
+        /* Compose Message */
+        msgLen = swCompose(msg, SW_MAX_MSG_LENGTH,
+                           myDev, &sourceDevice,
+                           targetType,
+                           msgScope,
+                           msgType, opcode,
+                           body, bodyLen);
+        if(msgLen > 0){
+            return RST_SEND;
+        }
+        else {
+            return RST_LISTEN;
+        }
+        break;
+        
+    case RST_SEND:
+        
+        /* Set Port */
+        sourceDevice.devIP.sin_port = tgtDev->devIP.sin_port;
+        /* Send Message */
+        r = swSend(out, msg, msgLen, &sourceDevice);
+        if(r > 0){
+            return RST_LISTEN;
+        }
+        else {
+            return RST_SEND;
+        }
+        break;
+
+    case RST_CLEANUP:
+        
+        /* Close Sockets */
+        close(in);
+        close(out);
+        return RST_SETUP;
+        break;
+
+    default:
+        return RST_SETUP;
+    }
 }

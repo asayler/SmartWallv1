@@ -16,6 +16,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 /* Local Includes */
 #include "SmartWall.h"
@@ -47,6 +48,10 @@ struct SWProcessor{
 };
 
 /* Functions */
+
+enum swSetup{SWSETUP_ERROR = -1, SWSETUP_SUCCESS = 0};
+enum swSetup swSetup(int* inSocket, int* outSocket,
+                     const struct SWDeviceInfo* myDev);
 
 /* Return Value: msgSize in bytes */
 int swListen(int inSocket, uint8_t* buffer, swLength_t bufferSize,
@@ -101,5 +106,16 @@ enum processorState swProcess(const msgScope_t msgScope,
                               void* deviceState,
                               msgScope_t* errorScope,
                               swOpcode_t* errorOpcode);
+
+/* TODO: Make Thread Safe */
+enum SWReceiverState{RST_SETUP, RST_LISTEN, RST_RECEIVE, RST_CHECK,
+                     RST_PROCESS, RST_COMPOSE, RST_SEND, RST_CLEANUP};
+enum SWReceiverState swReceiverStateMachine(enum SWReceiverState machineState,
+                                            const struct SWDeviceInfo* myDev,
+                                            const struct SWDeviceInfo* tgtDev,
+                                            void* deviceState,
+                                            struct SWProcessor* processors,
+                                            const int numProcessors);
+
 
 #endif
