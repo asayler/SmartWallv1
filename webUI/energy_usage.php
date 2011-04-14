@@ -18,7 +18,7 @@
    <?php include("navigation.inc"); ?>
 </div>
 
-   <div id="table" class="grid_5">
+<div id="table" class="grid_5">
 <?php
 //sw opcodes (i.e. what you're querying for or setting)
 $state = "0x0010";
@@ -38,7 +38,7 @@ $universal = "0x8000000000000000";
 <?php //get outlet list from Andy's compiled swls.c program
 
 //change directory for relative path purposes
-chdir('/home/laura/senior/code/SmartWallv1/usermon');
+chdir('/home/vermilion/SmartWallv1/usermon');
 $raw = shell_exec("./swls -raw 2>&1");
 $raw = trim($raw, "\n");
 
@@ -60,7 +60,7 @@ foreach($lookup as $key => $value) {
 ?>
 <?php
 //populate $aliases hash from aliases.txt 
-chdir('/home/laura/senior/code/SmartWallv1/webUI');
+chdir('../webUI');
 $handle = fopen("./aliases.txt","r") or exit("Unable to open alias file.");
 while(!feof($handle)) {
    $file_line = fgets($handle);
@@ -125,7 +125,7 @@ chdir('/var/www/');
       echo "First, select an outlet.\n";
    }
 }
-?>
+?> 
 </div>
 </div> <!-- end content -->
 

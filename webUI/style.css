@@ -335,12 +335,12 @@
 body{
       margin: 0;
       padding: 0;
-      background: #ccc;
+      background: #cce; /*ccc*/
       }
 
 #header{
          padding: 10px;
-         background: #bbb;	
+         background: #99c;/*bbb*/	
          }
 
 #navigation{
@@ -366,7 +366,7 @@ body{
 
 #footer{
          clear: both;
-         background: #bbb;
+         background: #99c; /*bbb*/
          padding: 10px;
          }
 

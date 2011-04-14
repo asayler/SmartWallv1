@@ -68,7 +68,7 @@ foreach my $key(sort keys %lookup){
 	    }
 	    #clean up @date_time
 	    foreach(@date_time){
-		$_ =~ s/.\d\d.\d\d//;
+		$_ =~ s/\d\d\.\d\d\.//;
 	    }
 	    #find max and min powers for graph
 	    my @temp = sort @power0;
@@ -94,7 +94,8 @@ foreach my $key(sort keys %lookup){
 	    x_label => 'Date',
 	    y_label => 'Power Usage (Watts)',
 	    title => 'Monthly Power Usage',
-	    y_min_value => $min,
+	    #y_min_value => $min,
+	    y_min_value => 0,
 	    y_max_value => $max+1,
 	    y_tick_number => 5,
 #	    x_tick_number => 10,
@@ -139,7 +140,7 @@ while (<FILE_HANDLE>) {
 }
 #clean up @date_time
 foreach(@date_time){
-    $_ =~ s/.\d\d.\d\d//;
+    $_ =~ s/\d\d\.\d\d\.//;
 }
 #find max and min powers for graph
 my @tempp = sort {$a <=> $b} @power; #numerical sort
@@ -152,21 +153,22 @@ $max = $tempp[-1]; #last item
 #make the graph from @data
 my $my_graph = GD::Graph::lines->new(400,300);
 $my_graph->set(
-	    x_label => 'Date',
-	    y_label => 'Power Usage (Watts)',
-	    title => 'Power Usage (all SmartWall devices)',
-	    y_min_value => $min,
-	    y_max_value => $max+1,
-	    y_tick_number => 5,
-	    y_label_skip => 2,
-	    t_margin => 10,
-	    b_margin => 10,
-	    r_margin => 20,
-	    l_margin => 10,
+    x_label => 'Date',
+    y_label => 'Power Usage (Watts)',
+    title => 'Power Usage (all SmartWall devices)',
+    #y_min_value => $min,
+    y_min_value => 0,
+    y_max_value => $max+1,
+    y_tick_number => 5,
+    y_label_skip => 2,
+    t_margin => 10,
+    b_margin => 10,
+    r_margin => 20,
+    l_margin => 10,
     x_label_skip => 400,
-	    markers => [ 1, 5 ],
-	    transparent => 0,
-	    );
+    markers => [ 1, 5 ],
+    transparent => 0,
+    );
 $my_graph->set_legend( 'All');
 my $gd = $my_graph->plot(\@data) or die $my_graph->error;
 my $string = "total.png";

@@ -68,8 +68,8 @@ foreach my $key (sort keys %lookup) {
 	} elsif ($channels eq "0x02") { #and it has 2 channels
 	    #print "Entered 2-channel loop\n"; #debug
 	    #two channel device
-	    #$swAdr = $lookup{$key}{'swAdr'}; #for when all addresses work
-	    $swAdr = "0x0011";
+	    $swAdr = $lookup{$key}{'swAdr'}; #for when all addresses work
+	    #$swAdr = "0x0011"; #debug
 	    my $power_query = "./swChnMsg $swAdr QUERY OUTLET $power 8 0 x 1 x";
 	    print "$power_query\n"; #debug
 	    $power_string = `$power_query`; #backtick system call
