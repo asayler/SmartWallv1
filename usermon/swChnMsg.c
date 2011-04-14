@@ -483,7 +483,9 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
             break;
         }
-
+	/* Close Sockets */
+	close(in);
+	close(out);
     }
     
     return 0;

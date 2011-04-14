@@ -17,7 +17,7 @@ my $outlet = "0x8000000000000004";
 my $master = "0x8000000000000001";
 my $universal = "0x8000000000000000";
 
-chdir("/home/laura/senior/code/SmartWallv1/usermon") or die "$!";
+chdir("/home/vermilion/SmartWallv1/usermon") or die "$!";
 
 #query for all devices and info
 my $outlets_raw = `./swls -raw`; #backtick system call
@@ -75,7 +75,7 @@ foreach my $key(sort keys %lookup){
 	    $min = $temp[0]; #first item
 	    $max = $temp[-1]; #last item
 	    @temp = ();
-	    @temp = sort @power1;
+	    @temp = sort {$a <=> $b} @power1;
 	    if ($temp[0] < $min) {
 		$min = $temp[0];
 	    }
@@ -142,12 +142,13 @@ foreach(@date_time){
     $_ =~ s/.\d\d.\d\d//;
 }
 #find max and min powers for graph
-my @temp = sort @power;
-$min = $temp[0]; #first item
-$max = $temp[-1]; #last item
+my @tempp = sort {$a <=> $b} @power; #numerical sort
+#print Dumper(@tempp); #debug
+$min = $tempp[0]; #first item
+$max = $tempp[-1]; #last item
+#print "Total max value is: $max\n"; #debug
 #create array of arrays for graphing
 @data = ([@date_time],[@power]);
-
 #make the graph from @data
 my $my_graph = GD::Graph::lines->new(400,300);
 $my_graph->set(
