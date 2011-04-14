@@ -75,7 +75,7 @@ foreach my $key(sort keys %lookup){
 	    $min = $temp[0]; #first item
 	    $max = $temp[-1]; #last item
 	    @temp = ();
-	    @temp = sort @power1;
+	    @temp = sort {$a <=> $b} @power1;
 	    if ($temp[0] < $min) {
 		$min = $temp[0];
 	    }
@@ -142,12 +142,13 @@ foreach(@date_time){
     $_ =~ s/.\d\d.\d\d//;
 }
 #find max and min powers for graph
-my @temp = sort @power;
-$min = $temp[0]; #first item
-$max = $temp[-1]; #last item
+my @tempp = sort {$a <=> $b} @power; #numerical sort
+#print Dumper(@tempp); #debug
+$min = $tempp[0]; #first item
+$max = $tempp[-1]; #last item
+#print "Total max value is: $max\n"; #debug
 #create array of arrays for graphing
 @data = ([@date_time],[@power]);
-
 #make the graph from @data
 my $my_graph = GD::Graph::lines->new(400,300);
 $my_graph->set(
