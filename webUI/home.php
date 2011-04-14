@@ -126,7 +126,8 @@ if (isset($_GET['apply'])){
 </div>
 
 <div id="graph" class="grid_5">
-  <IMG SRC="total.png" ALT="Some Text">  
+  <IMG SRC="total.png" ALT="Some Text"> 
+  <!-- <IMG SRC="fake2.png" ALT="Some Text"> -->
 </div>
 
 </div>
