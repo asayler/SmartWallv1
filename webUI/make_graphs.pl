@@ -17,7 +17,7 @@ my $outlet = "0x8000000000000004";
 my $master = "0x8000000000000001";
 my $universal = "0x8000000000000000";
 
-chdir("/home/laura/senior/code/SmartWallv1/usermon") or die "$!";
+chdir("/home/vermilion/SmartWallv1/usermon") or die "$!";
 
 #query for all devices and info
 my $outlets_raw = `./swls -raw`; #backtick system call
