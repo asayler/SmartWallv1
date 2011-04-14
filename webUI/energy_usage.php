@@ -119,7 +119,8 @@ chdir('/var/www/');
       }
       
       $string = $outlet.'.png';
-      echo"<IMG SRC=\"$string\">"; //display graph
+            echo "<IMG SRC=\"$string\">"; //display graph
+      //echo "<IMG SRC=\"fake.png\">"; #temp for screen shot
    } else {
       echo "First, select an outlet.\n";
    }
