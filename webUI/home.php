@@ -5,26 +5,37 @@
 <title>SmartWall Home</title>
 <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
-<body>
-                
 
+<body>
 <div id="" class="container_12">    
-<div id="header" class="grid_12">
+   <div id="header" class="grid_12">
    <?php include("header.inc"); ?>
 </div>
 </div>
 
 <div id="content" class="container_12">
-
 <div id="navigation" class="grid_2">
    <?php include("navigation.inc"); ?>
 </div>
 
 <div id="table" class="grid_5">
-    <?php //get outlet list from Andy's compiled swls.c program
-    
-    //change directory for relative path purposes
-    chdir('/home/laura/senior/code/SmartWallv1/usermon');
+<?php
+//sw opcodes (i.e. what you're querying for or setting)
+$state = "0x0010";
+$voltage = "0x0020";
+$current = "0x0021";
+$power = "0x0022";
+$freq = "0x0023";
+$phase = "0x0024";
+//sw types
+$outlet = "0x8000000000000004";
+$master = "0x8000000000000001";
+$universal = "0x8000000000000000";
+?>
+
+<?php 
+//get outlet list from Andy's compiled swls.c program
+chdir('/home/vermilion/SmartWallv1/usermon'); //relative path purposes
 $raw = shell_exec("./swls -raw 2>&1");
 $raw = trim($raw, "\n"); //trim trailing new line character
 
@@ -42,11 +53,11 @@ foreach($lookup as $key => $value) {
   $UIDs[] = $key;
 }
 //print_r($UIDs); //debug
-
 ?>
+
 <?php
   //populate $aliases hash from aliases.txt 
-chdir('/home/laura/senior/code/SmartWallv1/webUI');
+chdir('../webUI');
 $handle = fopen("./aliases.txt","r") or exit("Unable to open alias file.");
 while(!feof($handle)) {
   $file_line = fgets($handle);
@@ -70,53 +81,98 @@ foreach($UIDs as $value) {
 ?>
 
 <!-- Print all UIDs (aliased as appropriate) and their on/off status-->
+
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
   <?php
-  chdir('/home/laura/senior/code/SmartWallv1/usermon');
+  chdir('../usermon');
 echo "<table class=\"pretty\" border=\"1\">";
-echo "<th>Outlet</th><th>Status</th>";
+echo "<tr><th>Outlet</th><th>Status</th></tr>";
 foreach($aliased_UIDs as $value) {
-  //    	$swAdr = $lookup[$outlet]['swAdr']; //shell_exec can't convert
-  //	$swAdr = "0x0000000000000011"; //debug tool until all outlets available
-  $swAdr = "0x0011";
-  $query = shell_exec("./swChnMsg $swAdr QUERY OUTLET 0x0010 1 0 x 2>&1");
-  $query = chop($query);
-  if(preg_match('/1$/',$query)) { //pick which button is marked
-    $on = "checked";
-    $off = "";
-  } else if(preg_match('/0$/',$query)){
-    $on = "";
-    $off = "checked";
+  if($lookup[$value]['channels'] == "0x02"){
+    $swAdr = $lookup[$value]['swAdr'];
+    $query_string = "./swChnMsg $swAdr QUERY OUTLET $state 1 0 x 1 x"; 
+    //echo "query is: ".$query_string."<br />";
+    $query = shell_exec($query_string);
+    //echo "response is: ".$query."<br />";
+    //$query = rtrim($query, "\n");
+    if(preg_match("/$swAdr REPORT OUTLET $state 0 (0|1) 1 (0|1)/",$query,$matches)) { 
+      //echo "matches[1] is: ".$matches[1]."<br />";
+      //echo "matches[2] is: ".$matches[2]."<br />";
+      if ($matches[1] == 1) {
+	//echo "[1] matched 1 <br />";
+	$on_top = "checked";
+	$off_top = "";
+      } elseif ($matches[1] == 0) {
+	//echo "[1] matched 0 <br />";
+	$on_top = "";
+	$off_top = "checked";
+      }
+      if ($matches[2] == 1){
+	//echo "[2] matched 1 <br />";
+	$on_bottom = "checked";
+	$off_bottom = "";
+      } elseif ($matches[2] == 0){
+	//echo "[2] matched 0 <br />";
+	$on_bottom = "";
+	$off_bottom = "checked"; 
+      }
+    }
+    $top_name = "top_".$value;
+    $bottom_name = "bot_".$value;
+    //echo "top name is: ".$top_name."<br />";
+    //echo "bottom name is: ".$bottom_name."<br />";
+    echo "<tr><td>&nbsp $value &nbsp</td>";
+    echo "<td>";
+    echo "<input type=\"radio\" name=$top_name value=\"On\" $on_top>On"; 
+    echo "<input type=\"radio\" name=$top_name value=\"Off\" $off_top>Off"; 
+    echo "&nbsp<br />";
+    echo "<input type=\"radio\" name=$bottom_name value=\"On\" $on_bottom>On"; 
+    echo "<input type=\"radio\" name=$bottom_name value=\"Off\" $off_bottom>Off";
+    echo "&nbsp</td></tr>"; 
   }
-  echo "<tr><td>&nbsp $value &nbsp</td>";
-  echo "<td> <input type=\"radio\" name=$value value=\"On\" $on>On";
-  echo "<input type=\"radio\" name=$value value=\"Off\" $off>Off &nbsp</td></tr>";
-  
 }
-echo "</tr></table>";
+echo "</table>";
 ?>
 <input type="submit" class="button" value="Apply Changes" name="apply">
   </form>
-  
+
   <?php
   //Notice button press of apply, update outlets
-  chdir('/home/laura/senior/code/SmartWallv1/usermon');
+  chdir('../usermon');
 if (isset($_GET['apply'])){
   foreach($aliased_UIDs as $aUID){
-    $on_off = $_GET[$aUID]; //selected outlet
+    if($lookup[$aUID]['channels'] == "0x02"){
+      $top_string = "top_".$aUID;
+      $bot_string = "bot_".$aUID;
+      //echo "top string is: ".$top_string."<br />";
+      //echo "bottom string is: ".$bot_string."<br />";
+      //print_r($_GET);
+      $on_off_top = $_GET[$top_string]; //selected outlet
+      //echo "top to be turned: $on_off_top <br />";
+      $on_off_bottom = $_GET[$bot_string];
+      //echo "bottom to be turned: $on_off_bottom <br />";
 
-    //convert possibly aliased UID into normal UID
-    if(array_key_exists($aUID, $alias_UID)){ //check if this is an alias
-      $uaUID = $alias_UID[$aUID]; 
-    } 
-    if(preg_match("/On/", $on_off)) {
-	//    $swAdr = $lookup[$uaUID]['swAdr']; //shell_exec can't handle
-      $swAdr = "0x0011"; //temp while other outlets aren't simulated
-      $temp = shell_exec("./swChnMsg $swAdr SET OUTLET 0x0010 1 0 1 2>&1");
-    } elseif(preg_match("/Off/",$on_off)) {
-      //    $swAdr = $lookup[$uaUID]['swAdr']; //shell_exec can't handle
-      $swAdr = "0x0011"; //temp while other outlets aren't simulated
-	$temp = shell_exec("./swChnMsg $swAdr SET OUTLET 0x0010 1 0 0 2>&1");
+      //convert possibly aliased UID into normal UID
+      if(array_key_exists($aUID, $alias_UID)){ //check if this is an alias
+	$uaUID = $alias_UID[$aUID]; 
+      } else{
+	$uaUID = $aUID; 
+      }
+
+      if(preg_match("/On/", $on_off_top)) {
+	$top = '1';
+      }elseif (preg_match("/Off/", $on_off_top)){
+	$top = '0';
+      }
+      if(preg_match("/On/", $on_off_bottom)) { 
+	$bottom = '1';
+      }elseif (preg_match("/Off/", $on_off_bottom)){
+	$bottom = '0';
+      }
+      $swAdr = $lookup[$uaUID]['swAdr']; 
+      $set_string = "./swChnMsg $swAdr SET OUTLET $state 1 0 $top 1 $bottom 2>&1";
+      //echo $set_string."\n";
+      $temp = shell_exec($set_string); 
     }
   }
   header('location:http://localhost/home.php'); //refresh to display changed data
@@ -129,7 +185,6 @@ if (isset($_GET['apply'])){
   <IMG SRC="total.png" ALT="Some Text"> 
   <!-- <IMG SRC="fake2.png" ALT="Some Text"> -->
 </div>
-
 </div>
 
                 

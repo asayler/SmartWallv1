@@ -136,13 +136,13 @@ int main(void)
     limits.maxDataLength = sizeof(*tmpChanArgs);
     
     /* Setup Processors */
-    struct SWProcessor processors[NUMOUTLETPROCESSORS];
+    struct SWDevProcessor processors[NUMOUTLETPROCESSORS];
     memset(processors, 0, sizeof(processors));
     processors[0].processorScope = SW_SCP_CHANNEL;
     processors[0].data = &tmpChnData;
     processors[0].dataLimits = &limits;
     processors[0].decoder = (readSWBody)readSWChannelBody;
-    processors[0].handeler = (swHandeler)outletChnHandeler;
+    processors[0].handeler = (swDevHandeler)outletChnDevHandeler;
     processors[0].encoder = (writeSWBody)writeSWChannelBody;
     
     /* Setup State Vars */

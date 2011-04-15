@@ -2,11 +2,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Energy Usage</title>
+<title>Setup</title>
 <link rel="stylesheet" type="text/css" href="style.css"
 </head>
 
 <body>
+
 <div id="" class="container_12">    
    <div id="header" class="grid_12">
    <?php include("header.inc"); ?>
@@ -18,7 +19,7 @@
    <?php include("navigation.inc"); ?>
 </div>
 
-<div id="table" class="grid_5">
+<div id="" class="grid_10">
 <?php
 //sw opcodes (i.e. what you're querying for or setting)
 $state = "0x0010";
@@ -32,8 +33,6 @@ $outlet = "0x8000000000000004";
 $master = "0x8000000000000001";
 $universal = "0x8000000000000000";
 ?>
-
-<h3> &nbsp&nbsp Select a device: </h3>  
 
 <?php //get outlet list from Andy's compiled swls.c program
 
@@ -56,8 +55,8 @@ foreach($lookup as $key => $value) {
    $UIDs[] = $key;
 }
 //print_r($UIDs); //debug
-
 ?>
+
 <?php
 //populate $aliases hash from aliases.txt 
 chdir('../webUI');
@@ -80,53 +79,56 @@ foreach($UIDs as $value) {
       $aliased_UIDs[] = $value;
    }
 }
-chdir('/var/www/');
+chdir('/var/www/'); 
 ?>
 
-<!-- Print all UIDs in a selection form-->
+<!-- Print all UIDs, aliases and buttons to flash and rename-->
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-  <select name="outlets" size="<?php echo count($UIDs)-1; ?>">
   <?php
-  foreach($aliased_UIDs as $value) {
+    echo "<table class=\"pretty\" border=\"1\">";
+echo "<th>Outlet ID</th><th>Blink</th><th>Name</th>";
+
+foreach($aliased_UIDs as $value) {
   if(array_key_exists($value, $alias_UID)){
     $proper_UID = $alias_UID[$value];
-  }else{
+  } else {
     $proper_UID = $value;
   }
   $ttype = $lookup[$proper_UID]['type'];
   $temp = strcmp($ttype,$master);
   if($temp != 0){ #if not master outlet
-    echo "<option value=$value>$value</option>";
+    echo "<tr><td>&nbsp $proper_UID &nbsp</td>";
+    echo "<td> <input type=\"submit\" value=\"Blink\"></td>";
+    echo "<td><input type=\"text\" name=\"$proper_UID\" value=\"\"></td></tr>";
   }
 }
 ?>
-</select>
-<input type="submit" value="View Energy Usage" name="usage">
-  </form>
-  </div>
-
-<div id="picture" class="grid_5">
+</table>
+<input type="submit" class="button" name="$proper_UID" value="rename">
+</form>
+  
 
   <?php
   //Notice button press of usage, display relevant graph
-  if (isset($_GET['usage'])){
-    if($_GET["outlets"] != NULL) { //check that an outlet has been selected
-      $outlet = $_GET["outlets"]; //selected outlet
-      
-      //convert possibly aliased UID into normal UID
-      if(array_key_exists($outlet, $alias_UID)){ //check if this is an alias
-	$outlet = $alias_UID[$outlet]; //replace $outlet with UID
-      }
-      
-      $string = $outlet.'.png';
-            echo "<IMG SRC=\"$string\">"; //display graph
-      //echo "<IMG SRC=\"fake.png\">"; #temp for screen shot
-   } else {
-      echo "First, select an outlet.\n";
-   }
-}
-?> 
-</div>
+if (isset($_GET['rename'])){
+  foreach($proper_UID as $aUID){
+    $new_name = $_GET["$aUID"]; //selected outlet
+    //update array-hashes
+    $UID_alias[$aUID] = $new_name;
+    $alias_UID[$new_name] = $aUID;
+    //write hash back to file
+    chdir('/home/laura/senior/code/SmartWallv1/webUI');
+    $handle = fopen("./aliases.txt","w") or exit("Unable to open alias file.");
+    foreach($UID_alias as $key=>$value){
+      $out_string = "$key $value\n";
+	fwrite($handle, $out_string);
+    }
+    fclose($handle);
+  }  
+ }
+?>
+
+</div> 
 </div> <!-- end content -->
 
 <div id="" class="container_12">

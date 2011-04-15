@@ -358,6 +358,7 @@ int main(int argc, char *argv[]){
         }
         memcpy(&(tgtDevice.devInfo), &(tmpDeviceEntry->devInfo),
                sizeof(tgtDevice.devInfo));
+	tgtDevice.devIP.sin_addr.s_addr = hton32(tmpDeviceEntry->ipAddr);
         
         /* Check for Channel Mismatch */
         if(tmpChanData.header.numChan > tgtDevice.devInfo.numChan){
@@ -480,7 +481,9 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
             break;
         }
-
+	/* Close Sockets */
+	close(in);
+	close(out);
     }
     
     return 0;

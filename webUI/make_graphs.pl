@@ -17,7 +17,7 @@ my $outlet = "0x8000000000000004";
 my $master = "0x8000000000000001";
 my $universal = "0x8000000000000000";
 
-chdir("/home/laura/senior/code/SmartWallv1/usermon") or die "$!";
+chdir("/home/vermilion/SmartWallv1/usermon") or die "$!";
 
 #query for all devices and info
 my $outlets_raw = `./swls -raw`; #backtick system call
@@ -68,14 +68,14 @@ foreach my $key(sort keys %lookup){
 	    }
 	    #clean up @date_time
 	    foreach(@date_time){
-		$_ =~ s/.\d\d.\d\d//;
+		$_ =~ s/\d\d\.\d\d\.//;
 	    }
 	    #find max and min powers for graph
 	    my @temp = sort @power0;
 	    $min = $temp[0]; #first item
 	    $max = $temp[-1]; #last item
 	    @temp = ();
-	    @temp = sort @power1;
+	    @temp = sort {$a <=> $b} @power1;
 	    if ($temp[0] < $min) {
 		$min = $temp[0];
 	    }
@@ -94,7 +94,8 @@ foreach my $key(sort keys %lookup){
 	    x_label => 'Date',
 	    y_label => 'Power Usage (Watts)',
 	    title => 'Monthly Power Usage',
-	    y_min_value => $min,
+	    #y_min_value => $min,
+	    y_min_value => 0,
 	    y_max_value => $max+1,
 	    y_tick_number => 5,
 #	    x_tick_number => 10,
@@ -139,33 +140,35 @@ while (<FILE_HANDLE>) {
 }
 #clean up @date_time
 foreach(@date_time){
-    $_ =~ s/.\d\d.\d\d//;
+    $_ =~ s/\d\d\.\d\d\.//;
 }
 #find max and min powers for graph
-my @temp = sort @power;
-$min = $temp[0]; #first item
-$max = $temp[-1]; #last item
+my @tempp = sort {$a <=> $b} @power; #numerical sort
+#print Dumper(@tempp); #debug
+$min = $tempp[0]; #first item
+$max = $tempp[-1]; #last item
+#print "Total max value is: $max\n"; #debug
 #create array of arrays for graphing
 @data = ([@date_time],[@power]);
-
 #make the graph from @data
 my $my_graph = GD::Graph::lines->new(400,300);
 $my_graph->set(
-	    x_label => 'Date',
-	    y_label => 'Power Usage (Watts)',
-	    title => 'Power Usage (all SmartWall devices)',
-	    y_min_value => $min,
-	    y_max_value => $max+1,
-	    y_tick_number => 5,
-	    y_label_skip => 2,
-	    t_margin => 10,
-	    b_margin => 10,
-	    r_margin => 20,
-	    l_margin => 10,
+    x_label => 'Date',
+    y_label => 'Power Usage (Watts)',
+    title => 'Power Usage (all SmartWall devices)',
+    #y_min_value => $min,
+    y_min_value => 0,
+    y_max_value => $max+1,
+    y_tick_number => 5,
+    y_label_skip => 2,
+    t_margin => 10,
+    b_margin => 10,
+    r_margin => 20,
+    l_margin => 10,
     x_label_skip => 400,
-	    markers => [ 1, 5 ],
-	    transparent => 0,
-	    );
+    markers => [ 1, 5 ],
+    transparent => 0,
+    );
 $my_graph->set_legend( 'All');
 my $gd = $my_graph->plot(\@data) or die $my_graph->error;
 my $string = "total.png";
