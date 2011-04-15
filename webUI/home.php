@@ -123,12 +123,12 @@ foreach($aliased_UIDs as $value) {
     //echo "bottom name is: ".$bottom_name."<br />";
     echo "<tr><td>&nbsp $value &nbsp</td>";
     echo "<td>";
-    echo "<input type=\"radio\" name=$top_name value=\"On\" $on_top>On"; //top on
-    echo "<input type=\"radio\" name=$top_name value=\"Off\" $off_top>Off"; //top
-    echo "&nbsp<br />&nbsp";
-    echo "<input type=\"radio\" name=$bottom_name value=\"On\" $on_bottom>On"; //bottom on
+    echo "<input type=\"radio\" name=$top_name value=\"On\" $on_top>On"; 
+    echo "<input type=\"radio\" name=$top_name value=\"Off\" $off_top>Off"; 
+    echo "&nbsp<br />";
+    echo "<input type=\"radio\" name=$bottom_name value=\"On\" $on_bottom>On"; 
     echo "<input type=\"radio\" name=$bottom_name value=\"Off\" $off_bottom>Off";
-    echo "&nbsp</td></tr>"; //bottom off
+    echo "&nbsp</td></tr>"; 
   }
 }
 echo "</table>";
