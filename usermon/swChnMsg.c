@@ -359,8 +359,6 @@ int main(int argc, char *argv[]){
         memcpy(&(tgtDevice.devInfo), &(tmpDeviceEntry->devInfo),
                sizeof(tgtDevice.devInfo));
 	tgtDevice.devIP.sin_addr.s_addr = hton32(tmpDeviceEntry->ipAddr);
-	//tgtDevice.devIP.sin_addr.s_addr = (tmpDeviceEntry->ipAddr);
-	fprintf(stderr, "targetIP: 0x%x\n", tgtDevice.devIP.sin_addr.s_addr);
         
         /* Check for Channel Mismatch */
         if(tmpChanData.header.numChan > tgtDevice.devInfo.numChan){

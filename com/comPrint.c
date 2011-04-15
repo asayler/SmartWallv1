@@ -21,8 +21,6 @@
 
 /* print line of payload data (avoid printing binary data) */
 static int print_hex_ascii_line(const uint8_t *payload, int len, int offset);
-/* print line of payload data (binary data only) */
-static int print_hex_line(const uint8_t *payload, int len, int offset);
 /* print channel header */
 static int print_swChanHeader(const struct SmartWallChannelHeader* header);
 
@@ -226,45 +224,6 @@ static int print_hex_ascii_line(const uint8_t* payload, int len, int offset) {
             count += fprintf(stdout, ".");
         }
         ch++;
-    }
-    
-    count += fprintf(stdout, "\n");
-    
-    return count;
-}
-
-/* print line of payload data (binary only) */
-static int print_hex_line(const uint8_t *payload, int len, int offset) {
-    
-    /* local vars */
-    int i;
-    int gap;
-    int count = 0;
-    const uint8_t *ch;
-
-    /* input check */
-    if(payload == NULL){
-        count += fprintf(stderr, "print_hex_ascii_line: "
-                         "payload must not be NULL!\n");
-        return (-1 * count);
-    }
-    
-    /* offset */
-    count += fprintf(stdout, "%05d   ", offset);
-    
-    /* hex */
-    ch = payload;
-    for(i = 0; i < len; i++){
-        count += fprintf(stdout, "%02" PRIx8 " ", *ch);
-        ch++;
-    }
-        
-    /* fill hex gap with spaces if not full line */
-    if(len < 8){
-        gap = 8 - len;
-        for(i = 0; i < gap; i++){
-            count += fprintf(stdout, "   ");
-        }
     }
     
     count += fprintf(stdout, "\n");

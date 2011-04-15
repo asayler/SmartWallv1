@@ -174,6 +174,8 @@ enum swCheckState swCheck(const struct SWDeviceInfo* myDev,
                           const devType_t targetType,
                           msgScope_t* errorScope,
                           swOpcode_t* errorOpcode){
+
+    (void) targetType;
     
     *errorScope = 0;
     *errorOpcode = 0;
