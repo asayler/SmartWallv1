@@ -1,0 +1,50 @@
+\usepackage[pdftex]{graphicx}
+\usepackage{fix-cm}
+
+\newcommand{\tuftsecetitle}[9]
+{
+	\addtocounter{page}{-1}
+	\begin{centering}
+		% Preamble
+		\rule{6in}{.25mm}
+		\\[.1in]
+		{ \fontsize{38}{45}\selectfont \textsc{Tufts University} }
+		\rule{6in}{.25mm}
+		\\[.1in]
+		{ \fontsize{18}{21}\selectfont School of Engineering }
+		\\[.05in]
+		{ \fontsize{18}{20}\selectfont Department of Electrical 
+			and Computer Engineering }
+		\rule{6in}{.25mm}
+		\\[.35in]
+		\includegraphics[width=1.04in]{TuftsSeal.png}
+		\\[.55in]
+		{ \fontsize{18}{21}\selectfont \textbf{#1} }
+		\\[.1in]
+		{ \fontsize{14}{17}\selectfont #2 }
+		\\[.025in]
+		{ \fontsize{14}{17}\selectfont Lab Section: #3 }
+		\\[.55in]
+		{ \fontsize{14}{17}\selectfont Experiment #4 }
+		\\[.025in]
+		{ \fontsize{14}{17}\selectfont #5 }
+
+		\vfill
+	\end{centering}
+
+	{ \fontsize{12}{13}\selectfont 
+	\begin{flushright}
+			\begin{tabular}{l		r}
+				Name: & #6 \\
+				Submitted to: & #7 \\
+				Experiment performed: & #8 \\
+				Experiment due: & #9 
+			\end{tabular}
+	\end{flushright}
+	}
+
+	\thispagestyle{empty}
+	
+	\pagebreak
+}
+
