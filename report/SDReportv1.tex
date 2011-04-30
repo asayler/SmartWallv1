@@ -3,12 +3,12 @@
 %Lab1
 
 \documentclass[12pt]{article}
-\usepackage[text={6in, 9in}, centering]{geometry}
-\usepackage{tuftsece}
+\usepackage[text={6.5in, 9in}, centering]{geometry}
 \usepackage{graphicx}
 \usepackage{listings}
 \lstloadlanguages{C}
 \usepackage{amsmath}
+\usepackage{url}
 
 %\usepackage{tikz}
 %\usepackage{verbatim}
@@ -42,6 +42,23 @@
     
 \begin{abstract}
 
+Our team set out to design a system to enable the energy monitoring and
+automated control of a collection of in-wall electrical devices and plug-in
+appliances. To achieve this goal, we designed the SmartWall protocol,
+a self-configuring application layer network protocol for querying and
+controlling electrical devices. To demonstrate the power of this protocol
+to enable communication and control of in-wall electrical devices, we
+designed and prototyped a SmartOutlet. The SmartOutlet is an
+intelligent drop-in
+replacement for the standard electrical wall outlet that adds the
+ability to remotely toggle the outlet plugs on and off and to monitor the
+energy usage of any device utilizing the outlet. Finally, we designed a
+web based user interface for controlling, administering, and
+monitoring our SmartWall network (and any SmartOutlets on it). We hope
+this project demonstrates the benefits that come from embedding
+standardized energy monitoring and remote control capabilities in
+endpoint electrical grid hardware and devices and giving the end user
+thaw ability to control and monitor these devices.
   
 \end{abstract}
 
@@ -50,6 +67,7 @@
 \pagebreak
 
 \section{Introduction}
+
 
 
 \section{Background}
@@ -74,17 +92,43 @@
 
 
 \renewcommand{\refname}{\section{References}}
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
-\bibitem{wiki-ssi} ``Integrated Circuit''. 
-  \newblock \emph{Wikipedia, The Free Encyclopedia}.
-  \newblock 9 October 2010 04:48 UTC.
+\bibitem{RFC1958} Internet Engineering Task Force: Network Working Group.
+  \newblock ``RFC 1958''.
+  \newblock Brian Carpenter, Editor.
+  \newblock (June 1996).
+  \newblock \url{http://datatracker.ietf.org/doc/rfc1958/}.
 
-\bibitem{wiki-adder} ``Adder (electronics)''. 
-  \newblock \emph{Wikipedia, The Free Encyclopedia}.
-  \newblock 2 October 2010 17:59 UTC.
+\bibitem{CNID} Metcalfe, RM.
+  \newblock ``Computer Network Interface Design: Lessons from
+  Arpanet and Ethernet''.
+  \newblock IEEE Journal on Selected Areas in Communications.
+  \newblock (Feburary 1993).
+
+\bibitem{artUnix} Raymond, Eric S.
+  \newblock \emph{The Art of Unix Programming}.
+  \newblock Boston: Addison-Wesley, 2004.
+
+\bibitem{compNetworks} Tanenbaum, Andrew S.
+  \newblock \emph{Computer Networks}. 4th ed.
+  \newblock Upper Saddle River, NJ: Prentice Hall PTR, 2003.
+
+\bibitem{googleStory} Vise, David A., and Mark Malseed.
+  \newblock \emph{The Google Story}.
+  \newblock New York, NY:Delacorte, 2008.
+  \newblock Google Books.
+  \newblock \url{http://books.google.com}.
+
+\bibitem{UIDesign} Wood, Larry E.
+  \newblock \emph{User Interface Design: Bridging the Gap from User
+    Requirements to Design}.
+  \newblock Boca Raton: CRC, 1998.
+  \newblock Google Books.
+  \newblock \url{http://books.google.com>}.
 
 \end{thebibliography}
+
 
 \pagebreak
 
@@ -93,4 +137,3 @@
 \pagebreak
 
 \end{document}
-
