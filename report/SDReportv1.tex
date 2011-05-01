@@ -58,9 +58,11 @@ monitoring our SmartWall network (and any SmartOutlets on it). We hope
 this project demonstrates the benefits that come from embedding
 standardized energy monitoring and remote control capabilities in
 endpoint electrical grid hardware and devices and giving the end user
-thaw ability to control and monitor these devices.
+the ability to control and monitor these devices.
   
 \end{abstract}
+
+\pagebreak
 
 \tableofcontents
 
@@ -68,9 +70,122 @@ thaw ability to control and monitor these devices.
 
 \section{Introduction}
 
+Currently, residential and business electricity users lack a simple
+and affordable means to monitor their energy usage on a per device
+level and automate or remotely control electrical devices and
+hardware. Even in the 21st century world where most facets of our
+lives are accessible form the web and where we can instantaneously
+communicate across the globe, we have failed to extend this
+connectivity and remote functionality to the basic appliances, devices,
+and electrical hardware we use every day. We can process stock trading
+orders from our cell phones, or track airline flights from our
+laptops, but we can not use these same devices or technologies to turn
+the lights out while we're at work or tell us how much energy a
+particular appliance is consuming.
 
+We aim to remedy this technological deficit
+by developing a system capable of providing
+power monitoring, automation, and remote control
+to the end user of any device, appliance, or electrical fixture that
+connects to the local electrical system. We call this system
+``SmartWall'', reflecting a combination of the current trend
+toward assigning an intelligence qualifier to modern ubiquitous
+interconnected technologies (\emph{smart}) and the fact that
+current electrical systems
+revolve around the in-\emph{wall} electrical wiring present in most homes and
+office buildings.
+
+The goals of a SmartWall system are as follow:
+\begin{description}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item[Convenience:] Providing end users with the ability automate and
+  control electrically connected devices in their homes from their
+  computer, cell phone, or similar device is a desirable convenience
+  and one that is currently lacking. From automatically turning lights
+  on and off to primitively preheating the oven or turning up the heat
+  form work before one arrives home, the SmartWall system and add
+  considerable convince and functionality to one's day-today
+  interaction with the devices and appliance they use.
+\item[Energy Conservation:] By providing users with the ability to
+  monitor their energy usage on a fine grain level and providing them
+  with the ability to programmaticly control the behavior of their electrical
+  devices, users have all the necessary tools required for analysis
+  and reducing energy waste. This includes everything from
+  automatically turning off unnecessary devices when one is at work
+  during the day to identifying the largest sources of energy use and
+  addressing these sources individually.
+\item[Integration Framework:] The SmartWall system lays the groundwork for an
+  endless number of integration opportunities with other
+  technologies. By providing programmatic and network accessible
+  control of the electrical devices and appliances in one's home or
+  office, we open the door for providing a considerable service to any
+  number of external systems. From integration with Smart-Grid meters
+  that require the ability to turn large appliances on or off at the
+  power companies discretion to providing landlords and building
+  managers the ability to track energy usage on a per person level and
+  bill their tenets accordingly, the possibilities for external
+  integration are immense.
+\end{description}
+
+The SmartWall vision has three facets:
+\begin{description}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item[SmartWall Protocol:] The underlying network protocol that
+  facilitates communication with and control of SmartWall devices.
+\item[SmartWall Enabled Devices:] Any device or electrical fixture that
+  connects to the local electrical system and is capable of
+  communicating via the SmartWall protocol.
+\item[SmartWall User Interfaces:] Any device or system that connects
+  the end user to their local SmartWall network for the purpose of
+  monitoring, controlling, or automating devices on the network.
+\end{description}
+
+In line with these three facets, we will be  developing our solution
+from three distinct directions:
+\begin{description}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item[Network:] The SmartWall Network Protocol and Standard
+\item[Hardware:] A Proof-of-Concept SmartWall Device - The SmartOutlet
+\item[User Interface:] A Proof-of-Concept Web Based User Interface 
+\end{description}
+
+Network protocol development involves designing and implementing the
+SmartWall protocol governing the communications and command set supported
+by our SmartOutlet and our wider SmartWall system suite
+vision. We aim for the SmartWall protocol to be open and
+extensible. It will fit into the standard IP network stack as an application
+layer protocol utilizing the UDP transport layer protocol on top of a
+wire, wireless, or power-line Ethernet implementation.
+
+Hardware prototype development encompasses designing,
+building, and testing an actual SmartOutlet prototype. The SmartOutlet
+device will be a drop-in replacement for standard in-wall electrical
+devices with the added benefits of providing the ability to switch
+each socket on or off and
+to monitor the power and energy usage of each socket via the SmartWall
+network.
+
+User interface development encompasses creating a web based user
+interface, as well as any intermediate software that will be necessary
+to allow our interface to communicate with our prototype
+SmartOutlet(s) via the SmartWall network. This interface will provide
+the end user with a simple way to monitor and control their power
+consumption on a per device level. It will also allow users the
+convenience of automating and remotely controlling devices in their home.
+
+These three sections encompass the necessary tasks that were completed
+in reaching our project goal and also reflect the division of labor
+between the members of our team. We will reference these three
+approaches in the sections below.
 
 \section{Background}
+
 
 
 \section{Design}
