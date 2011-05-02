@@ -518,13 +518,33 @@ and direct the hardware.
 
 \subsection{Reference Protocol and Device Implementation}
 
+The example output of the swls Master utility can be found in Listing
+\ref{lst:swls.txt}. This output shows the list of SmartWall devices on
+the local host, the types and address of each device, and various
+other device specific information necessary to communicate with each device.
+
 \lstinputlisting[language=bash,
   caption={swls Example Output},
   label=lst:swls.txt]{swls.txt}
 
+Listing \ref{lst:swChnMsg.txt} shows the example output of an exchange
+of SmartWall message between the Master device and a local slave
+outlet device via the swChnMsg command. We first query the slave
+outlet for the on/off state of each of its two sockets. We then set
+each socket to the ``On'' state. Finally, we query the outlet a second
+time to confirm that each socket is indeed ``On''. The outlet replies
+to each message form the master with a report of the current state of
+the affected channels.
+
 \lstinputlisting[language=bash,
   caption={swChnMsg Exchange Example Output},
   label=lst:swChnMsg.txt]{swChnMsg.txt}
+
+Listing \ref{lst:msg1-2.txt} is a dump of the network packet traffic
+involved in the first Query/Response exchange shown in Listing
+\ref{lst:swChnMsg.txt}. For a full packet dumb of the entire
+Listing \ref{lst:swChnMsg.txt} message exchange, see Appendix E (Section
+\ref{sec:AppendixE}).
 
 \lstinputlisting[language=bash,
   caption={swChnMsg Exchange Network Packets 1 and 2},
