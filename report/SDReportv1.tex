@@ -186,12 +186,100 @@ approaches in the sections below.
 
 \section{Background}
 
+\subsection{Existing Technology}
 
+While the SmartWall system aims to provide energy monitoring and
+control capabilities to a wide range of electrical devices, it is not the
+first system to offer these services. Several preexisting technologies
+of various levels of success already exist in this arena.
+
+The promise of home automation has existed since digital communications
+begin to gain prominence in the 1970s. The most extensive effort in this
+field is the X10 power-line based automated control system
+\cite{wiki-X10}. The X10 system, however, has a number of detractors
+that have prevented it form becoming universally deployed:
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item It is not easily extensible, making ti very difficult to add
+  support for new devices or for functions beyond simple on/off, dim,
+  etc controls.
+\item It uses outdated and error-prone power-line communication
+  standards making it unsuitable for sending commands over any network
+  other than the local power system and causing frequent errors.
+\item It does not support power monitoring or more advanced state querying.
+\end{itemize}  
+
+There are also a number of products on the market that allow the user
+to monitor the energy usage of their devices. P3 Internationale's
+``Kill A Watt'' product is a good example of one such a device
+\cite{p3-KillAWatt}. Like the X10 system, however, such devices have
+failed to gain prominence due to a number of factors including:
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item They are external, 3rd party devices requiring the consumer to
+  purchase an additional power monitor for each electrical device they
+  wish to monitor. 
+\item They generally provide no networking or remote monitoring capabilities.
+\item They are passive monitors, proving no control over devices.
+\end{itemize}  
+
+Our SmartWall system combines the benefits of existing automation and
+monitoring technologies while addressing their shortcomings and
+approaching both capabilities form a 21st century, network-centric approach.
+
+\subsection{Networking}
+Ethernet based IP networks have cemented themselves as the standard
+for modern communication systems. The IP network stack provides an
+abstract, layered approach to network communication. Each layer of the
+stack implements specific functionality by relying on the layers below
+it and by providing a service to the layers above it. Thus, we can
+separate the physical layer, link layer, Internet layer, transport
+layer, Adan application layer and focus on each independently.
+
+The IEEE 1901 ``Homeplug'' collection of power-line Ethernet protocols are
+quickly becoming the standard for power-line communications and provide
+us with an abstracted power-line communication physical layer on which our
+SmartWall system can ride.
+
+The UDP transportation layer provides lightweight uni-cast, multi-cast, and
+broadcast datagram communication ideal. It has a simple and easy to
+implement interface and, along with TCP, is one of the two most common
+transportation layers available in the IP stack.
+
+\subsection{Hardware}
+
+\subsection{User Interface}
+No matter how excellent the underlying technology, if the potential
+users do not find a product’s interface to be usable, that product is
+likely to fail. Thus, a key element of a successful product is a
+successful user interface. For something of a case study, we examined the
+wild success of Google. Much of Google's appeal is based upon the fact
+that “its clean interface made people feel good about the product,
+one that always seemed to work properly” \cite{googleStory}. These are
+two of the major concerns in any user project: a product that works
+properly, and an
+interface that the users can feel good about. Thus, interfaces are
+all about usability. To be usable, an interface must provide its
+potential users with “access to the functions and features of an
+application in a way that reflects the users’ ways of thinking about
+the tasks” and “means...to interact with the application in ways that
+are intuitive and natural” \cite{UIDesign}.
 
 \section{Design}
 
+Thus, our SmartWall protocol will
+leverage the standard UDP/IP network stack.
+This has the benefit of
+leveraging a wide range of well understood existing hardware and
+software. It also means that we can leverage existing physical layer
+technologies to obtain power-line based Ethernet connectivity.
 
 \section{Solution}
+
 
 
 \section{Results}
@@ -225,6 +313,11 @@ approaches in the sections below.
   \newblock \emph{The Art of Unix Programming}.
   \newblock Boston: Addison-Wesley, 2004.
 
+\bibitem{p3-KillAWatt} P3 International.
+  \newblock ``P4400 Kill A Watt''.
+  \newblock Retrieved 2004 EST, May 1, 2011.
+  \newblock \url{http://www.p3international.com/products/special/P4400/P4400-CE.html}
+
 \bibitem{compNetworks} Tanenbaum, Andrew S.
   \newblock \emph{Computer Networks}. 4th ed.
   \newblock Upper Saddle River, NJ: Prentice Hall PTR, 2003.
@@ -234,6 +327,11 @@ approaches in the sections below.
   \newblock New York, NY:Delacorte, 2008.
   \newblock Google Books.
   \newblock \url{http://books.google.com}.
+
+\bibitem{wiki-X10} ``X10 (industry standard)''.
+  \newblock Wikipedia, The Free Encyclopedia.
+  \newblock 2011, April 29.  Retrieved 1953 EST, May 1, 2011.
+  \newblock \url{http://en.wikipedia.org/w/index.php?title=X10_(industry_standard)&oldid=426496014}.
 
 \bibitem{UIDesign} Wood, Larry E.
   \newblock \emph{User Interface Design: Bridging the Gap from User
