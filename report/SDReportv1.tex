@@ -1,6 +1,6 @@
 %Andy Sayler
-%EE126
-%Lab1
+%SmartWall Project
+%Created April 29, 2011
 
 \documentclass[12pt]{article}
 \usepackage[text={6.5in, 9in}, centering]{geometry}
@@ -9,6 +9,7 @@
 \lstloadlanguages{C}
 \usepackage{amsmath}
 \usepackage{url}
+\usepackage{pdfpages}
 
 %\usepackage{tikz}
 %\usepackage{verbatim}
@@ -70,6 +71,7 @@ the ability to control and monitor these devices.
 
 \section{Introduction}
 
+\subsection{The Current State}
 Currently, residential and business electricity users lack a simple
 and affordable means to monitor their energy usage on a per device
 level and automate or remotely control electrical devices and
@@ -83,6 +85,7 @@ laptops, but we can not use these same devices or technologies to turn
 the lights out while we're at work or tell us how much energy a
 particular appliance is consuming.
 
+\subsection{The SmartWall Vision}
 We aim to remedy this technological deficit
 by developing a system capable of providing
 power monitoring, automation, and remote control
@@ -144,6 +147,7 @@ The SmartWall vision has three facets:
   monitoring, controlling, or automating devices on the network.
 \end{description}
 
+\subsection{Our Approach}
 In line with these three facets, we will be  developing our solution
 from three distinct directions:
 \begin{description}
@@ -271,19 +275,267 @@ are intuitive and natural” \cite{UIDesign}.
 
 \section{Design}
 
-Thus, our SmartWall protocol will
-leverage the standard UDP/IP network stack.
+\subsection{SmartWall Protocol}
+\subsubsection{Network Stack}
+\label{sec:Design.SmartWallProtocol.NetworkStack}
+Our SmartWall protocol uses the standard UDP/IP network stack.
 This has the benefit of
 leveraging a wide range of well understood existing hardware and
 software. It also means that we can leverage existing physical layer
-technologies to obtain power-line based Ethernet connectivity.
+technologies to obtain power-line, wired, or wireless Ethernet
+connectivity as the situation requires. Figure \ref{fig:swStack} shows
+the protocol stack that utilized by the SmartWall network. As an IP
+based protocol, the SmartWall network can also leverage all of the
+normal benefits of IP including the ability to route traffic between
+multiple local networks, sniff traffic for diagnostic purposes, or
+encrypt traffic using IPsec or a similar method.
 
-\section{Solution}
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=.5]{stack.pdf}
+  \end{center}
+  \caption{SmartWall Protocol Stack}
+  \label{fig:swStack}
+\end{figure}
 
+\subsubsection{Mode of Operation}
+\label{sec:Design.SmartWallProtocol.ModeofOperation}
+The SmartWall protocol is designed to operate in a loose master/slave
+configuration where all normal messages are acknowledged with the
+appropriate response. Figure \ref{fig:swMode} shows this operation.
 
+Normally, most SmartWall devices are operating in a
+Slave mode. In this mode, the device passively listens for messages
+addressed to it. When it receives a message, it performs the necessary
+actions and sends the necessary response. Slave devices do not initiate
+any message exchanges (except during self-configuration, see Section
+\ref{sec:Design.SmartWallProtocol.SelfConfiguration}).
 
-\section{Results}
+Each SmartWall network has a single active Master device at all
+times. The master device on the network is in charge if initiating network
+communications, normally at the request of the user interface or other
+external input. The master also maintains a list of all active devices
+on the SmartWall network and handles incoming configuration requests
+form Slave devices (see Section
+\ref{sec:Design.SmartWallProtocol.SelfConfiguration}). Master devices
+are capable of automatic fail-over operation. Although there can only
+be one acting Master on each SmartWall network, multiple backup master
+may be present and begin operation if the acting master fails. This
+provides the ability to build highly redundant SmartWall networks for
+high reliability critical applications.
 
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=.5]{networkmode.pdf}
+  \end{center}
+  \caption{SmartWall Protocol Mode of Operation}
+  \label{fig:swMode}
+\end{figure}
+
+\subsubsection{Self Configuration}
+\label{sec:Design.SmartWallProtocol.SelfConfiguration}
+In order to ensure ease of use, the SmartWall network is
+self-configuring. To achieve this functionality, the acting Master device
+on each SmartWall network is in charge providing slave devices with
+the necessary
+initialization and configuration parameters. When a new device is
+added to the SmartWall network, it broadcast a request of
+initialization. the acting master answer this request by sending the
+appropriate configuration information. Only one device on the network
+may complete the initializing process at a time. If  second device
+tries to initialize while a current initialization is underway, both
+initialization fail and the device retry the initialization procedure at random
+intervals until one secure the initialization lock and successfully
+completes the procedure, allowing the second device to proceed.
+
+\subsection{SmartOutlet}
+
+\subsection{User Interface}
+
+\subsubsection{Web Based UI}
+In the case of our SmartWall project, the user interface will be a
+web application. For our product to be successful, the users
+should find interaction with the website so intuitive that no
+training or direction is needed. A web user interface has a number of
+advantages over a dedicated user interface program. These include:
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item The ability to access the UI through any device that provides a
+  standardized web browser (computer, phone, etc).
+\item The ability to publicly serve the interface, making it
+  remotely accessible from the Internet.
+\end{itemize}  
+
+\subsubsection{Functionality}
+The user interface will interact with the SmartWall Master device. It
+provides the user with the necessary tools to utilize the SmartWall
+network to monitor and control devices. In addition to the basic
+SmartWall functionality, the user interface implements additional
+functionality including:
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item The ability to log, graph, and view energy use and device state
+  over time.
+\item The ability to automate device control via timers and event
+  sequences.
+\item The ability to alias devices with human-readable names and
+  locations, and notes.
+\end{itemize}  
+
+\section{Implementation}
+
+\subsection{Protocol}
+
+\subsubsection{Definition}
+
+The bulk of the SmartWall protocol is defined in the SmartWall
+definition document in Appendix A (Section \ref{sec:AppendixA}). The
+SmartWall protocol is implemented in ANSI C. Appendix B (Section
+\ref{sec:AppendixB}) contains the C header files describing the protocol
+and its interface.
+
+SmartWall.h (Listing
+\ref{lst:SmartWall.h} in Section \ref{sec:AppendixB.SmartWall.h}) is
+the primary C header file describing the protocol definition. The
+protocol defines a generic SmartWall header, as well as message scope
+headers.
+
+The SmartWall protocol utilizes the Berkeley Sockets API for accessing
+the UDP/IP network stack. SmartWallSockets.h (Listing
+\ref{lst:SmartWallSockets.h} in Section
+\ref{sec:AppendixB.SmartWallSockets.h}) is the C header file containing
+the SmartWall Sockets Interface.
+
+\subsubsection{Key Concepts}
+
+Each SmartWall message consists of the following:
+\begin{description}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item[SmartWall Message Header:] Contains all necessary SmartWall
+  addressing and message information.
+\item[SmartWall Scope Header:] Contains the necessary scope-specific
+  message information. Message scopes define how wide an area a
+  message governs and thus also control what the format of the message
+  body looks like.
+\item[SmartWall Message Body:] Contains the actual message information.
+\end{description}
+
+The formats and field descriptions for the previous items can be found
+in Appendix A (Section \ref{sec:AppendixA}).
+
+Each SmartWall device implements one or more device
+type profiles. These profiles define how the device interprets a
+specific opcode. By making all opcode profile based, we insure that
+teh SmartWall protocl remains extensible. If support for a new device
+type is needed, one must simply add a new device type profile. By
+allowing devices to implement multiple type profiles, we avoid the need
+for redundant opcodes and function implementation. For example, any
+device that requires simple power monitoring and the ability to turn
+on and off may implement the Outlet profile, regardless of whether or not
+it also supports functionality above and beyond a basic outlet.
+
+\subsection{Reference Master}
+
+In addition to the basic protocol and interface implementation, our
+efforts also involved writing a reference Master implementation. This
+implementation is designed to run on a standard GNU/Linux
+platform. The C header files for this implementation are in Appendix C
+(Section \ref{sec:AppendixC}).
+
+The external interface to Master implementation is provided through a
+series of utility programs. These programs allow one to send and
+receive message, and list the active devices on the SmartWall
+network. They are designed to be called at the command line directly by
+the user, or indirectly called from the more advanced web based user
+interface. At this time, the following utilities are provided:
+\begin{description}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item[swls:] Lists all active SmartWall devices and their information.  
+\item[swChnMsg:] Sends a SmartWall Channel Scope message and returns
+  the response.
+\end{description}
+
+\subsection{Reference Slave}
+
+We have also coded a reference slave implementation for our SmartOutlet
+device. This implementation can run as either a software based
+SmartOutlet simulator, or as embedded code on the actual SmartOutlet
+hardware device. The C header files related to the slave implementation
+can be found in Appendix D (Section \ref{sec:AppendixD}).
+
+\subsection{SmartOutlet}
+
+\subsection{User Interface}
+\subsubsection{Parts}
+The web user interface was implemented using the following software:
+\begin{description}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item[Apache2:] Web server to host the website
+\item[Perl:] Scripting language which queried for and stored power usage
+  data for each outlet
+\item[PHP5:] Web programming language used to interface with the network
+  protocol and generate some of the dynamic content of the website
+\item[HTML:] Web programming language into which PHP code was embedded
+\item[CSS:] Style sheet language used to make the website visually appealing
+\end{description}
+
+\subsubsection{Process}
+Work on the interface began with setting up the Apache web server
+and other necessary software. Simple “Hello world” type test
+programs ensured that the server was properly configured and that
+html and php web pages would be viewed. Since the hardware
+prototype was still being built, during development the website
+communicated with a software simulation of the network. We
+interfaced a php web page with the network simulation in order to
+perform the most basic action, a query for a list of all active
+devices, and print it to the web page. Once this basic
+functionality was established, we began work on displaying the
+information in a visually appealing way. As other portions of the
+network protocol were completed, further interaction with the
+network simulation, including setting the on/off status of
+devices and querying for power, became available, and these too
+were integrated into the user interface. In order to display
+historic data on energy usage, we wrote a Perl script to query
+all devices for their instantaneous power usage once per
+minute. We stored this data month-by-month and used it to
+generate graphs of each outlet’s and the whole system’s energy
+usage. Finally, we integrated the user interface with the
+hardware prototype and established that the website could query
+and direct the hardware.
+
+\section{Results and Examples}
+
+\subsection{Reference Protocol and Device Implementation}
+
+\subsection{SmartOutlet}
+
+\subsection{Web Interface}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=.3]{webUI-home.png}
+  \end{center}
+  \caption{UI - Device Control Home Page}
+  \label{fig:webUI-home}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=.3]{webUI-energy.png}
+  \end{center}
+  \caption{UI - Monitor Device Energy Usage History}
+  \label{fig:webUI-energy}
+\end{figure}
 
 \section{Analysis}
 
@@ -307,7 +559,7 @@ technologies to obtain power-line based Ethernet connectivity.
   \newblock ``Computer Network Interface Design: Lessons from
   Arpanet and Ethernet''.
   \newblock IEEE Journal on Selected Areas in Communications.
-  \newblock (Feburary 1993).
+  \newblock (February 1993).
 
 \bibitem{artUnix} Raymond, Eric S.
   \newblock \emph{The Art of Unix Programming}.
@@ -342,11 +594,101 @@ technologies to obtain power-line based Ethernet connectivity.
 
 \end{thebibliography}
 
+\pagebreak
+
+\section{Appendix A - Protocol Definition}
+\label{sec:AppendixA}
+
+\includepdf[pages={1-4}]{SmartWallVersion1.pdf}
 
 \pagebreak
 
-\section{Appendix A - }
+\section{Appendix B - Protocol and Common Headers}
+\label{sec:AppendixB}
 
 \pagebreak
+
+\subsection{SmartWall.h}
+\label{sec:AppendixB.SmartWall.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Protocol Definition - SmartWall.h},
+  label=lst:SmartWall.h]{../com/SmartWall.h}
+
+\pagebreak
+
+\subsection{SmartWallSockets.h}
+\label{sec:AppendixB.SmartWallSockets.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Sockets Interface - SmartWallSockets.h},
+  label=lst:SmartWallSockets.h]{../com/SmartWallSockets.h}
+
+\pagebreak
+
+\subsection{comTools.h}
+\label{sec:AppendixB.comTools.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Auxiliary Tools - comTools.h},
+  label=lst:comTools.h]{../com/comTools.h}
+
+\pagebreak
+
+\subsection{comPrint.h}
+\label{sec:AppendixB.comPrint.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Print Functions - comPrint.h},
+  label=lst:comPrint.h]{../com/comPrint.h}
+
+\pagebreak
+
+\subsection{swDevice.h}
+\label{sec:AppendixB.swDevice.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Device Interface - swDevice.h},
+  label=lst:swDevice.h]{../com/swDevice.h}
+
+\pagebreak
+
+\section{Appendix C - Master Implementation}
+\label{sec:AppendixC}
+
+\pagebreak
+
+\subsection{swMaster.h}
+\label{sec:AppendixC.swMaster.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Master Interface Header - swMaster.h},
+  label=lst:swMaster.h]{../master/swMaster.h}
+
+\pagebreak
+
+\section{Appendix D - Slave Implementation}
+\label{sec:AppendixD}
+
+\pagebreak
+
+\subsection{swSlave.h}
+\label{sec:AppendixD.swSlave.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Slave Interface Header - swSlave.h},
+  label=lst:swSlave.h]{../slave/swSlave.h}
+
+\pagebreak
+
+\subsection{swUniversal.h}
+\label{sec:AppendixD.swUniversal.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Universal Device Interface Header - swUniversal.h},
+  label=lst:swUniversal.h]{../slave/swUniversal.h}
+
+\pagebreak
+
+\subsection{swOutlet.h}
+\label{sec:AppendixD.swOutlet.h}
+\lstinputlisting[language=C,
+  caption={SmartWall Outlet Device Interface Header - swOutlet.h},
+  label=lst:swOutlet.h]{../slave/swOutlet.h}
+
+\pagebreak
+
 
 \end{document}
