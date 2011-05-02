@@ -1,0 +1,6 @@
+asayler@Albatross:$ ./swChnMsg 0x0011 QUERY OUTLET 0x0010 1 0 x 1 x
+0x0011 REPORT OUTLET 0x0010 0 1 1 1
+asayler@Albatross:$ ./swChnMsg 0x0011 SET OUTLET 0x0010 1 0 1 1 1
+0x0011 REPORT OUTLET 0x0010 0 1 1 1
+asayler@Albatross:$ ./swChnMsg 0x0011 QUERY OUTLET 0x0010 1 0 x 1 x
+0x0011 REPORT OUTLET 0x0010 0 1 1 1

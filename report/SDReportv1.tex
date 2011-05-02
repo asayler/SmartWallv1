@@ -31,6 +31,7 @@
   title=\lstname,
   frame=single,
   frameround=tttt,
+  framexrightmargin=3pt,
 }
 
 \title{SmartWall: SmartOutlet}
@@ -432,7 +433,7 @@ in Appendix A (Section \ref{sec:AppendixA}).
 Each SmartWall device implements one or more device
 type profiles. These profiles define how the device interprets a
 specific opcode. By making all opcode profile based, we insure that
-teh SmartWall protocl remains extensible. If support for a new device
+the SmartWall protocol remains extensible. If support for a new device
 type is needed, one must simply add a new device type profile. By
 allowing devices to implement multiple type profiles, we avoid the need
 for redundant opcodes and function implementation. For example, any
@@ -517,9 +518,36 @@ and direct the hardware.
 
 \subsection{Reference Protocol and Device Implementation}
 
+\lstinputlisting[language=bash,
+  caption={swls Example Output},
+  label=lst:swls.txt]{swls.txt}
+
+\lstinputlisting[language=bash,
+  caption={swChnMsg Exchange Example Output},
+  label=lst:swChnMsg.txt]{swChnMsg.txt}
+
+\lstinputlisting[language=bash,
+  caption={swChnMsg Exchange Network Packets 1 and 2},
+  label=lst:msg1-2.txt]{msg1-2.txt}
+
 \subsection{SmartOutlet}
 
 \subsection{Web Interface}
+
+The final result for the user interface was a php and html website
+which allowed the user to view all devices connected to their system,
+along with their on/off status, turn each channel of each device on
+and off at will, and view the power usage of the system as a whole
+and of each outlet individually. Some infrastructure was also put in
+place for setting timers and aliasing/renaming outlets for ease of
+use. Aliases could be displayed if hard-coded, but the ability to
+rename outlets through the website was not completed.
+
+Shown in Figure \ref{fig:webUI-home} is the website homepage. It provides the
+user with immediate access to a list of all the devices in their
+home, whether each device is on or off, the ability to turn each
+device on or off, and a graph of the system’s power usage for the
+past month. 
 
 \begin{figure}
   \begin{center}
@@ -529,6 +557,13 @@ and direct the hardware.
   \label{fig:webUI-home}
 \end{figure}
 
+Shown in Figure \ref{fig:webUI-energy} is the page that allows users
+to view power usage on
+a per-device basis. The user can select the device they wish to
+view information about and see a graph of the past month’s power
+usage. The two lines on the graph show the two sockets or
+channels of an outlet, which are independently controllable. 
+
 \begin{figure}
   \begin{center}
     \includegraphics[scale=.3]{webUI-energy.png}
@@ -537,7 +572,25 @@ and direct the hardware.
   \label{fig:webUI-energy}
 \end{figure}
 
+A important part of the interface design was interacting with the
+Engineering Psychology consultants assigned to our group. We met with
+them as a whole group shortly after they were assigned to us in order
+to bring them up to speed on our project. We explained our premise
+and goals for the project and set out a tentative schedule for
+further communications. As we designed the website, we interacted
+with them several times order to get feedback. After giving them
+goals for the user interface, we solicited suggestions on what a user
+might want to see first when they open the website. They suggested
+that the list of device and a graph of the overall energy usage would
+be most valuable, and we implemented the homepage with these
+suggestions in mind. As the website began to take shape, we met with
+them twice more to demonstrate and solicit suggestions on what could
+be changed or improved to make it more user-friendly. Their
+suggestions regarding layout and vocabulary were incorporated into
+the final design. 
+
 \section{Analysis}
+
 
 
 \section{Conclusion}
@@ -687,6 +740,13 @@ and direct the hardware.
 \lstinputlisting[language=C,
   caption={SmartWall Outlet Device Interface Header - swOutlet.h},
   label=lst:swOutlet.h]{../slave/swOutlet.h}
+
+\pagebreak
+
+\section{Appendix E - Example SmartWall Message Exchange}
+\label{sec:AppendixE}
+
+\includepdf[pages={1-2}]{msgExchange.pdf}
 
 \pagebreak
 
