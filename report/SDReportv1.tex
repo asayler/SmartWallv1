@@ -2,7 +2,7 @@
 %SmartWall Project
 %Created April 29, 2011
 
-\documentclass[12pt]{article}
+\documentclass[11pt]{article}
 \usepackage[text={6.5in, 9in}, centering]{geometry}
 \usepackage{graphicx}
 \usepackage{listings}
@@ -60,9 +60,11 @@ monitoring our SmartWall network (and any SmartOutlets on it). We hope
 this project demonstrates the benefits that come from embedding
 standardized energy monitoring and remote control capabilities in
 endpoint electrical grid hardware and devices and giving the end user
-the ability to control and monitor these devices.
+the ability to control and monitor these devices remotely.
   
 \end{abstract}
+
+\begin{center} {\bf Note: Not For Public Release} \end{center}
 
 \pagebreak
 
@@ -409,7 +411,7 @@ even easier, and would allow the user to easily move SmartOutlets
 around to different nodes in the house is situations where in-wall
 retrofitting are undesirable.
 
-\subsubsection(Electrical Design)
+\subsubsection{Electrical Design}
 The SmartOutlet must also be as robust as a standard wall-outlet. This
 means that the additional circuity necessary for power monitoring and
 switching must be capable of operating for the 10+ year lifespan of
@@ -472,21 +474,21 @@ functionality including:
 \subsubsection{Definition and Interfaces}
 
 The bulk of the SmartWall protocol is defined in the SmartWall
-definition document in Appendix A (Section \ref{sec:AppendixA}). The
-SmartWall protocol is implemented in ANSI C. Appendix B (Section
-\ref{sec:AppendixB}) contains the C header files describing the protocol
+definition document in Appendix \ref{sec:ProtocolDefiniton}. The
+SmartWall protocol is implemented in ANSI C. Appendix
+\ref{sec:ProtocolHeaders} contains the C header files describing the protocol
 and its interface.
 
 SmartWall.h (Listing
-\ref{lst:SmartWall.h} in Section \ref{sec:AppendixB.SmartWall.h}) is
+\ref{lst:SmartWall.h} in Appendix \ref{sec:ProtocolHeaders.SmartWall.h}) is
 the primary C header file describing the protocol definition. The
 protocol defines a generic SmartWall header, as well as message scope
 headers.
 
 The SmartWall protocol utilizes the Berkeley Sockets API for accessing
 the UDP/IP network stack. SmartWallSockets.h (Listing
-\ref{lst:SmartWallSockets.h} in Section
-\ref{sec:AppendixB.SmartWallSockets.h}) is the C header file containing
+\ref{lst:SmartWallSockets.h} in Appendix
+\ref{sec:ProtocolHeaders.SmartWallSockets.h}) is the C header file containing
 the SmartWall Sockets Interface.
 
 \subsubsection{Key Concepts}
@@ -506,7 +508,7 @@ Each SmartWall message consists of the following:
 \end{description}
 
 The formats and field descriptions for the previous items can be found
-in Appendix A (Section \ref{sec:AppendixA}).
+in Appendix \ref{sec:ProtocolDefiniton}.
 
 Each SmartWall device implements one or more device
 type profiles. These profiles define how the device interprets a
@@ -524,8 +526,8 @@ it also supports functionality above and beyond a basic outlet.
 In addition to the basic protocol and interface implementation, our
 efforts also involved writing a reference Master implementation. This
 implementation is designed to run on a standard GNU/Linux
-platform. The C header files for this implementation are in Appendix C
-(Section \ref{sec:AppendixC}).
+platform. The C header files for this implementation are in Appendix
+\ref{sec:MasterImplmentation}.
 
 The external interface to Master implementation is provided through a
 series of utility programs. These programs allow one to send and
@@ -548,7 +550,7 @@ We have also coded a reference slave implementation for our SmartOutlet
 device. This implementation can run as either a software based
 SmartOutlet simulator, or as embedded code on the actual SmartOutlet
 hardware device. The C header files related to the slave implementation
-can be found in Appendix D (Section \ref{sec:AppendixD}).
+can be found in Appendix \ref{sec:SlaveImplmentation}.
 
 \subsection{SmartOutlet}
 
@@ -669,8 +671,8 @@ the affected channels.
 Listing \ref{lst:msg1-2.txt} is a dump of the network packet traffic
 involved in the first Query/Response exchange shown in Listing
 \ref{lst:swChnMsg.txt}. For a full packet dump of the entire
-Listing \ref{lst:swChnMsg.txt} message exchange, see Appendix E (Section
-\ref{sec:AppendixE}).
+Listing \ref{lst:swChnMsg.txt} message exchange, see Appendix 
+\ref{sec:MessageExchange}).
 
 \lstinputlisting[language=bash,
   caption={swChnMsg Exchange Network Packets 1 and 2},
@@ -749,13 +751,159 @@ suggestions regarding layout and vocabulary were incorporated into
 the final design. 
 
 \section{Analysis}
+\subsection{SmartWall Protocol}
+The SmartWall protocol successfully accomplishes the goals of bringing
+monitoring and control to a wide range of electrical wall fixtures,
+appliance, and devices. The protocol is extensible and supports
+various device type profiles, as well as combinations of these
+protocols for hybrid devices. The protocol leverages a lot of existing
+machinery and infrastructure, allowing it to be quickly and easily
+deployed in a variety of implementations.
 
+The auto-configuration and auto-fail-over parts of the SmartWall protocol
+are currently under-defined and untested. Given more time, these
+functions would be added and tested. Error detection, correction, and
+handling are also currently under-defined in the protocol. Given more
+time, these capabilities would be expanded and vetted.
 
+\subsection{Reference Implementations}
+The reference Protocol, Master, and Slave configurations all meet the
+desired set of requirements. Collectively, they demonstrate the basic
+functionality and power of the SmartWall system. All are capable of
+sending, receiving, and processing the SmartWall:SmartOutlet command
+set. The code is highly portable and supports both OS based or
+embedded implementations. All have been run through continuous burn-in
+tests and operate successfully and stably over long periods. All have
+also been analyzed for and are free of memory leaks and other common errors.
+
+Like the protocol, the reference implementation lacks full
+auto-configuration or
+fail-over functionality. Given more time, these features would be added
+and tested. The implementations also require some further generalization
+of their APIs, specifically as they pertain to the implementation and
+operation of various device command sets.
+
+\subsection{SmartOutlet}
+The current, preliminary prototype of the SmartOutlet is meant to be
+one piece a proof-of-concept of the Smart-Wall system.  Power
+monitoring, outlet-state control, and steady Ethernet communication
+were the only crucial requirements of the SmartOutlet prototype.  The
+prototype outlet is able to successfully complete and respond to all
+queries sent from the network. Power data reports are currently
+fabricated due to the currently inoperable of power monitoring code.
+
+The prototype also currently lacks power-line communication in favor of
+standard wired Ethernet. This simplified the prototyping process
+without significantly changing the implementation strategy since we are merely
+substituting one abstraction for another. Future versions of the
+prototype would attempt to make use of power-line Ethernet technology in
+line with the goals of a production SmartOutlet.
+
+The current prototype runs at 24VDC as opposed to standard line
+voltage. Standard residential voltages and currents are too high and
+too dangerous for us to have tested the prototype outlet under
+such power levels.  Therefore, the outlet circuitry is powered by a
+USB cable, and the lights that act as loads for the outlet
+demonstration are powered by an external 24 V source.  The prototype
+outlet is able to demonstrate control of the states of the outlet’s
+ports, as well as real-time power monitoring of the ports’ loads,
+though the voltage and current provided at the ports are at much lower
+levels than would been normally seen at a residential electrical outlet.
+
+\subsection{Web User Interface}
+The user interface, implemented as a web application, provided
+most, though not all, of the functionality originally desired,
+including the ability to view and modify the status of each
+device in the user’s system, monitor power usage, and display
+power information by outlet or for the whole system. It did not
+provide the ability to set timers, or to rename outlets for ease
+of use. These deficits were due to time constrains, as opposed to
+technical problems, and could be implemented with little
+difficulty given more time.
+
+The current system for collecting and displaying power usage
+allows the user to view the power usage of each device, or the
+system as a whole. This functionality could be extended by
+allowing users to associate devices into rooms, and monitor usage
+on a by-room basis. This type of functionality might be used by
+parents to encourage their children to save energy by turning out
+the lights, as energy saving could be turned into a friendly
+competition among the family. The power monitoring could also be
+extended by providing the user with historical data, the graphs
+for the last few months. The Engineering Psychology consultants
+also suggested adding the capability to align the
+power-monitoring schedule with the schedule of the home-owner’s
+electric bill. 
+
+The interface’s usability is as-yet untested. It of course seems
+usable to us, but the average home-owner might have a different
+experience. Given more time, a series of usability tests
+involving users unfamiliar with our product would be very helpful
+in improving the design. Asking non-technical users to perform
+tasks like turning a particular outlet on, renaming an outlet, or
+describing what they understand from the power usage graphs would
+give us valuable feedback on what is intuitive and what isn't,
+and how we might improve. 
 
 \section{Conclusion}
+\subsection{A Network of Things}
+The SmartWall system successfully provides a means to network the
+electrical devices in our homes and offices. It lays the groundwork for
+creating a ``Network of Things'', capable of providing us with remote
+control and monitoring capabilities over the electrical fixtures,
+appliances, and devices we use every day.
 
+The benefits of such a network are immense. From pure convenience, to
+leveraging the additional control and automation for energy saving purposes,
+bringing 21st century connectivity to the devices on our lives has the
+ability to fundamentally change how we interact with the world. Such a
+system is an inevitable part of our future. We believe that our SmartWall
+system can fill the current void and bring automation, monitoring, and control
+to the masses. 
 
-\section{Recommendations}
+\subsection{A Path Forward}
+In order for such a system to truly be useful, it must also be
+ubiquitous. Developers must start embedding SmartWall support in their
+devices, and good SmartWall users interfaces must be available. A key
+requirement for these prerequisites is affordability. Consumers have a
+limited pallet for price increases in devices and appliances that
+already exist on the market. Thus SmartWall integration must be done
+without adding significant cost. Since we leverage a large amount of COTS
+technology in our solution, we believe that our approach can meet this
+requirement.
+
+Additionally, the SmartWall protocol must be open and extensible,
+encouraging it's adoption as the de facto protocol for the automation and
+monitoring of our appliances and devices. Format wars rarely serve the
+industry as a whole, and unless there is a single, universal protocol
+that allows interoperability between a wide range of devices, the
+``Network of Things'' will never exist. Ethernet proved this for
+computer networking, and we hope SmartWall can prove it for appliance
+networking.
+
+\subsection{Future Plans}
+Since this project was originally undertaken by a team of Tufts
+University students
+for their 2010/2011 Senior Design course, our formal pursuit of this project as
+a team ends here. Any future work on the SmartWall system will be
+undertaken individually or be a new team.
+
+The next step in developing the SmartWall system would be to build a
+second SmartOutlet prototype that resolved the issues in the first,
+namely power monitoring and power-line networking. We'd also like to
+continue the development of the protocol to support auto-configuration
+and fail-over. We would expand the reference implementation to include
+cleaner APIs for incorporating yet-to-be-defined device types and
+command sets. We would continue to develop the user interface to make
+it simple and user-friendly while maintaining the ability to leverage the
+full power of the SmartWall system.
+
+Finally, to truly test the SmartWall system, we would like to build a
+test installation. This would entail converting several rooms or an
+entire home into a SmartWall capable space with a variety of prototype
+devices and user interfaces. Such an installation would be an excellent
+proving ground for the SmartWall technology and would allow us to fully
+test the operation of a system as a whole in a real-world environment.
 
 
 \renewcommand{\refname}{\section{References}}
@@ -808,20 +956,22 @@ the final design.
 
 \pagebreak
 
-\section{Appendix A - Protocol Definition}
-\label{sec:AppendixA}
+\appendix
+
+\section{Protocol Definition}
+\label{sec:ProtocolDefiniton}
 
 \includepdf[pages={1-4}]{SmartWallVersion1.pdf}
 
 \pagebreak
 
-\section{Appendix B - Protocol and Common Headers}
-\label{sec:AppendixB}
+\section{Protocol and Common Headers}
+\label{sec:ProtocolHeaders}
 
 \pagebreak
 
 \subsection{SmartWall.h}
-\label{sec:AppendixB.SmartWall.h}
+\label{sec:ProtocolHeaders.SmartWall.h}
 \lstinputlisting[language=C,
   caption={SmartWall Protocol Definition - SmartWall.h},
   label=lst:SmartWall.h]{../com/SmartWall.h}
@@ -829,7 +979,7 @@ the final design.
 \pagebreak
 
 \subsection{SmartWallSockets.h}
-\label{sec:AppendixB.SmartWallSockets.h}
+\label{sec:ProtocolHeaders.SmartWallSockets.h}
 \lstinputlisting[language=C,
   caption={SmartWall Sockets Interface - SmartWallSockets.h},
   label=lst:SmartWallSockets.h]{../com/SmartWallSockets.h}
@@ -837,7 +987,7 @@ the final design.
 \pagebreak
 
 \subsection{comTools.h}
-\label{sec:AppendixB.comTools.h}
+\label{sec:ProtocolHeaders.comTools.h}
 \lstinputlisting[language=C,
   caption={SmartWall Auxiliary Tools - comTools.h},
   label=lst:comTools.h]{../com/comTools.h}
@@ -845,7 +995,7 @@ the final design.
 \pagebreak
 
 \subsection{comPrint.h}
-\label{sec:AppendixB.comPrint.h}
+\label{sec:ProtocolHeaders.comPrint.h}
 \lstinputlisting[language=C,
   caption={SmartWall Print Functions - comPrint.h},
   label=lst:comPrint.h]{../com/comPrint.h}
@@ -853,33 +1003,33 @@ the final design.
 \pagebreak
 
 \subsection{swDevice.h}
-\label{sec:AppendixB.swDevice.h}
+\label{sec:ProtocolHeaders.swDevice.h}
 \lstinputlisting[language=C,
   caption={SmartWall Device Interface - swDevice.h},
   label=lst:swDevice.h]{../com/swDevice.h}
 
 \pagebreak
 
-\section{Appendix C - Master Implementation}
-\label{sec:AppendixC}
+\section{Master Implementation}
+\label{sec:MasterImplmentation}
 
 \pagebreak
 
 \subsection{swMaster.h}
-\label{sec:AppendixC.swMaster.h}
+\label{sec:MasterImplmentation.swMaster.h}
 \lstinputlisting[language=C,
   caption={SmartWall Master Interface Header - swMaster.h},
   label=lst:swMaster.h]{../master/swMaster.h}
 
 \pagebreak
 
-\section{Appendix D - Slave Implementation}
-\label{sec:AppendixD}
+\section{Slave Implementation}
+\label{sec:SlaveImplmentation}
 
 \pagebreak
 
 \subsection{swSlave.h}
-\label{sec:AppendixD.swSlave.h}
+\label{sec:SlaveImplmentation.swSlave.h}
 \lstinputlisting[language=C,
   caption={SmartWall Slave Interface Header - swSlave.h},
   label=lst:swSlave.h]{../slave/swSlave.h}
@@ -887,7 +1037,7 @@ the final design.
 \pagebreak
 
 \subsection{swUniversal.h}
-\label{sec:AppendixD.swUniversal.h}
+\label{sec:SlaveImplmentation.swUniversal.h}
 \lstinputlisting[language=C,
   caption={SmartWall Universal Device Interface Header - swUniversal.h},
   label=lst:swUniversal.h]{../slave/swUniversal.h}
@@ -895,15 +1045,15 @@ the final design.
 \pagebreak
 
 \subsection{swOutlet.h}
-\label{sec:AppendixD.swOutlet.h}
+\label{sec:SlaveImplmentation.swOutlet.h}
 \lstinputlisting[language=C,
   caption={SmartWall Outlet Device Interface Header - swOutlet.h},
   label=lst:swOutlet.h]{../slave/swOutlet.h}
 
 \pagebreak
 
-\section{Appendix E - Example SmartWall Message Exchange}
-\label{sec:AppendixE}
+\section{Example SmartWall Message Exchange}
+\label{sec:MessageExchange}
 
 \includepdf[pages={1-2}]{msgExchange.pdf}
 
