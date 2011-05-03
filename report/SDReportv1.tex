@@ -77,7 +77,7 @@ Currently, residential and business electricity users lack a simple
 and affordable means to monitor their energy usage on a per device
 level and automate or remotely control electrical devices and
 hardware. Even in the 21st century world where most facets of our
-lives are accessible form the web and where we can instantaneously
+lives are accessible from the web and where we can instantaneously
 communicate across the globe, we have failed to extend this
 connectivity and remote functionality to the basic appliances, devices,
 and electrical hardware we use every day. We can process stock trading
@@ -93,7 +93,7 @@ power monitoring, automation, and remote control
 to the end user of any device, appliance, or electrical fixture that
 connects to the local electrical system. We call this system
 ``SmartWall'', reflecting a combination of the current trend
-toward assigning an intelligence qualifier to modern ubiquitous
+toward assigning an intelligence qualifier to modern ubiquitously
 interconnected technologies (\emph{smart}) and the fact that
 current electrical systems
 revolve around the in-\emph{wall} electrical wiring present in most homes and
@@ -109,25 +109,25 @@ The goals of a SmartWall system are as follow:
   computer, cell phone, or similar device is a desirable convenience
   and one that is currently lacking. From automatically turning lights
   on and off to primitively preheating the oven or turning up the heat
-  form work before one arrives home, the SmartWall system and add
-  considerable convince and functionality to one's day-today
-  interaction with the devices and appliance they use.
+  from work before you arrive home, the SmartWall system adds
+  considerable convince and functionality to our day-to-day
+  interaction with the devices and appliances we use.
 \item[Energy Conservation:] By providing users with the ability to
-  monitor their energy usage on a fine grain level and providing them
+  monitor their energy usage on a fine grain level and by providing them
   with the ability to programmaticly control the behavior of their electrical
-  devices, users have all the necessary tools required for analysis
+  devices, users have all the necessary tools required for analyzing
   and reducing energy waste. This includes everything from
-  automatically turning off unnecessary devices when one is at work
+  automatically turning off unnecessary devices when we are work
   during the day to identifying the largest sources of energy use and
   addressing these sources individually.
 \item[Integration Framework:] The SmartWall system lays the groundwork for an
   endless number of integration opportunities with other
   technologies. By providing programmatic and network accessible
-  control of the electrical devices and appliances in one's home or
-  office, we open the door for providing a considerable service to any
+  control of the electrical devices and appliances in our homes or
+  offices, we open the door for providing a considerable service to any
   number of external systems. From integration with Smart-Grid meters
   that require the ability to turn large appliances on or off at the
-  power companies discretion to providing landlords and building
+  power company's discretion to providing landlords and building
   managers the ability to track energy usage on a per person level and
   bill their tenets accordingly, the possibilities for external
   integration are immense.
@@ -145,7 +145,7 @@ The SmartWall vision has three facets:
   communicating via the SmartWall protocol.
 \item[SmartWall User Interfaces:] Any device or system that connects
   the end user to their local SmartWall network for the purpose of
-  monitoring, controlling, or automating devices on the network.
+  monitoring, controlling, and/or automating devices on the network.
 \end{description}
 
 \subsection{Our Approach}
@@ -166,15 +166,17 @@ by our SmartOutlet and our wider SmartWall system suite
 vision. We aim for the SmartWall protocol to be open and
 extensible. It will fit into the standard IP network stack as an application
 layer protocol utilizing the UDP transport layer protocol on top of a
-wire, wireless, or power-line Ethernet implementation.
+wired, wireless, or power-line Ethernet implementation.
 
 Hardware prototype development encompasses designing,
 building, and testing an actual SmartOutlet prototype. The SmartOutlet
-device will be a drop-in replacement for standard in-wall electrical
+aims to be a drop-in replacement for standard in-wall electrical
 devices with the added benefits of providing the ability to switch
 each socket on or off and
 to monitor the power and energy usage of each socket via the SmartWall
-network.
+network. The hardware prototype will also explore the logistics of
+making SmartWall technology affordable: a key prerequisite to ubiquitous
+adoption.
 
 User interface development encompasses creating a web based user
 interface, as well as any intermediate software that will be necessary
@@ -184,7 +186,7 @@ the end user with a simple way to monitor and control their power
 consumption on a per device level. It will also allow users the
 convenience of automating and remotely controlling devices in their home.
 
-These three sections encompass the necessary tasks that were completed
+These three sections encompass the necessary tasks that we completed
 in reaching our project goal and also reflect the division of labor
 between the members of our team. We will reference these three
 approaches in the sections below.
@@ -202,12 +204,12 @@ The promise of home automation has existed since digital communications
 begin to gain prominence in the 1970s. The most extensive effort in this
 field is the X10 power-line based automated control system
 \cite{wiki-X10}. The X10 system, however, has a number of detractors
-that have prevented it form becoming universally deployed:
+that have prevented it from becoming universally deployed:
 \begin{itemize}
   \setlength{\itemsep}{0pt}
   \setlength{\parskip}{0pt}
   \setlength{\parsep}{0pt}
-\item It is not easily extensible, making ti very difficult to add
+\item It is not easily extensible, making it very difficult to add
   support for new devices or for functions beyond simple on/off, dim,
   etc controls.
 \item It uses outdated and error-prone power-line communication
@@ -234,7 +236,7 @@ failed to gain prominence due to a number of factors including:
 
 Our SmartWall system combines the benefits of existing automation and
 monitoring technologies while addressing their shortcomings and
-approaching both capabilities form a 21st century, network-centric approach.
+approaching both capabilities from a 21st century, network-centric approach.
 
 \subsection{Networking}
 Ethernet based IP networks have cemented themselves as the standard
@@ -243,19 +245,53 @@ abstract, layered approach to network communication. Each layer of the
 stack implements specific functionality by relying on the layers below
 it and by providing a service to the layers above it. Thus, we can
 separate the physical layer, link layer, Internet layer, transport
-layer, Adan application layer and focus on each independently.
+layer, and application layer and focus on each independently.
 
 The IEEE 1901 ``Homeplug'' collection of power-line Ethernet protocols are
 quickly becoming the standard for power-line communications and provide
 us with an abstracted power-line communication physical layer on which our
 SmartWall system can ride.
 
+The Ethernet link layer provides basic endpoint addressing, error
+detection, and packet switching capabilities. As stated above, it is
+extremely common technology with a lot of available hardware and
+software support.
+
+The IP Internet layer provides global addressing and the ability to
+route packets between separate networks. It is the standard Internet layer
+for most Ethernet communication and is most frequently used in
+conjunction with the TCP or UDP transportation layers.
+
 The UDP transportation layer provides lightweight uni-cast, multi-cast, and
-broadcast datagram communication ideal. It has a simple and easy to
+broadcast datagram communication. It has a simple and easy to
 implement interface and, along with TCP, is one of the two most common
 transportation layers available in the IP stack.
 
+UDP supports an arbitrary application layer protocol. We have
+developed the SmartWall protocol to facilitate application layer
+communication for this project.
+
 \subsection{Hardware}
+The lack of penetration of the existing power monitoring
+and automation technologies shows that consumers are unwilling to
+spend significantly more money for these capabilities.
+Current in-wall electrical fixtures are relatively cheap. A basic outlet
+costs only about \$2 and light switches or fixtures are equally
+inexpensive. Thus, any technology that aims to become universally
+embedded in or bundled with electrical wall-fixtures, devices, and
+appliances must not add a considerable cost to these devices.
+
+Monitoring the energy usage of an electrical load involves measuring
+the voltage across that load and the current running through it. The
+product of those measurements is power: $P = V*I$.  Measuring power is a
+simple task for a DC power source, but AC power is more
+complicated. In order to calculate the AC power that the load is
+consuming, analog-to-digital converters must sample the instantaneous
+voltage and current at at least twice the AC oscillation frequency
+(the Nyquist criteria). Active instantaneous power consumption is
+calculated by multiplying corresponding digital samples of voltage and
+current. Average power and energy can be found be integrating a number of
+samples across the period of the AC waveform.
 
 \subsection{User Interface}
 No matter how excellent the underlying technology, if the potential
@@ -275,17 +311,16 @@ the tasks” and “means...to interact with the application in ways that
 are intuitive and natural” \cite{UIDesign}.
 
 \section{Design}
-
 \subsection{SmartWall Protocol}
 \subsubsection{Network Stack}
 \label{sec:Design.SmartWallProtocol.NetworkStack}
 Our SmartWall protocol uses the standard UDP/IP network stack.
 This has the benefit of
 leveraging a wide range of well understood existing hardware and
-software. It also means that we can leverage existing physical layer
+software solutions. It also means that we can leverage existing physical layer
 technologies to obtain power-line, wired, or wireless Ethernet
 connectivity as the situation requires. Figure \ref{fig:swStack} shows
-the protocol stack that utilized by the SmartWall network. As an IP
+the protocol stack utilized by the SmartWall network. As an IP
 based protocol, the SmartWall network can also leverage all of the
 normal benefits of IP including the ability to route traffic between
 multiple local networks, sniff traffic for diagnostic purposes, or
@@ -317,10 +352,10 @@ times. The master device on the network is in charge if initiating network
 communications, normally at the request of the user interface or other
 external input. The master also maintains a list of all active devices
 on the SmartWall network and handles incoming configuration requests
-form Slave devices (see Section
+from Slave devices (see Section
 \ref{sec:Design.SmartWallProtocol.SelfConfiguration}). Master devices
 are capable of automatic fail-over operation. Although there can only
-be one acting Master on each SmartWall network, multiple backup master
+be one acting Master on each SmartWall network, multiple backup masters
 may be present and begin operation if the acting master fails. This
 provides the ability to build highly redundant SmartWall networks for
 high reliability critical applications.
@@ -340,19 +375,64 @@ self-configuring. To achieve this functionality, the acting Master device
 on each SmartWall network is in charge providing slave devices with
 the necessary
 initialization and configuration parameters. When a new device is
-added to the SmartWall network, it broadcast a request of
-initialization. the acting master answer this request by sending the
+added to the SmartWall network, it broadcasts a request for
+initialization. The acting Master answers this request by sending the
 appropriate configuration information. Only one device on the network
-may complete the initializing process at a time. If  second device
+may complete the initializing process at a time. If a second device
 tries to initialize while a current initialization is underway, both
-initialization fail and the device retry the initialization procedure at random
-intervals until one secure the initialization lock and successfully
+initializations fail and the devices retry the initialization
+procedure at random
+intervals until one secures the initialization lock and successfully
 completes the procedure, allowing the second device to proceed.
 
 \subsection{SmartOutlet}
+\subsubsection{Connectivity}
+SmartOutlets will connect to the SmartWall network via
+Ethernet-over-power-line technology, avoiding the need for extra
+in-wall wiring.  Because the SmartOutlet is a
+real-time-operating-system, the embedded code of the MCU must be
+robust and efficient to ensure that all queries are executed in a
+timely fashion, and that no data is lost.
+
+\subsubsection{Physical Design}
+In an effort to make the SmartOutlet easy to install and operate, all
+of the circuitry of the device should fit inside the same
+housing of a normal outlet. Once installed, the outlet will appear
+identical to a normal wall outlet with the exception of a status LED
+and reset button for troubleshooting and user configuration.
+
+Future plans for the
+SmartOutlet include a version with a sleek housing that does not
+replace a regular electrical outlet, but instead plugs into one and
+remains flat and flush against the wall.  This would make installation
+even easier, and would allow the user to easily move SmartOutlets
+around to different nodes in the house is situations where in-wall
+retrofitting are undesirable.
+
+\subsubsection(Electrical Design)
+The SmartOutlet must also be as robust as a standard wall-outlet. This
+means that the additional circuity necessary for power monitoring and
+switching must be capable of operating for the 10+ year lifespan of
+a standard outlet. To achieve this, we will be using solid-state
+relays for switching, and where available, robust IC solutions for power
+monitoring and SmartWall communication. All SmartOutlet circuitry will be
+power by an integrated AC-to-DC converter that pulls power directly
+from the AC power lines connected to the device. The device will
+utilize energy efficient ICs and programmatic power saving modes to avoid
+unnecessary energy leaching by the device itself.
+
+Figure \ref{fig:outletDiagram} shows the system level connections and
+interactions of the SmartOutlet components.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=.5]{outletdiagram.pdf}
+  \end{center}
+  \caption{SmartOutlet System Diagram}
+  \label{fig:outletDiagram}
+\end{figure}
 
 \subsection{User Interface}
-
 \subsubsection{Web Based UI}
 In the case of our SmartWall project, the user interface will be a
 web application. For our product to be successful, the users
@@ -388,10 +468,8 @@ functionality including:
 \end{itemize}  
 
 \section{Implementation}
-
 \subsection{Protocol}
-
-\subsubsection{Definition}
+\subsubsection{Definition and Interfaces}
 
 The bulk of the SmartWall protocol is defined in the SmartWall
 definition document in Appendix A (Section \ref{sec:AppendixA}). The
@@ -432,7 +510,7 @@ in Appendix A (Section \ref{sec:AppendixA}).
 
 Each SmartWall device implements one or more device
 type profiles. These profiles define how the device interprets a
-specific opcode. By making all opcode profile based, we insure that
+specific opcode. By making all opcodes profile based, we ensure that
 the SmartWall protocol remains extensible. If support for a new device
 type is needed, one must simply add a new device type profile. By
 allowing devices to implement multiple type profiles, we avoid the need
@@ -442,7 +520,7 @@ on and off may implement the Outlet profile, regardless of whether or not
 it also supports functionality above and beyond a basic outlet.
 
 \subsection{Reference Master}
-
+\label{sec:Implementaion.ReferenceMaster}
 In addition to the basic protocol and interface implementation, our
 efforts also involved writing a reference Master implementation. This
 implementation is designed to run on a standard GNU/Linux
@@ -451,7 +529,7 @@ platform. The C header files for this implementation are in Appendix C
 
 The external interface to Master implementation is provided through a
 series of utility programs. These programs allow one to send and
-receive message, and list the active devices on the SmartWall
+receive messages and list the active devices on the SmartWall
 network. They are designed to be called at the command line directly by
 the user, or indirectly called from the more advanced web based user
 interface. At this time, the following utilities are provided:
@@ -465,7 +543,7 @@ interface. At this time, the following utilities are provided:
 \end{description}
 
 \subsection{Reference Slave}
-
+\label{sec:Implementaion.ReferenceSlave}
 We have also coded a reference slave implementation for our SmartOutlet
 device. This implementation can run as either a software based
 SmartOutlet simulator, or as embedded code on the actual SmartOutlet
@@ -473,6 +551,52 @@ hardware device. The C header files related to the slave implementation
 can be found in Appendix D (Section \ref{sec:AppendixD}).
 
 \subsection{SmartOutlet}
+
+Figure \ref{fig:outletFront} shows a concept view of the SmartOutlet device.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=.5]{outlet.pdf}
+  \end{center}
+  \caption{SmartOutlet Front View}
+  \label{fig:outletFront}
+\end{figure}
+
+The SmartOutlet prototype uses PIC32 Ethernet Starter Kit to control
+all of its communications and operations. This kit provides a PIC32
+MCU and the necessary Ethernet connections. The initial prototype
+utilizes standard wired Ethernet, as opposed to power-line Ethernet
+technology that later prototypes and the final product intent to use.
+
+The SmartOutlet measures power by using the MCP3909 IC and some
+external circuitry.  The voltage is measured using a voltage divider
+across in parallel with each load, and the current is measured by
+measuring the voltage produced across a
+very accurate resistor in series with each load.
+The MCP3909 produces digital voltage and current
+readings that are sent to the PIC32 MCU via the Serial Peripheral
+Interface (SPI). The MCU uses the digital samples of voltage and
+current to calculate the active power being used by the loads.
+
+Solid-state relays that capable of handling large
+voltages and currents and operating with a control
+voltage of 2-5V are used to switch each port of the SmartOutlet.
+The states of the two ports are held in two
+global variables in the embedded code (1 for on, 0 for off).  The
+variables are changed based off SET messages from the SmartWall
+network or reported via QUERY messages from the SmartWall network.
+
+The overall design of the embedded code is relatively simple.
+It consists of some initial setup code and a cooperative multitasking
+body  loop that runs a number of state machines.
+The setup phase consists of
+initializing the IP stack and the SPI, and configuring the MCP3909 to
+send the digital readings of its ADC converters to the MCU via the
+SPI. The body state machines handle all IP communication tasks, all IP
+core tasks, update the state of the outlet ports, and measures the
+power being used by the loads. The SmartWall portions of the
+SmartOutlet run the same code as the Reference Slave (Section
+\ref{sec:Implementaion.ReferenceSlave}).
 
 \subsection{User Interface}
 \subsubsection{Parts}
@@ -490,32 +614,34 @@ The web user interface was implemented using the following software:
 \item[CSS:] Style sheet language used to make the website visually appealing
 \end{description}
 
-\subsubsection{Process}
-Work on the interface began with setting up the Apache web server
-and other necessary software. Simple “Hello world” type test
-programs ensured that the server was properly configured and that
-html and php web pages would be viewed. Since the hardware
-prototype was still being built, during development the website
-communicated with a software simulation of the network. We
-interfaced a php web page with the network simulation in order to
-perform the most basic action, a query for a list of all active
-devices, and print it to the web page. Once this basic
-functionality was established, we began work on displaying the
-information in a visually appealing way. As other portions of the
-network protocol were completed, further interaction with the
-network simulation, including setting the on/off status of
-devices and querying for power, became available, and these too
-were integrated into the user interface. In order to display
-historic data on energy usage, we wrote a Perl script to query
-all devices for their instantaneous power usage once per
-minute. We stored this data month-by-month and used it to
-generate graphs of each outlet’s and the whole system’s energy
-usage. Finally, we integrated the user interface with the
-hardware prototype and established that the website could query
-and direct the hardware.
+\subsubsection{Web Pages}
+The web pages of the SmartWall prototype user interface are
+implemented in php and html. They communicate with the utility
+programs described in Section \ref{sec:Implementaion.ReferenceMaster}
+to obtain lists of all devices on
+the system and query for their on/off status and power usage.
+\begin{description}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+\item[Home Page:] Allows the user to view all their devices, turn them on and
+off, and view the system’s total power usage.
+\item[Energy Usage:] Provides user with ability to view the power usage
+of each device and each channel of each device individually.
+\item[Setup Page:] Allows user to identify the location of devices in their
+home and rename them for convenience.
+\item[Timers Page:] Would allow the user to set timers for each device.
+\end{description}
+
+\subsubsection{Power Monitoring}
+Perl scripts collect power usage data and turn them into user-friendly
+graphs to be displayed on the website. Every minute the scripts query
+the Master for a list of devices and query each device for their
+instantaneous power usage. Every five minutes, the information
+collected is turned into graphs. In this manner, recent graphs are
+ready and waiting when the user opens the website.
 
 \section{Results and Examples}
-
 \subsection{Reference Protocol and Device Implementation}
 
 The example output of the swls Master utility can be found in Listing
@@ -533,7 +659,7 @@ outlet device via the swChnMsg command. We first query the slave
 outlet for the on/off state of each of its two sockets. We then set
 each socket to the ``On'' state. Finally, we query the outlet a second
 time to confirm that each socket is indeed ``On''. The outlet replies
-to each message form the master with a report of the current state of
+to each message from the master with a report of the current state of
 the affected channels.
 
 \lstinputlisting[language=bash,
@@ -542,7 +668,7 @@ the affected channels.
 
 Listing \ref{lst:msg1-2.txt} is a dump of the network packet traffic
 involved in the first Query/Response exchange shown in Listing
-\ref{lst:swChnMsg.txt}. For a full packet dumb of the entire
+\ref{lst:swChnMsg.txt}. For a full packet dump of the entire
 Listing \ref{lst:swChnMsg.txt} message exchange, see Appendix E (Section
 \ref{sec:AppendixE}).
 
@@ -551,6 +677,18 @@ Listing \ref{lst:swChnMsg.txt} message exchange, see Appendix E (Section
   label=lst:msg1-2.txt]{msg1-2.txt}
 
 \subsection{SmartOutlet}
+The current prototype of the SmartOutlet is able to communicate with
+the SmartWall network and control the states of the electrical ports of the
+outlet. Power monitoring functionality has not been entirely
+implemented due to complications with the SPI.
+
+The current prototype
+outlet is not wired to measure power produced by normal residential AC
+voltage and current levels, though the relays used to
+control the state of the outlet ports are capable of handling such
+levels.  The circuitry for the prototype SmartOutlet is powered by a
+connected USB cable or AC adapter and is capable of switching 24V DC
+loads.
 
 \subsection{Web Interface}
 
@@ -566,7 +704,7 @@ rename outlets through the website was not completed.
 Shown in Figure \ref{fig:webUI-home} is the website homepage. It provides the
 user with immediate access to a list of all the devices in their
 home, whether each device is on or off, the ability to turn each
-device on or off, and a graph of the system’s power usage for the
+device on or off, and a graph of the system's power usage for the
 past month. 
 
 \begin{figure}
@@ -592,8 +730,9 @@ channels of an outlet, which are independently controllable.
   \label{fig:webUI-energy}
 \end{figure}
 
-A important part of the interface design was interacting with the
-Engineering Psychology consultants assigned to our group. We met with
+Interacting with the
+Engineering Psychology consultants assigned to our group was also an
+important part of the interface design. We met with
 them as a whole group shortly after they were assigned to us in order
 to bring them up to speed on our project. We explained our premise
 and goals for the project and set out a tentative schedule for
