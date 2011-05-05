@@ -135,7 +135,6 @@ int main(int argc, char *argv[]){
 static int updateState(struct outletDeviceState* state){
     
     /* Update Power */
-    rand();
     if(state->chState[0]){
         if(rand() % 2){
             state->chPower[0] = CH0POWER + ((rand() % 1024) / 1024.0);
