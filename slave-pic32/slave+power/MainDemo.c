@@ -30,6 +30,11 @@
 #include "slave/swOutlet.h"
 #include "slave/swUniversal.h"
 
+/* For Random Seeding */
+#include <time.h>
+#define CH0POWER 5
+#define CH1POWER 5
+
 // SmartWall Defines
 #define SENDPORT SWINPORT
 #define LISTENPORT SWOUTPORT
@@ -163,13 +168,13 @@ int main(void)
     limits.maxDataLength = sizeof(*tmpChanArgs);
     
     /* Setup Processors */
-    struct SWProcessor processors[NUMOUTLETPROCESSORS];
+    struct SWDevProcessor processors[NUMOUTLETPROCESSORS];
     memset(processors, 0, sizeof(processors));
     processors[0].processorScope = SW_SCP_CHANNEL;
     processors[0].data = &tmpChnData;
     processors[0].dataLimits = &limits;
     processors[0].decoder = (readSWBody)readSWChannelBody;
-    processors[0].handeler = (swHandeler)outletChnHandeler;
+    processors[0].handeler = (swDevHandeler)outletChnDevHandeler;
     processors[0].encoder = (writeSWBody)writeSWChannelBody;
     
     /* Setup State Vars */
@@ -244,10 +249,10 @@ int main(void)
 	}
 }
 
-int updateDeviceState(const struct outletDeviceState* myState){
+int updateDeviceState(const struct outletDeviceState* state){
 
 	//Channel 0 State
-	if(myState->chState[0] == 1){
+	if(state->chState[0] == 1){
 		LED1_IO = 1;
 	}	
 	else{
@@ -255,15 +260,40 @@ int updateDeviceState(const struct outletDeviceState* myState){
 	}
 	
 	//Channel 1 State
-	if(myState->chState[1] == 1){
+	if(state->chState[1] == 1){
 		LED2_IO = 1;
 	}	
 	else{
 		LED2_IO = 0;
 	}
 
-	SET_CHANNEL_STATE(myState->chState[0], myState->chState[1]);
+	SET_CHANNEL_STATE(state->chState[0], state->chState[1]);
 	
+	/* Update Power */
+    if(state->chState[0]){
+        if(rand() % 2){
+            state->chPower[0] = CH0POWER + ((rand() % 1024) / 1024.0);
+        }
+        else{
+            state->chPower[0] = CH0POWER - ((rand() % 1024) / 1024.0);
+        }
+    }
+    else{
+        state->chPower[0] = 0;
+    }
+    
+    if(state->chState[1]){
+        if(rand() % 2){
+            state->chPower[1] = CH1POWER + ((rand() % 1024) / 1024.0);
+        }
+        else{
+            state->chPower[1] = CH1POWER - ((rand() % 1024) / 1024.0);
+        }
+    }
+    else{
+        state->chPower[1] = 0;
+    }
+
 	return 0;
 }	
 
